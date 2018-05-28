@@ -138,7 +138,7 @@ Route
      * Product
      */
     Route
-      .resource('products', 'ScheduleController')
+      .resource('products', 'ProductController')
       .apiOnly()
       .validator(new Map([
         [['products.store', 'products.update'], ['StoreProduct']],
