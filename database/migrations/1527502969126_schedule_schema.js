@@ -6,6 +6,12 @@ class ScheduleSchema extends Schema {
   up () {
     this.create('schedules', (table) => {
       table.increments()
+      table.integer('marketing_id').unsigned()
+      table.string('action', 250).notNullable()
+      table.integer('study_id').unsigned()
+      table.date('start_date').notNullable()
+      table.date('end_date').notNullable()
+      table.string('description').nullable()
       table.timestamps()
     })
   }
@@ -16,3 +22,12 @@ class ScheduleSchema extends Schema {
 }
 
 module.exports = ScheduleSchema
+
+/*
+marketing_id
+action
+study_id
+start_date
+end_date
+description
+*/

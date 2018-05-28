@@ -1,19 +1,14 @@
 'use strict'
 
-/*
-|--------------------------------------------------------------------------
-| ScheduleSeeder
-|--------------------------------------------------------------------------
-|
-| Make use of the Factory instance to seed database with dummy data or
-| make use of Lucid models directly.
-|
-*/
-
 const Factory = use('Factory')
+const Schedule = use('App/Models/Schedule')
 
 class ScheduleSeeder {
   async run () {
+    await Schedule.truncate()
+    await Factory
+      .model('App/Models/Schedule')
+      .createMany(25)
   }
 }
 

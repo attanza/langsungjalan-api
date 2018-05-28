@@ -46,5 +46,24 @@ Factory.blueprint('App/Models/StudyProgram', (faker) => {
   }
 })
 
+Factory.blueprint('App/Models/Schedule', (faker) => {
+  return {
+    marketing_id: faker.integer({ min: 1, max: 5 }),
+    study_id: faker.integer({ min: 1, max: 5 }),
+    start_date: faker.date({year: 2018}),
+    end_date: faker.date({year: 2018}),
+    action: faker.sentence({ words: 4 }),
+    description: faker.sentence({ words: 4 }),
+  }
+})
 
+
+/*
+marketing_id
+action
+study_id
+start_date
+end_date
+description
+*/
 
