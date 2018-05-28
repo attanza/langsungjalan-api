@@ -16,7 +16,7 @@ description
 class ScheduleController {
   /**
    * Index
-   * Get List of StudyPrograms
+   * Get List of Schedule
    */
   async index({ request, response }) {
     let { page, limit, search } = request.get()
@@ -53,6 +53,20 @@ class ScheduleController {
 
       return response.status(200).send(parsed)
     }
+  }
+
+  /**
+   * Store
+   * Store New Schedule
+   */
+  async store({ request, response, auth }) {
+    let body = request.only(['marketing_id', 'action', 'study_id', 'start_date', 'end_date', 'description'])
+    const data = await Schedule.create(body)
+    await RedisHelper.delete('Schedule_*')
+    const activity = `Add new Schedule '${data.name}'`
+    await ActivityTraits.saveActivity(request, auth, activity)
+    let parsed = ResponseParser.apiCreated(data.toJSON())
+    return response.status(201).send(parsed)
   }
 }
 

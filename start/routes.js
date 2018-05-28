@@ -127,7 +127,7 @@ Route
       .resource('schedules', 'ScheduleController')
       .apiOnly()
       .validator(new Map([
-        [['schedules.store', 'schedules.update'], ['StoreStudyProgram']],
+        [['schedules.store', 'schedules.update'], ['StoreSchedule']],
         [['schedules.index'], ['List']]
       ]))
       .middleware(new Map([
