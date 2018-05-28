@@ -1,0 +1,34 @@
+
+.image-wrapper {
+  width: 25vw;
+  height: auto;
+}
+
+.image-wrapper img {
+  width: 100%;
+}
+.table {
+  width: 100%;
+  overflow-x: scroll;
+}
+.table th, td {
+  text-align: left
+}
+
+.back-btn-wrapper {
+  display: flex;
+  height: 70px;
+  width: 100%;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.diagram-wrapper{
+  width: 100%;
+  height: auto;
+}
+.diagram-wrapper img {
+  width: 100%;
+}

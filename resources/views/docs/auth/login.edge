@@ -1,0 +1,101 @@
+<section id="login" style="width: 100%;">
+  <template>
+    <v-expansion-panel>
+      <v-expansion-panel-content>
+        <div slot="header">
+          <h2>
+            <v-chip color="success" text-color="white" label>POST /login</v-chip>
+            <small class="subheading">Get token from email and password </small>
+          </h2>
+        </div>
+        <v-layout row wrap class="mt-3">
+          <v-flex xs12 style="overflow-x:auto;">
+            <table class="table">
+              <tr>
+                <th width="30%">End point:</th>
+                <td width="70%">
+                  <v-chip color="grey darken-2" text-color="white" label>/login</v-chip>
+                </td>
+              </tr>
+              <tr>
+                <th>Accept:
+                </th>
+                <td>application/json</td>
+              </tr>
+              <tr>
+                <th>Body</th>
+                <td>
+                  <ul>
+                    <li>email: string, required</li>
+                    <li>password: string, required</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <th>Response:
+                </th>
+                <td>
+                  <pre>
+{
+	"meta": {
+		"status": 200,
+		"message": "Login successfully"
+	},
+	"data": {
+		"type": "bearer",
+		"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsImlhdCI6MTUyNjc2ODQxNSwiZXhwIjoxNTI2OTQxMjE1fQ.S1cDUnGjGgLTmVQYU4cFTx0nq8NRC-AQI6pR7Rnh4cU",
+		"refreshToken": "a541d55d102d9c7b9cad0209bd5a77445I8nQ05dUxllRbXuA4iQXeSGjxazHfrAgvE59AnWbYUPJW6/gaipquVb6DyLC+Ih",
+		"user": {
+			"id": 1,
+			"name": "Leila McCarthy",
+			"email": "lar@fiwfobvu.kp",
+			"phone": "(237) 900-1725",
+			"photo": null,
+			"Address": "1032 Ijbuk Trail",
+			"role_id": 2,
+			"is_active": 1,
+			"created_at": "2018-05-19 12:27:36",
+			"updated_at": "2018-05-19 12:27:36",
+			"role": {
+				"id": 2,
+				"name": "Administrator"
+			}
+		}
+	}
+						</pre>
+                </td>
+              </tr>
+              <tr>
+                <th>Posible Errors</th>
+                <td>
+<pre>
+{
+	"meta": {
+		"status": 400,
+		"message": "Login Failed"
+	}
+},
+{
+	"meta": {
+		"status": 422,
+		"message": "Validation failed"
+	},
+	"details": [
+		{
+			"message": "email is required",
+			"field": "email",
+			"validation": "required"
+		}
+	]
+}
+</pre>
+                </td>
+              </tr>
+            </table>
+          </v-flex>
+
+        </v-layout>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </template>
+</section>

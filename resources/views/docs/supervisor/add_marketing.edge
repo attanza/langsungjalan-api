@@ -1,0 +1,93 @@
+<section id="supervisor_add_marketing" style="width: 100%;">
+  <template>
+    <v-expansion-panel>
+      <v-expansion-panel-content>
+        <div slot="header">
+          <h2>
+            <v-chip color="success" text-color="white" label>POST /supervisor/add-marketing</v-chip>
+            <small class="subheading">Attach Marketings to Supervisor</small>
+          </h2>
+        </div>
+        <v-layout row wrap class="mt-3">
+          <v-flex xs12 style="overflow-x:auto;">
+            <table class="table">
+              <tr>
+                <th width="30%">End point:</th>
+                <td width="70%">
+                  <v-chip color="grey darken-2" text-color="white" label>/supervisor/add-marketing</v-chip>
+                </td>
+              </tr>
+              <tr>
+                <th>Accept:
+                </th>
+                <td>application/json</td>
+              </tr>
+              <tr>
+                <th>Authorization:
+                </th>
+                <td>Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                </td>
+              </tr>
+              <tr>
+                <th>Body</th>
+                <td>
+                  <ul>
+                    <li>supervisor_id: integer</li>
+                    <li>marketings: array of integers</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <th>Response:
+                </th>
+                <td>
+                  <pre>
+{
+	"meta": {
+		"status": 200
+	},
+	"data": "Marketing attached"
+}
+						</pre>
+                </td>
+              </tr>
+              <tr>
+                <th>Possible Errors</th>
+                <td>
+                  <pre>
+{
+	"meta": {
+		"status": 401,
+		"message": "Unathorized"
+	}
+},
+{
+	"meta": {
+		"status": 403,
+		"message": "Forbidden"
+	}
+},
+{
+	"meta": {
+		"status": 422,
+		"message": "Validation failed"
+	},
+	"details": [
+		{
+			"message": "supervisor_id is required",
+			"field": "supervisor_id",
+			"validation": "required"
+		}
+	]
+}
+</pre>
+                </td>
+              </tr>
+            </table>
+          </v-flex>
+
+        </v-layout>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </template>
+</section>

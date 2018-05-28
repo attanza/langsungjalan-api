@@ -1,0 +1,39 @@
+<section id="roles" class="mt-2" style="width: 100%;">
+  <template>
+    <v-expansion-panel>
+      <v-expansion-panel-content>
+        <div slot="header">
+          <h1>Roles</h1>
+        </div>
+        <v-container>
+          <h3>Description</h3>
+          <p>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi amet dignissimos, sint exercitationem autem et. Minus officia
+            dolores eveniet eaque deleniti, autem qui voluptatibus aspernatur expedita rem nulla ad aliquid?
+          </p>
+          <h3>Schema</h3>
+          <p>
+            <ul class="ml-3">
+              <li>name: string|unique</li>
+              <li>slug: string</li>
+            </ul>
+          </p>
+          <v-alert :value="true" type="info">
+            Roles can only CREATE, UPDATE and DELETE by Super Administrator
+          </v-alert>
+          <h3 class="mt-3">End Points</h3>
+          <v-layout row wrap>
+            <v-flex xs12>
+              @include('docs.roles.list')
+              @include('docs.roles.store')
+              @include('docs.roles.show')
+              @include('docs.roles.update')
+              @include('docs.roles.delete')
+            </v-flex>
+          </v-layout>
+
+        </v-container>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </template>
+</section>
