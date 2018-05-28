@@ -1,5 +1,7 @@
 'use strict'
 
+const { ResponseParser } = use('App/Helpers')
+
 class StoreSchedule {
   get rules () {
     return {
@@ -29,6 +31,10 @@ class StoreSchedule {
       end_date: 'toDate',
       description: 'escape',
     }
+  }
+
+  async fails(errorMessages) {
+    return this.ctx.response.status(422).send(ResponseParser.apiValidationFailed(errorMessages))
   }
 }
 
