@@ -68,6 +68,65 @@ class ScheduleController {
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
+
+  /**
+   * Show
+   * Schedule by id
+   */
+  async show({ request, response }) {
+    const id = request.params.id
+    let redisKey = `Schedule_${id}`
+    let cached = await RedisHelper.get(redisKey)
+    if (cached) {
+      return response.status(200).send(cached)
+    }
+    const data = await Schedule.find(id)
+    if (!data) {
+      return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    await data.loadMany(['marketing', 'study'])
+    let parsed = ResponseParser.apiItem(data.toJSON())
+    await RedisHelper.set(redisKey, parsed)
+    return response.status(200).send(parsed)
+  }
+
+  /**
+   * Update
+   * Update Schedule by Id
+   */
+  async update({ request, response, auth }) {
+    let body = request.only(['marketing_id', 'action', 'study_id', 'start_date', 'end_date', 'description'])
+    const id = request.params.id
+    const data = await Schedule.find(id)
+    if (!data || data.length === 0) {
+      return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    await data.merge(body)
+    await data.save()
+    const activity = `Update Schedule '${data.name}'`
+    await ActivityTraits.saveActivity(request, auth, activity)
+    await RedisHelper.delete('Schedule_*')
+    await data.loadMany(['marketing', 'study'])
+    let parsed = ResponseParser.apiUpdated(data.toJSON())
+    return response.status(200).send(parsed)
+  }
+
+  /**
+   * Delete
+   * Delete Schedule by Id
+   */
+  async destroy({ request, response, auth }) {
+    const id = request.params.id
+    const data = await Schedule.find(id)
+    if (!data) {
+      return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    const activity = `Delete Schedule '${data.name}'`
+    await ActivityTraits.saveActivity(request, auth, activity)
+    await RedisHelper.delete('Schedule*')
+    await data.delete()
+    return response.status(200).send(ResponseParser.apiDeleted())
+  }
 }
 
 module.exports = ScheduleController
