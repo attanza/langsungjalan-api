@@ -57,13 +57,21 @@ Factory.blueprint('App/Models/Schedule', (faker) => {
   }
 })
 
+Factory.blueprint('App/Models/Product', (faker) => {
+  return {
+    code: faker.bb_pin(),
+    name: faker.sentence({ words: 3 }),
+    measurement: faker.sentence({ words: 1 }),
+    price: faker.integer({ min: 100000, max: 300000 }),
+    description: faker.sentence({ words: 4 }),
+  }
+})
 
 /*
-marketing_id
-action
-study_id
-start_date
-end_date
+code
+name
+measurement
+price
 description
 */
 
