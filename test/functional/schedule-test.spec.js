@@ -70,6 +70,113 @@ test('Cannot Create Schedule with uncomplete data', async ({ client }) => {
   response.assertStatus(422)
 })
 
+/**
+ * Update Schedule
+ */
+
+test('Unathorized cannot Update Schedule', async ({ client }) => {
+  const editing = await Schedule.find(2)
+  const response = await client
+    .put(endpoint + '/' + editing.id)
+    .send(scheduleData())
+    .end()
+  response.assertStatus(401)
+})
+
+test('Authorized can Update Schedule', async ({ client }) => {
+  const user = await User.find(1)
+  const editing = await Schedule.find(2)
+  const response = await client
+    .put(endpoint + '/' + editing.id)
+    .loginVia(user, 'jwt')
+    .send(scheduleData())
+    .end()
+  response.assertStatus(200)
+  response.assertJSONSubset({
+    data: {
+      'marketing_id': 3,
+      'action': 'Wa ja dipir da2.',
+      'study_id': 3,
+    }
+  })
+})
+
+test('Cannot Update unexisted Schedule', async ({ client }) => {
+  const user = await User.find(1)
+  const response = await client
+    .put(endpoint + '/' + 35)
+    .loginVia(user, 'jwt')
+    .send(scheduleData())
+    .end()
+  response.assertStatus(400)
+})
+
+/**
+ * Show Schedule
+ */
+
+test('Unathorized cannot Show Schedule', async ({ client }) => {
+  const data = await Schedule.find(1)
+  const response = await client
+    .get(endpoint + '/' + data.id)
+    .end()
+  response.assertStatus(401)
+})
+
+test('Authorized can Show Schedule', async ({ client }) => {
+  const user = await User.find(1)
+  const editing = await Schedule.find(2)
+  const response = await client
+    .get(endpoint + '/' + editing.id)
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
+
+test('Cannot Show unexisted Schedule', async ({ client }) => {
+  const user = await User.find(1)
+  const response = await client
+    .get(endpoint + '/' + 35)
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(400)
+})
+
+/**
+ * Delete Schedule
+ */
+
+test('Unathorized cannot Delete Schedule', async ({ client }) => {
+  const data = await Schedule.find(1)
+  const response = await client
+    .delete(endpoint + '/' + data.id)
+    .end()
+  response.assertStatus(401)
+})
+
+test('Authorized can Delete Schedule', async ({ client }) => {
+  const user = await User.find(1)
+  const editing = await Schedule.find(2)
+  const response = await client
+    .delete(endpoint + '/' + editing.id)
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
+
+test('Cannot Delete unexisted Schedule', async ({ client }) => {
+  const user = await User.find(1)
+  const response = await client
+    .delete(endpoint + '/' + 35)
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(400)
+})
+
+/**
+ * Form Data
+ */
+
 function scheduleData() {
   return {
     'marketing_id': 3,
