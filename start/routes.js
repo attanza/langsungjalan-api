@@ -119,6 +119,20 @@ Route
       .middleware(new Map([
         [['studies.store', 'studies.update', 'studies.delete'], ['admin']]
       ]))
+
+      /**
+       * Schedule
+       */
+    Route
+      .resource('schedules', 'ScheduleController')
+      .apiOnly()
+      .validator(new Map([
+        [['schedules.store', 'schedules.update'], ['StoreStudyProgram']],
+        [['schedules.index'], ['List']]
+      ]))
+      .middleware(new Map([
+        [['schedules.store', 'schedules.update', 'schedules.delete'], ['admin']]
+      ]))
   })
   .prefix('api/v1')
   .formats(['json'])
