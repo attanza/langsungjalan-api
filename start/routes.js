@@ -120,9 +120,9 @@ Route
         [['studies.store', 'studies.update', 'studies.delete'], ['admin']]
       ]))
 
-      /**
-       * Schedule
-       */
+    /**
+     * Schedule
+     */
     Route
       .resource('schedules', 'ScheduleController')
       .apiOnly()
@@ -132,6 +132,20 @@ Route
       ]))
       .middleware(new Map([
         [['schedules.store', 'schedules.update', 'schedules.delete'], ['admin']]
+      ]))
+
+    /**
+     * Product
+     */
+    Route
+      .resource('products', 'ScheduleController')
+      .apiOnly()
+      .validator(new Map([
+        [['products.store', 'products.update'], ['StoreProduct']],
+        [['products.index'], ['List']]
+      ]))
+      .middleware(new Map([
+        [['products.store', 'products.update', 'products.delete'], ['admin']]
       ]))
   })
   .prefix('api/v1')
