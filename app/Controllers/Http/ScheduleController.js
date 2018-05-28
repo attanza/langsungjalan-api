@@ -62,6 +62,7 @@ class ScheduleController {
   async store({ request, response, auth }) {
     let body = request.only(['marketing_id', 'action', 'study_id', 'start_date', 'end_date', 'description'])
     const data = await Schedule.create(body)
+    await data.loadMany(['marketing', 'study'])
     await RedisHelper.delete('Schedule_*')
     const activity = `Add new Schedule '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)

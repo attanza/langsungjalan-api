@@ -1,0 +1,43 @@
+<section id="marketing_schedule" class="mt-2" style="width: 100%;">
+  <template>
+    <v-expansion-panel>
+      <v-expansion-panel-content>
+        <div slot="header">
+          <h1>Marketing Schedules</h1>
+        </div>
+        <v-container>
+          <h3>Description</h3>
+          <p>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi amet dignissimos, sint exercitationem autem et. Minus officia
+            dolores eveniet eaque deleniti, autem qui voluptatibus aspernatur expedita rem nulla ad aliquid?
+          </p>
+          <h3>Schema</h3>
+          <p>
+            <ul class="ml-3">
+              <li>marketing_id: required|integer</li>
+              <li>action: required|string</li>
+              <li>study_id: required|integer</li>
+              <li>start_date: required|date</li>
+              <li>end_date: required|date</li>
+              <li>description: string</li>
+            </ul>
+          </p>
+          <v-alert :value="true" type="info">
+            Marketing Schedules can only CREATE, UPDATE and DELETE by Super Administrator, Administrator, Supervisor
+          </v-alert>
+          <h3 class="mt-3">End Points</h3>
+          <v-layout row wrap>
+            <v-flex xs12>
+              @include('docs.marketing_schedule.list')
+              @include('docs.marketing_schedule.store')
+              @include('docs.marketing_schedule.show')
+              @include('docs.marketing_schedule.update')
+              @include('docs.marketing_schedule.delete')
+            </v-flex>
+          </v-layout>
+
+        </v-container>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </template>
+</section>

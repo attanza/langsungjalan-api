@@ -1,0 +1,138 @@
+<section id="schedule_store" style="width: 100%;">
+  <template>
+    <v-expansion-panel>
+      <v-expansion-panel-content>
+        <div slot="header">
+          <h2>
+            <v-chip color="success" text-color="white" label>POST /schedules</v-chip>
+            <small class="subheading">Create new Schedule </small>
+          </h2>
+        </div>
+        <v-layout row wrap class="mt-3">
+          <v-flex xs12 style="overflow-x:auto;">
+            <table class="table">
+              <tr>
+                <th width="30%">End point:</th>
+                <td width="70%">
+                  <v-chip color="grey darken-2" text-color="white" label>/schedules</v-chip>
+                </td>
+              </tr>
+              <tr>
+                <th>Accept:
+                </th>
+                <td>application/json</td>
+              </tr>
+              <tr>
+                <th>Authorization:
+                </th>
+                <td>Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                </td>
+              </tr>
+              <tr>
+                <th>Body</th>
+                <td>
+                  <ul>
+                    <li>marketing_id: required|integer</li>
+                    <li>action: required|string</li>
+                    <li>study_id: required|integer</li>
+                    <li>start_date: required|date</li>
+                    <li>end_date: required|date</li>
+                    <li>description: string</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <th>Response:
+                </th>
+                <td>
+                  <pre>
+{
+	"meta": {
+		"status": 201,
+		"message": "Created successfully"
+	},
+	"data": {
+		"marketing_id": 5,
+		"action": "Wa ja dipir da.",
+		"study_id": 2,
+		"start_date": "2018-04-01T17:00:00.000Z",
+		"end_date": "2018-10-16T17:00:00.000Z",
+		"description": "Nuagaebu gosirusa zohiz bavutbuj.",
+		"created_at": "2018-05-28 21:45:49",
+		"updated_at": "2018-05-28 21:45:49",
+		"id": 27,
+		"marketing": {
+			"id": 5,
+			"name": "Dorothy Shaw",
+			"email": "lubzegwej@numuvga.il",
+			"phone": "(853) 370-9390",
+			"description": null,
+			"photo": "",
+			"Address": "506 Jobi Terrace",
+			"role_id": 2,
+			"is_active": 1,
+			"created_at": "2018-05-28 19:04:41",
+			"updated_at": "2018-05-28 19:04:41"
+		},
+		"study": {
+			"id": 2,
+			"university_id": 2,
+			"name": "Gabriel Morrison",
+			"address": "1362 Olsum Plaza",
+			"email": "ara@nuvabwi.pe",
+			"phone": "(358) 581-8349",
+			"contact_person": "Lucile Davis",
+			"description": "Webocof iri jin gefim facupuda nomtawa je ziruuj dit bapbe hamburu oholo vih ca owowu lidlavak goho.",
+			"year": "2019",
+			"class_per_year": 39,
+			"students_per_class": 40,
+			"lat": -72.111008,
+			"lng": 43.058109,
+			"created_at": "2018-05-28 19:04:40",
+			"updated_at": "2018-05-28 19:04:40"
+		}
+	}
+}
+						</pre>
+                </td>
+              </tr>
+              <tr>
+                <th>Possible Errors</th>
+                <td>
+<pre>
+{
+	"meta": {
+		"status": 401,
+		"message": "Unathorized"
+	}
+},
+{
+	"meta": {
+		"status": 422,
+		"message": "Validation failed"
+	},
+	"details": [
+		{
+			"message": "action is required",
+			"field": "action",
+			"validation": "required"
+		}
+	]
+},
+{
+	"meta": {
+		"status": 403,
+		"message": "Forbidden"
+	}
+}
+</pre>
+                </td>
+              </tr>
+            </table>
+          </v-flex>
+
+        </v-layout>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </template>
+</section>
