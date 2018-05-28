@@ -1,0 +1,40 @@
+<section id="product" class="mt-2" style="width: 100%;">
+  <template>
+    <v-expansion-panel>
+      <v-expansion-panel-content>
+        <div slot="header">
+          <h1>Products</h1>
+        </div>
+        <v-container>
+          <h3>Description</h3>
+          <p>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi amet dignissimos, sint exercitationem autem et. Minus officia
+            dolores eveniet eaque deleniti, autem qui voluptatibus aspernatur expedita rem nulla ad aliquid?
+          </p>
+          <h3>Schema</h3>
+          <p>
+            <ul class="ml-3">
+              <li>code: required|max:25|unique</li>
+              <li>name: required|max:50|unique</li>
+              <li>measurement: required|max:25</li>
+              <li>price: required|integer</li>
+              <li>description: max:250</li>
+            </ul>
+          </p>
+          <h3 class="mt-3">End Points</h3>
+          <v-layout row wrap>
+            <v-flex xs12>
+              @include('docs.product.list')
+              @include('docs.product.store')
+              @include('docs.product.show')
+              @include('docs.product.update')
+              @include('docs.product.delete')
+            </v-flex>
+          </v-layout>
+
+        </v-container>
+      </v-expansion-panel-content>
+    </v-expansion-panel>
+  </template>
+</section>
+
