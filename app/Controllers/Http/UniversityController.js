@@ -20,6 +20,13 @@ class UniversityController {
     if (search && search != '') {
       const data = await University.query()
         .where('name', 'like', `%${search}%`)
+        .orWhere('address', 'like', `%${search}%`)
+        .orWhere('email', 'like', `%${search}%`)
+        .orWhere('phone', 'like', `%${search}%`)
+        .orWhere('contact_person', 'like', `%${search}%`)
+        .orWhere('description', 'like', `%${search}%`)
+        .orWhere('province', 'like', `%${search}%`)
+        .orWhere('city', 'like', `%${search}%`)
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)

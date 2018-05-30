@@ -29,7 +29,7 @@ Route
     Route.get('/reset', 'PasswordController.showPasswordForm').as('reset')
     Route.post('/reset', 'PasswordController.postReset')
   })
-  .prefix('api/auth')
+  .prefix('api/v1')
   .namespace('Auth')
   .formats(['json'])
 
