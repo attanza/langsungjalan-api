@@ -34,6 +34,9 @@ class StoreStudyProgram {
       contact_person: 'escape',
       address: 'escape',
       description: 'escape',
+      class_per_year: 'toInt',
+      students_per_class: 'toInt',
+
     }
   }
 
