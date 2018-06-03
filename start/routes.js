@@ -147,6 +147,10 @@ Route
       .middleware(new Map([
         [['products.store', 'products.update', 'products.delete'], ['admin']]
       ]))
+    /**
+     * For Combo Box / Select Box
+     */
+    Route.get('combo-data', 'ComboDataController.index')
   })
   .prefix('api/v1')
   .formats(['json'])
