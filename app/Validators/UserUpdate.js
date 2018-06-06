@@ -4,7 +4,7 @@ const { ResponseParser } = use('App/Helpers')
 
 
 class UserUpdate {
-  get rules () {
+  get rules() {
     const id = this.ctx.params.id
     return {
       name: 'required|max:50',
@@ -22,16 +22,18 @@ class UserUpdate {
     }
   }
 
-  get sanitizationRules () {
+  get sanitizationRules() {
     return {
       email: 'normalize_email',
       role_id: 'to_int',
       name: 'escape',
       phone: 'escape',
+      address: 'escape',
+      description: 'escape',
     }
   }
 
-  async fails (errorMessages) {
+  async fails(errorMessages) {
     return this.ctx.response.status(422).send(ResponseParser.apiValidationFailed(errorMessages))
   }
 }

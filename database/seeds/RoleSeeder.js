@@ -6,7 +6,7 @@ class RoleSeeder {
   async run() {
     await Role.truncate()
     const roles = ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student']
-    roles.map(async (role) => {
+    roles.forEach(async(role) => {
       await Role.create({
         name: role,
         slug: Slug(role)

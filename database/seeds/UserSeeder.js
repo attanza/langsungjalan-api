@@ -8,16 +8,17 @@ const randomstring = require('randomstring')
 const now = moment().format('YYYY-MM-DD HH:mm:ss')
 
 class UserSeeder {
-  async run () {
+  async run() {
     await Database.raw('SET FOREIGN_KEY_CHECKS = 0;')
     await Database.table('users').truncate()
     await Database.table('tokens').truncate()
     await Database.table('activations').truncate()
+    await Database.table('marketing_supervisor').truncate()
 
     await User.truncate()
     await Factory
       .model('App/Models/User')
-      .createMany(5)
+      .createMany(15)
     await this.setActivation()
   }
 

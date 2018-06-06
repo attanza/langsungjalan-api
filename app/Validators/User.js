@@ -4,7 +4,7 @@ const { ResponseParser } = use('App/Helpers')
 
 
 class User {
-  get rules () {
+  get rules() {
     return {
       name: 'required|max:50',
       email: 'required|email|unique:users',
@@ -22,12 +22,15 @@ class User {
     }
   }
 
-  get sanitizationRules () {
+  get sanitizationRules() {
     return {
       email: 'normalize_email',
       role_id: 'to_int',
       name: 'escape',
       phone: 'escape',
+      address: 'escape',
+      description: 'escape',
+
     }
   }
 

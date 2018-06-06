@@ -3,7 +3,7 @@
 const Schema = use('Schema')
 
 class UserSchema extends Schema {
-  up () {
+  up() {
     this.create('users', table => {
       table.increments()
       table.string('name', 80).notNullable()
@@ -12,7 +12,7 @@ class UserSchema extends Schema {
       table.string('password', 60).notNullable()
       table.string('description').nullable()
       table.string('photo').nullable()
-      table.text('Address').nullable()
+      table.text('address').nullable()
       table.integer('role_id').unsigned()
       table.boolean('is_active').default(0)
       table.string('verification_token').nullable()
@@ -20,9 +20,19 @@ class UserSchema extends Schema {
     })
   }
 
-  down () {
+  down() {
     this.drop('users')
   }
 }
 
 module.exports = UserSchema
+
+// name
+// email
+// phone
+// password
+// description
+// photo
+// Address
+// role_id
+// is_active
