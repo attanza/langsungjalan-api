@@ -9,7 +9,7 @@ Route.get('/', () => {
 })
 
 Route.get('/docs', 'DocumentController.index')
-Route.get('/email', async ({ view }) => {
+Route.get('/email', async({ view }) => {
   const user = await User.find(1)
   const baseUrl = Env.get('APP_URL')
   user.baseUrl = baseUrl
@@ -46,12 +46,24 @@ Route
       .resource('users', 'UserController')
       .apiOnly()
       .validator(new Map([
-        [['users.store'], ['User']],
-        [['users.update'], ['UserUpdate']],
-        [['users.index'], ['List']]
+        [
+          ['users.store'],
+          ['User']
+        ],
+        [
+          ['users.update'],
+          ['UserUpdate']
+        ],
+        [
+          ['users.index'],
+          ['List']
+        ]
       ]))
       .middleware(new Map([
-        [['users.store', 'users.update', 'users.delete'], ['admin']]
+        [
+          ['users.store', 'users.update', 'users.delete'],
+          ['admin']
+        ]
       ]))
 
     /**
@@ -61,11 +73,20 @@ Route
       .resource('roles', 'RoleController')
       .apiOnly()
       .validator(new Map([
-        [['roles.store'], ['Role']],
-        [['roles.update'], ['Role']]
+        [
+          ['roles.store'],
+          ['Role']
+        ],
+        [
+          ['roles.update'],
+          ['Role']
+        ]
       ]))
       .middleware(new Map([
-        [['roles.store', 'roles.update', 'roles.delete'], ['super']]
+        [
+          ['roles.store', 'roles.update', 'roles.delete'],
+          ['super']
+        ]
       ]))
 
     /**
@@ -77,16 +98,20 @@ Route
      * Supervisor
      */
 
-    Route.post('supervisor/add-marketing', 'SupervisorController.assignMarketing')
+    Route.post('supervisor/attach-marketing', 'SupervisorController.attachMarketing')
       .validator('AddMarketing')
+      .middleware('admin')
+    Route.post('supervisor/detach-marketing', 'SupervisorController.detachMarketing')
+      .validator('AddMarketing')
+      .middleware('admin')
+    Route.get('supervisor/search-marketing', 'SupervisorController.searchMarketing')
       .middleware('admin')
 
     /**
      * Marketing
      */
 
-    Route.post('marketing/add-supervisor', 'MarketingController.assignSupervisor')
-      .validator('AddSupervisor')
+    Route.post('marketing/add-supervisor', 'MarketingController.searchMarketing')
       .middleware('supervisor')
 
     /**
@@ -97,27 +122,48 @@ Route
       .resource('universities', 'UniversityController')
       .apiOnly()
       .validator(new Map([
-        [['universities.store'], ['StoreUniversity']],
-        [['universities.update'], ['UpdateUniversity']],
-        [['universities.index'], ['List']]
+        [
+          ['universities.store'],
+          ['StoreUniversity']
+        ],
+        [
+          ['universities.update'],
+          ['UpdateUniversity']
+        ],
+        [
+          ['universities.index'],
+          ['List']
+        ]
       ]))
       .middleware(new Map([
-        [['universities.store', 'universities.update', 'universities.delete'], ['admin']]
+        [
+          ['universities.store', 'universities.update', 'universities.delete'],
+          ['admin']
+        ]
       ]))
 
     /**
      * Study Programs
-    */
+     */
 
     Route
       .resource('studies', 'StudyProgramController')
       .apiOnly()
       .validator(new Map([
-        [['studies.store', 'studies.update'], ['StoreStudyProgram']],
-        [['studies.index'], ['List']]
+        [
+          ['studies.store', 'studies.update'],
+          ['StoreStudyProgram']
+        ],
+        [
+          ['studies.index'],
+          ['List']
+        ]
       ]))
       .middleware(new Map([
-        [['studies.store', 'studies.update', 'studies.delete'], ['admin']]
+        [
+          ['studies.store', 'studies.update', 'studies.delete'],
+          ['admin']
+        ]
       ]))
 
     /**
@@ -127,11 +173,20 @@ Route
       .resource('schedules', 'ScheduleController')
       .apiOnly()
       .validator(new Map([
-        [['schedules.store', 'schedules.update'], ['StoreSchedule']],
-        [['schedules.index'], ['List']]
+        [
+          ['schedules.store', 'schedules.update'],
+          ['StoreSchedule']
+        ],
+        [
+          ['schedules.index'],
+          ['List']
+        ]
       ]))
       .middleware(new Map([
-        [['schedules.store', 'schedules.update', 'schedules.delete'], ['admin']]
+        [
+          ['schedules.store', 'schedules.update', 'schedules.delete'],
+          ['admin']
+        ]
       ]))
 
     /**
@@ -141,11 +196,20 @@ Route
       .resource('products', 'ProductController')
       .apiOnly()
       .validator(new Map([
-        [['products.store', 'products.update'], ['StoreProduct']],
-        [['products.index'], ['List']]
+        [
+          ['products.store', 'products.update'],
+          ['StoreProduct']
+        ],
+        [
+          ['products.index'],
+          ['List']
+        ]
       ]))
       .middleware(new Map([
-        [['products.store', 'products.update', 'products.delete'], ['admin']]
+        [
+          ['products.store', 'products.update', 'products.delete'],
+          ['admin']
+        ]
       ]))
     /**
      * For Combo Box / Select Box
