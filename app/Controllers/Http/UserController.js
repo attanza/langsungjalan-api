@@ -8,7 +8,7 @@ class UserController {
 
   /**
    * Index
-   * Get List of Roles
+   * Get List of Users
    */
   async index({ request, response }) {
     let { page, limit, search, role_id } = request.get()

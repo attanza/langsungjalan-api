@@ -98,10 +98,34 @@ Route
      * Supervisor
      */
 
+    Route
+      .resource('supervisors', 'SupervisorController')
+      .apiOnly()
+      .validator(new Map([
+        [
+          ['supervisors.store'],
+          ['Supervisor']
+        ],
+        [
+          ['supervisors.update'],
+          ['Supervisor']
+        ],
+        [
+          ['supervisors.index'],
+          ['List']
+        ]
+      ]))
+      .middleware(new Map([
+        [
+          ['supervisors.store', 'supervisors.update', 'supervisors.delete'],
+          ['admin']
+        ]
+      ]))
+
     Route.post('supervisor/attach-marketing', 'SupervisorController.attachMarketing')
       .validator('AddMarketing')
       .middleware('admin')
-    Route.post('supervisor/detach-marketing', 'SupervisorController.detachMarketing')
+    Route.put('supervisor/detach-marketing', 'SupervisorController.detachMarketing')
       .validator('AddMarketing')
       .middleware('admin')
     Route.get('supervisor/search-marketing', 'SupervisorController.searchMarketing')

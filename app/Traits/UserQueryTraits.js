@@ -32,6 +32,8 @@ class UserQueryTraits {
     }
     const data = await User.query()
       .with('role')
+      .with('marketings')
+      .with('supervisors')
       .where('role_id', parseInt(this.role_id))
       .orderBy('name')
       .paginate(parseInt(this.page), parseInt(this.limit))
