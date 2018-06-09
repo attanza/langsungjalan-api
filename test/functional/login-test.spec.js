@@ -8,7 +8,7 @@ trait('Test/ApiClient')
 trait('DatabaseTransactions')
 trait('Auth/Client')
 
-const endpoint = 'api/auth/login'
+const endpoint = 'api/v1/login'
 
 /**
  * Login

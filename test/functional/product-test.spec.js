@@ -23,7 +23,7 @@ test('Unathorized cannot get Product List', async ({ client }) => {
 })
 
 test('Authorized can get Product List', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .get(endpoint)
     .loginVia(user, 'jwt')
@@ -44,7 +44,7 @@ test('Unathorized cannot create Product', async ({ client }) => {
 })
 
 test('Authorized can Create Product', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .post(endpoint)
     .loginVia(user, 'jwt')
@@ -61,7 +61,7 @@ test('Authorized can Create Product', async ({ client }) => {
 })
 
 test('Cannot Create Product with uncomplete data', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .post(endpoint)
     .loginVia(user, 'jwt')
@@ -83,7 +83,7 @@ test('Unathorized cannot Update Product', async ({ client }) => {
 })
 
 test('Authorized can Update Product', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const editing = await Product.find(2)
   const response = await client
     .put(endpoint + '/' + editing.id)
@@ -101,7 +101,7 @@ test('Authorized can Update Product', async ({ client }) => {
 })
 
 test('Cannot Update unexisted Product', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .put(endpoint + '/' + 35)
     .loginVia(user, 'jwt')
@@ -123,7 +123,7 @@ test('Unathorized cannot Show Product', async ({ client }) => {
 })
 
 test('Authorized can Show Product', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const editing = await Product.find(2)
   const response = await client
     .get(endpoint + '/' + editing.id)
@@ -133,7 +133,7 @@ test('Authorized can Show Product', async ({ client }) => {
 })
 
 test('Cannot Show unexisted Product', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .get(endpoint + '/' + 35)
     .loginVia(user, 'jwt')
@@ -154,7 +154,7 @@ test('Unathorized cannot Delete Product', async ({ client }) => {
 })
 
 test('Authorized can Delete Product', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const editing = await Product.find(2)
   const response = await client
     .delete(endpoint + '/' + editing.id)
@@ -164,7 +164,7 @@ test('Authorized can Delete Product', async ({ client }) => {
 })
 
 test('Cannot Delete unexisted Product', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .delete(endpoint + '/' + 35)
     .loginVia(user, 'jwt')
@@ -184,4 +184,12 @@ function ProductData() {
     'price': 228984,
     'description': 'Retazuw zol labu bepoba.'
   }
+}
+
+async function getAdmin() {
+  return await User.query().where('role_id', 2).first()
+}
+
+async function getNonAdmin() {
+  return await User.query().where('role_id', 4).first()
 }

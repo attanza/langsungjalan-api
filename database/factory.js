@@ -10,7 +10,7 @@ Factory.blueprint('App/Models/User', (faker) => {
     phone: faker.phone(),
     address: faker.address(),
     is_active: 1,
-    role_id: 2
+    role_id: faker.integer({ min: 1, max: 5 })
   }
 })
 
