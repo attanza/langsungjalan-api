@@ -110,6 +110,7 @@ class SupervisorController {
     await RedisHelper.delete('User_*')
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
+
   }
 
   /**
@@ -149,9 +150,9 @@ class SupervisorController {
     }
     // Check Marketings
     let filteredMarketings = []
-    marketings.forEach(async (m) => {
+    marketings.forEach(async(m) => {
       let marketing = await User.find(m)
-      if(marketing.role_id === 4) {
+      if (marketing.role_id === 4) {
         filteredMarketings.push(marketing.id)
       }
     })

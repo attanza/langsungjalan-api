@@ -125,18 +125,42 @@ Route
     Route.post('supervisor/attach-marketing', 'SupervisorController.attachMarketing')
       .validator('AddMarketing')
       .middleware('admin')
+
     Route.put('supervisor/detach-marketing', 'SupervisorController.detachMarketing')
       .validator('AddMarketing')
       .middleware('admin')
-    Route.get('supervisor/search-marketing', 'SupervisorController.searchMarketing')
+
+
+    Route.get('supervisors/search-marketing', 'SupervisorController.searchMarketing')
       .middleware('admin')
 
     /**
      * Marketing
      */
 
-    Route.post('marketing/add-supervisor', 'MarketingController.searchMarketing')
-      .middleware('supervisor')
+    Route
+      .resource('marketings', 'MarketingController')
+      .apiOnly()
+      .validator(new Map([
+        [
+          ['marketings.store'],
+          ['Supervisor']
+        ],
+        [
+          ['marketings.update'],
+          ['Supervisor']
+        ],
+        [
+          ['marketings.index'],
+          ['List']
+        ]
+      ]))
+      .middleware(new Map([
+        [
+          ['marketings.store', 'marketings.update', 'marketings.delete'],
+          ['admin']
+        ]
+      ]))
 
     /**
      * Universities
