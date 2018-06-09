@@ -45,7 +45,7 @@ test('Unathorized cannot create Schedule', async ({ client }) => {
 })
 
 test('Authorized can Create Schedule', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .post(endpoint)
     .loginVia(user, 'jwt')
@@ -84,7 +84,7 @@ test('Unathorized cannot Update Schedule', async ({ client }) => {
 })
 
 test('Authorized can Update Schedule', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const editing = await Schedule.find(2)
   const response = await client
     .put(endpoint + '/' + editing.id)
@@ -102,7 +102,7 @@ test('Authorized can Update Schedule', async ({ client }) => {
 })
 
 test('Cannot Update unexisted Schedule', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .put(endpoint + '/' + 35)
     .loginVia(user, 'jwt')
@@ -186,4 +186,8 @@ function scheduleData() {
     'end_date': '2018-10-16T17:00:00.000Z',
     'description': 'Nuagaebu gosirusa zohiz bavutbuj.'
   }
+}
+
+async function getAdmin() {
+  return await User.query().where('role_id', 2).first()
 }

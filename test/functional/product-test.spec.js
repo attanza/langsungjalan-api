@@ -189,7 +189,3 @@ function ProductData() {
 async function getAdmin() {
   return await User.query().where('role_id', 2).first()
 }
-
-async function getNonAdmin() {
-  return await User.query().where('role_id', 4).first()
-}

@@ -44,7 +44,7 @@ test('Unathorized cannot create StudyProgram', async ({ client }) => {
 })
 
 test('Authorized can Create StudyProgram', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .post(endpoint)
     .loginVia(user, 'jwt')
@@ -84,7 +84,7 @@ test('Unathorized cannot Update StudyProgram', async ({ client }) => {
 })
 
 test('Authorized can Update StudyProgram', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const editing = await StudyProgram.find(2)
   const response = await client
     .put(endpoint + '/' + editing.id)
@@ -103,7 +103,7 @@ test('Authorized can Update StudyProgram', async ({ client }) => {
 })
 
 test('Cannot Update unexisted StudyProgram', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .put(endpoint + '/' + 35)
     .loginVia(user, 'jwt')
@@ -193,4 +193,8 @@ function StudyProgramData() {
     lat: -46.88105,
     lng: 0.84585,
   }
+}
+
+async function getAdmin() {
+  return await User.query().where('role_id', 2).first()
 }

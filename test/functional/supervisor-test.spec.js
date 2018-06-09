@@ -22,7 +22,7 @@ test('Unathorized cannot get Supervisor List', async ({ client }) => {
 })
 
 test('Authorized can get Supervisor List', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .get(endpoint)
     .loginVia(user, 'jwt')
@@ -43,7 +43,7 @@ test('Unathorized cannot create Supervisor', async ({ client }) => {
 })
 
 test('Non Administrator cannot Create Supervisor', async ({ client }) => {
-  const user = await User.query().where('role_id', 4).first()
+  const user = await getSupervisor()
   const response = await client
     .post(endpoint)
     .loginVia(user, 'jwt')
@@ -53,7 +53,7 @@ test('Non Administrator cannot Create Supervisor', async ({ client }) => {
 })
 
 test('Administrator can Create Supervisor', async ({ client }) => {
-  const user = await User.query().where('role_id', 2).first()
+  const user = await getAdmin()
   const response = await client
     .post(endpoint)
     .loginVia(user, 'jwt')
@@ -70,7 +70,7 @@ test('Administrator can Create Supervisor', async ({ client }) => {
 })
 
 test('Cannot Create Supervisor with uncomplete data', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await getAdmin()
   const response = await client
     .post(endpoint)
     .loginVia(user, 'jwt')
@@ -83,17 +83,17 @@ test('Cannot Create Supervisor with uncomplete data', async ({ client }) => {
  */
 
 test('Unathorized cannot Update Supervisor', async ({ client }) => {
-  const editing = await User.query().where('role_id', 3).first()
+  const user = await getSupervisor()
   const response = await client
-    .put('/api/v1/supervisors/' + editing.id)
+    .put('/api/v1/supervisors/' + user.id)
     .send(supervisorData())
     .end()
   response.assertStatus(401)
 })
 
 test('Non Administrator cannot Update Supervisor', async ({ client }) => {
-  const user = await User.query().where('role_id', 4).first()
-  const editing = await User.query().where('role_id', 3).first()
+  const user = await getSupervisor()
+  const editing = await getSupervisor()
   const response = await client
     .put('/api/v1/supervisors/' + editing.id)
     .loginVia(user, 'jwt')
@@ -103,8 +103,8 @@ test('Non Administrator cannot Update Supervisor', async ({ client }) => {
 })
 
 test('Administrator can Update Supervisor', async ({ client }) => {
-  const user = await User.query().where('role_id', 2).first()
-  const editing = await User.query().where('role_id', 3).first()
+  const user = await getAdmin()
+  const editing = await getSupervisor()
   const response = await client
     .put('/api/v1/supervisors/' + editing.id)
     .loginVia(user, 'jwt')
@@ -114,7 +114,7 @@ test('Administrator can Update Supervisor', async ({ client }) => {
 })
 
 test('Cannot Update unexisted Supervisor', async ({ client }) => {
-  const user = await User.query().where('role_id', 2).first()
+  const user = await getAdmin()
   const response = await client
     .put('/api/v1/supervisors/' + 35)
     .loginVia(user, 'jwt')
@@ -128,7 +128,7 @@ test('Cannot Update unexisted Supervisor', async ({ client }) => {
  */
 
 test('Unathorized cannot Show Supervisor', async ({ client }) => {
-  const Supervisor = await User.query().where('role_id', 4).first()
+  const Supervisor = await getSupervisor()
   const response = await client
     .get('/api/v1/supervisors/' + Supervisor.id)
     .end()
@@ -136,8 +136,8 @@ test('Unathorized cannot Show Supervisor', async ({ client }) => {
 })
 
 test('Authorized can Show Supervisor', async ({ client }) => {
-  const user = await User.query().where('role_id', 2).first()
-  const editing = await User.query().where('role_id', 3).first()
+  const user = await getAdmin()
+  const editing = await getSupervisor()
   const response = await client
     .get('/api/v1/supervisors/' + editing.id)
     .loginVia(user, 'jwt')
@@ -146,7 +146,7 @@ test('Authorized can Show Supervisor', async ({ client }) => {
 })
 
 test('Cannot Show unexisted Supervisor', async ({ client }) => {
-  const user = await User.query().where('role_id', 2).first()
+  const user = await getAdmin()
   const response = await client
     .get('/api/v1/supervisors/' + 35)
     .loginVia(user, 'jwt')
@@ -224,4 +224,12 @@ async function attachData() {
     supervisor_id: supervisor.id,
     marketings: [marketing.id]
   }
+}
+
+async function getAdmin() {
+  return await User.query().where('role_id', 2).first()
+}
+
+async function getSupervisor() {
+  return await User.query().where('role_id', 3).first()
 }
