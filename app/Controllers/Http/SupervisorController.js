@@ -17,15 +17,14 @@ class SupervisorController {
 
     if (!page) page = 1
     if (!limit) limit = 10
-
     if (search && search != '') {
       const data = await User.query()
         .where('role_id', 3)
-        .where('name', 'like', `%${this.search}%`)
-        .orWhere('email', 'like', `%${this.search}%`)
-        .orWhere('phone', 'like', `%${this.search}%`)
-        .orWhere('address', 'like', `%${this.search}%`)
-        .paginate(parseInt(this.page), parseInt(this.limit))
+        .where('name', 'like', `%${search}%`)
+        .orWhere('email', 'like', `%${search}%`)
+        .orWhere('phone', 'like', `%${search}%`)
+        .orWhere('address', 'like', `%${search}%`)
+        .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     } else {
@@ -180,6 +179,24 @@ class SupervisorController {
     await RedisHelper.delete(`Supervisor_${supervisor_id}`)
     await RedisHelper.delete('Marketing_Combo')
     return response.status(200).send(ResponseParser.successResponse(supervisor, 'Marketing detached'))
+  }
+
+  async searchMarketing({request, response}) {
+    let { page, limit, search, role_id } = request.get()
+
+    if (!page) page = 1
+    if (!limit) limit = 10
+    if (search && search != '') {
+      const data = await User.query()
+        .where('role_id', 3)
+        .where('name', 'like', `%${search}%`)
+        .orWhere('email', 'like', `%${search}%`)
+        .orWhere('phone', 'like', `%${search}%`)
+        .orWhere('address', 'like', `%${search}%`)
+        .paginate(parseInt(page), parseInt(limit))
+      let parsed = ResponseParser.apiCollection(data.toJSON())
+      return response.status(200).send(parsed)
+    }
   }
 }
 

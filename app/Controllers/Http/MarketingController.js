@@ -14,18 +14,18 @@ class MarketingController {
    */
   async index({ request, response }) {
     let { page, limit, search } = request.get()
-
     if (!page) page = 1
     if (!limit) limit = 10
 
     if (search && search != '') {
       const data = await User.query()
+        .with('supervisors')
         .where('role_id', 4)
-        .where('name', 'like', `%${this.search}%`)
-        .orWhere('email', 'like', `%${this.search}%`)
-        .orWhere('phone', 'like', `%${this.search}%`)
-        .orWhere('address', 'like', `%${this.search}%`)
-        .paginate(parseInt(this.page), parseInt(this.limit))
+        .where('name', 'like', `%${search}%`)
+        .orWhere('email', 'like', `%${search}%`)
+        .orWhere('phone', 'like', `%${search}%`)
+        .orWhere('address', 'like', `%${search}%`)
+        .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     } else {
@@ -38,6 +38,7 @@ class MarketingController {
 
       const data = await User.query()
         .where('role_id', 4)
+        .with('supervisors')
         .orderBy('name')
         .paginate(parseInt(this.page), parseInt(this.limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
@@ -62,6 +63,7 @@ class MarketingController {
     await RedisHelper.delete('User_*')
     const activity = `Add new Marketing '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
+    await data.load('supervisors')
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
