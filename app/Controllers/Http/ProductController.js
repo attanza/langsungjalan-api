@@ -21,8 +21,6 @@ class ProductController {
     if (!page) page = 1
     if (!limit) limit = 10
 
-
-
     if (search && search != '') {
       const data = await Product.query()
         .where('code', 'like', `%${search}%`)

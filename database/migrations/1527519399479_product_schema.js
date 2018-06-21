@@ -10,7 +10,7 @@ class ProductSchema extends Schema {
       table.string('name', 50).notNullable()
       table.string('measurement', 25).notNullable()
       table.integer('price').notNullable()
-      table.string('description', 250).notNullable()
+      table.string('description', 250).nullable()
       table.timestamps()
     })
   }
