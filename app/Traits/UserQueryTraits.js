@@ -14,7 +14,7 @@ class UserQueryTraits {
 
   async qBySearch() {
     const data = await User.query()
-      .with('role')
+      .with('roles')
       .where('name', 'like', `%${this.search}%`)
       .orWhere('email', 'like', `%${this.search}%`)
       .orWhere('phone', 'like', `%${this.search}%`)
@@ -31,7 +31,9 @@ class UserQueryTraits {
       return cached
     }
     const data = await User.query()
-      .with('role')
+      .with('roles', (builder) => {
+        builder.where('id', this.role_id)
+      })
       .with('marketings')
       .with('supervisors')
       .where('role_id', parseInt(this.role_id))
@@ -49,7 +51,7 @@ class UserQueryTraits {
       return cached
     }
     const data = await User.query()
-      .with('role')
+      .with('roles')
       .orderBy('name')
       .paginate(parseInt(this.page), parseInt(this.limit))
     let parsed = ResponseParser.apiCollection(data.toJSON())

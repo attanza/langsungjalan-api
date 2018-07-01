@@ -3,8 +3,11 @@
 const Model = use('Model')
 
 class Permission extends Model {
-  roles() {
-    return this.belongsToMany('App/Models/Role')
+
+  static get traits () {
+    return [
+      '@provider:Adonis/Acl/HasRole'
+    ]
   }
 }
 

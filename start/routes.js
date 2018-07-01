@@ -9,7 +9,7 @@ Route.get('/', () => {
 })
 
 Route.get('/docs', 'DocumentController.index')
-Route.get('/email', async({ view }) => {
+Route.get('/email', async ({ view }) => {
   const user = await User.find(1)
   const baseUrl = Env.get('APP_URL')
   user.baseUrl = baseUrl
@@ -46,24 +46,15 @@ Route
       .resource('users', 'UserController')
       .apiOnly()
       .validator(new Map([
-        [
-          ['users.store'],
-          ['User']
-        ],
-        [
-          ['users.update'],
-          ['UserUpdate']
-        ],
-        [
-          ['users.index'],
-          ['List']
-        ]
+        [['users.store'],['User']],
+        [['users.update'],['UserUpdate']],
+        [['users.index'],['List']]
       ]))
       .middleware(new Map([
-        [
-          ['users.store', 'users.update', 'users.delete'],
-          ['admin']
-        ]
+        [['users.index'],['can:read_user']],
+        [['users.store'],['can:create_user']],
+        [['users.update'],['can:update_user']],
+        [['users.delete'],['can:delete_user']]
       ]))
 
     /**
@@ -73,20 +64,14 @@ Route
       .resource('roles', 'RoleController')
       .apiOnly()
       .validator(new Map([
-        [
-          ['roles.store'],
-          ['Role']
-        ],
-        [
-          ['roles.update'],
-          ['Role']
-        ]
+        [['roles.store'],['Role']],
+        [['roles.update'],['Role']]
       ]))
       .middleware(new Map([
-        [
-          ['roles.store', 'roles.update', 'roles.delete'],
-          ['super']
-        ]
+        [['roles.index'],['can:read_role']],
+        [['roles.store'],['can:create_role']],
+        [['roles.update'],['can:update_role']],
+        [['roles.delete'],['can:delete_role']]
       ]))
 
     /**
@@ -102,24 +87,15 @@ Route
       .resource('supervisors', 'SupervisorController')
       .apiOnly()
       .validator(new Map([
-        [
-          ['supervisors.store'],
-          ['Supervisor']
-        ],
-        [
-          ['supervisors.update'],
-          ['Supervisor']
-        ],
-        [
-          ['supervisors.index'],
-          ['List']
-        ]
+        [['supervisors.store'],['Supervisor']],
+        [['supervisors.update'],['Supervisor']],
+        [['supervisors.index'],['List']]
       ]))
       .middleware(new Map([
-        [
-          ['supervisors.store', 'supervisors.update', 'supervisors.delete'],
-          ['admin']
-        ]
+        [['supervisors.index'],['can:read_supervisor']],
+        [['supervisors.store'],['can:create_supervisor']],
+        [['supervisors.update'],['can:update_supervisor']],
+        [['supervisors.delete'],['can:delete_supervisor']]
       ]))
 
     Route.post('supervisor/attach-marketing', 'SupervisorController.attachMarketing')
@@ -142,24 +118,14 @@ Route
       .resource('marketings', 'MarketingController')
       .apiOnly()
       .validator(new Map([
-        [
-          ['marketings.store'],
-          ['Supervisor']
-        ],
-        [
-          ['marketings.update'],
-          ['Supervisor']
-        ],
-        [
-          ['marketings.index'],
-          ['List']
-        ]
-      ]))
+        [['marketings.store'],['Supervisor']],
+        [['marketings.update'],['Supervisor']],
+        [['marketings.index'],['List']]]))
       .middleware(new Map([
-        [
-          ['marketings.store', 'marketings.update', 'marketings.delete'],
-          ['admin']
-        ]
+        [['marketings.index'],['can:read_marketing']],
+        [['marketings.store'],['can:create_marketing']],
+        [['marketings.update'],['can:update_marketing']],
+        [['marketings.delete'],['can:delete_marketing']]
       ]))
 
     /**
@@ -170,24 +136,15 @@ Route
       .resource('universities', 'UniversityController')
       .apiOnly()
       .validator(new Map([
-        [
-          ['universities.store'],
-          ['StoreUniversity']
-        ],
-        [
-          ['universities.update'],
-          ['UpdateUniversity']
-        ],
-        [
-          ['universities.index'],
-          ['List']
-        ]
+        [['universities.store'],['StoreUniversity']],
+        [['universities.update'],['UpdateUniversity']],
+        [['universities.index'],['List']]
       ]))
       .middleware(new Map([
-        [
-          ['universities.store', 'universities.update', 'universities.delete'],
-          ['admin']
-        ]
+        [['universities.index'],['can:read_university']],
+        [['universities.store'],['can:create_university']],
+        [['universities.update'],['can:update_university']],
+        [['universities.delete'],['can:delete_university']]
       ]))
 
     /**
@@ -198,20 +155,14 @@ Route
       .resource('studies', 'StudyProgramController')
       .apiOnly()
       .validator(new Map([
-        [
-          ['studies.store', 'studies.update'],
-          ['StoreStudyProgram']
-        ],
-        [
-          ['studies.index'],
-          ['List']
-        ]
+        [['studies.store', 'studies.update'],['StoreStudyProgram']],
+        [['studies.index'],['List']]
       ]))
       .middleware(new Map([
-        [
-          ['studies.store', 'studies.update', 'studies.delete'],
-          ['admin']
-        ]
+        [['studies.index'],['can:create_study_program']],
+        [['studies.store'],['can:create_study_program']],
+        [['studies.update'],['can:update_study_program']],
+        [['studies.delete'],['can:delete_study_program']]
       ]))
 
     /**
@@ -221,20 +172,14 @@ Route
       .resource('schedules', 'ScheduleController')
       .apiOnly()
       .validator(new Map([
-        [
-          ['schedules.store', 'schedules.update'],
-          ['StoreSchedule']
-        ],
-        [
-          ['schedules.index'],
-          ['List']
-        ]
+        [['schedules.store', 'schedules.update'],['StoreSchedule']],
+        [['schedules.index'],['List']]
       ]))
       .middleware(new Map([
-        [
-          ['schedules.store', 'schedules.update', 'schedules.delete'],
-          ['admin']
-        ]
+        [['schedules.index'],['can:create_schedule']],
+        [['schedules.store'],['can:create_schedule']],
+        [['schedules.update'],['can:update_schedule']],
+        [['schedules.delete'],['can:delete_schedule']]
       ]))
 
     /**
@@ -244,20 +189,14 @@ Route
       .resource('products', 'ProductController')
       .apiOnly()
       .validator(new Map([
-        [
-          ['products.store', 'products.update'],
-          ['StoreProduct']
-        ],
-        [
-          ['products.index'],
-          ['List']
-        ]
+        [['products.store', 'products.update'],['StoreProduct']],
+        [['products.index'],['List']]
       ]))
       .middleware(new Map([
-        [
-          ['products.store', 'products.update', 'products.delete'],
-          ['admin']
-        ]
+        [['products.index'],['can:create_product']],
+        [['products.store'],['can:create_product']],
+        [['products.update'],['can:update_product']],
+        [['products.delete'],['can:delete_product']]
       ]))
     /**
      * For Combo Box / Select Box

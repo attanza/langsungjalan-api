@@ -1,6 +1,5 @@
 'use strict'
 
-const Factory = use('Factory')
 const User = use('App/Models/User')
 const Database = use('Database')
 const moment = require('moment')
@@ -30,8 +29,7 @@ class UserSeeder {
         is_active: 1,
       }
       let user = await User.create(userData)
-      await user.roles().attach(i)
-      i++
+      await user.roles().attach(i++)
     })
     // await Factory
     //   .model('App/Models/User')
