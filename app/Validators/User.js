@@ -10,7 +10,7 @@ class User {
       email: 'required|email|unique:users',
       phone: 'required|max:30|unique:users',
       password: 'required|min:6',
-      role_id: 'required|integer'
+      roles: 'required|array'
     }
   }
 

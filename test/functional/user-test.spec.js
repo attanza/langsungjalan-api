@@ -182,10 +182,12 @@ function UserData() {
     password: 'password',
     phone: '08909034789',
     address: 'Jl. Bandung',
-    role_id: 2
+    roles: [2, 3]
   }
 }
 
 async function getAdmin() {
-  return await User.query().where('role_id', 2).first()
+  return await User.query().whereHas('roles', (builder) => {
+    builder.where('role_id', 1)
+  }).first()
 }

@@ -32,7 +32,7 @@ class UserQueryTraits {
     }
     const data = await User.query()
       .with('roles', (builder) => {
-        builder.where('id', this.role_id)
+        builder.where('role_id', this.role_id)
       })
       .with('marketings')
       .with('supervisors')

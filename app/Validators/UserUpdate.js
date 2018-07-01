@@ -10,7 +10,7 @@ class UserUpdate {
       name: 'required|max:50',
       email: `unique:users,email,id,${id}`,
       phone: `required|max:30|unique:users,phone,id,${id}`,
-      role_id: 'required|integer'
+      roles: 'required|array'
     }
   }
 

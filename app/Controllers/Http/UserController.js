@@ -1,8 +1,10 @@
 'use strict'
 
 const User = use('App/Models/User')
+const Role = use('App/Models/Role')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits, ActivationTraits, UserQueryTraits } = use('App/Traits')
+const fillable = ['name', 'email', 'password', 'phone', 'address', 'description', 'is_active']
 
 class UserController {
 
@@ -19,13 +21,13 @@ class UserController {
       let parsed = await query.qBySearch()
       return response.status(200).send(parsed)
 
-    // Query with role id
+      // Query with role id
     } else if (role_id && parseInt(role_id) > 0) {
       let query = new UserQueryTraits(page, limit, search, role_id)
       let parsed = await query.qByRole()
       return response.status(200).send(parsed)
 
-    // Query with Page and limit
+      // Query with Page and limit
     } else {
       let query = new UserQueryTraits(page, limit, search, role_id)
       let parsed = await query.qDefault()
@@ -39,9 +41,13 @@ class UserController {
    */
 
   async store({ request, response, auth }) {
-    let body = request.only(['name', 'email', 'password', 'phone', 'address', 'description', 'role_id', 'is_active'])
+    let body = request.only(fillable)
     const data = await User.create(body)
-    await data.load('role')
+    let { roles } = request.post()
+    if (roles) {
+      await this.attachRoles(data, roles)
+    }
+    await data.load('roles')
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete('User_*')
     const activity = `Add new User '${data.name}'`
@@ -64,14 +70,14 @@ class UserController {
       return response.status(200).send(cached)
     }
 
-    const data = await User.query().with('role').where('id', id).first()
+    const data = await User.query().with('roles').where('id', id).first()
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    if(data.role_id === 3) {
+    if (data.role_id === 3) {
       await data.load('marketings')
     }
-    if(data.role_id === 4) {
+    if (data.role_id === 4) {
       await data.load('supervisors')
     }
     let parsed = ResponseParser.apiItem(data.toJSON())
@@ -90,13 +96,14 @@ class UserController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-
-    let body = request.only(['name', 'email', 'phone', 'address', 'description', 'role_id', 'is_active'])
-
+    let body = request.only(fillable)
     await data.merge(body)
     await data.save()
-    await data.load('role')
-
+    let { roles } = request.post()
+    if (roles) {
+      await this.attachRoles(data, roles)
+    }
+    await data.load('roles')
     const activity = `Update User '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('User_*')
@@ -123,9 +130,24 @@ class UserController {
     await data.tokens().delete()
     await data.supervisors().detach()
     await data.marketings().detach()
+    await data.roles().detach()
     // Delete Data
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
+  }
+
+  /**
+   * Attach Roles to User
+   */
+
+  async attachRoles(user, roles) {
+    await user.roles().detach()
+    roles.forEach(async (r) => {
+      let role = await Role.find(r)
+      if (role) {
+        await user.roles().attach(role.id)
+      }
+    })
   }
 }
 

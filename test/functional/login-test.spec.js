@@ -18,7 +18,7 @@ test('Can Login if user is exist and active', async ({ client }) => {
   const user = await User.find(1)
   const response = await client
     .post(endpoint)
-    .send({email: user.email, password: 'password'})
+    .send({email: user.email, password: 'P4sw0rd@langsungjalan.com'})
     .end()
   response.assertStatus(200)
 })
@@ -38,7 +38,6 @@ test('Cannot Login if user is exist but not activated', async ({ client }) => {
     password: 'password',
     phone: '08909034789',
     address: 'Jl. Bandung',
-    role_id: 2
   })
   const response = await client
     .post(endpoint)
