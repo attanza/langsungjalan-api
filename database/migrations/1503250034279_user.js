@@ -13,7 +13,6 @@ class UserSchema extends Schema {
       table.string('description').nullable()
       table.string('photo').nullable()
       table.text('address').nullable()
-      table.integer('role_id').unsigned()
       table.boolean('is_active').default(0)
       table.string('verification_token').nullable()
       table.timestamps()
