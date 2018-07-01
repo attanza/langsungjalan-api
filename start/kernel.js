@@ -13,7 +13,8 @@ const Server = use('Server')
 */
 const globalMiddleware = [
   'Adonis/Middleware/BodyParser',
-  'Adonis/Middleware/Session'
+  'Adonis/Middleware/Session',
+  'Adonis/Acl/Init'
 ]
 
 /*
@@ -38,7 +39,9 @@ const namedMiddleware = {
   me: 'App/Middleware/Me',
   super: 'App/Middleware/SuperAdmin',
   admin: 'App/Middleware/Admin',
-  supervisor: 'App/Middleware/Supervisor'
+  supervisor: 'App/Middleware/Supervisor',
+  is: 'Adonis/Acl/Is',
+  can: 'Adonis/Acl/Can',
 }
 
 /*
