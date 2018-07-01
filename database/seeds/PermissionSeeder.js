@@ -13,8 +13,8 @@ class PermissionSeeder {
     await resources.forEach(r => {
       actions.forEach(async (act) => {
         let body = {
-          name: changeCase.sentenceCase(r + ' ' + act),
-          slug: changeCase.snakeCase(r + ' ' + act)
+          name: changeCase.sentenceCase(act + ' ' + r),
+          slug: changeCase.snakeCase(act + ' ' + r)
         }
         await Permission.create(body)
       })
