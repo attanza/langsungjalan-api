@@ -159,7 +159,7 @@ test('Cannot Show unexisted Marketing', async ({ client }) => {
  */
 
 test('Unathorized cannot Delete Marketing', async ({ client }) => {
-  const Marketing = await User.query().where('role_id', 4).first()
+  const Marketing = await getMarketing()
   const response = await client
     .delete('/api/v1/Marketings/' + Marketing.id)
     .end()
@@ -167,8 +167,8 @@ test('Unathorized cannot Delete Marketing', async ({ client }) => {
 })
 
 test('Authorized can Delete Marketing', async ({ client }) => {
-  const user = await User.query().where('role_id', 2).first()
-  const editing = await User.query().where('role_id', 3).first()
+  const user = await getAdmin()
+  const editing = await getMarketing()
   const response = await client
     .delete('/api/v1/Marketings/' + editing.id)
     .loginVia(user, 'jwt')
@@ -192,9 +192,13 @@ function MarketingData() {
 }
 
 async function getAdmin() {
-  return await User.query().where('role_id', 2).first()
+  return await User.query().whereHas('roles', builder => {
+    builder.where('role_id', 1)
+  }).first()
 }
 
 async function getMarketing() {
-  return await User.query().where('role_id', 3).first()
+  return await User.query().whereHas('roles', builder => {
+    builder.where('role_id', 3)
+  }).first()
 }

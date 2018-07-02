@@ -19,18 +19,18 @@ class UserSeeder {
     await Database.table('role_user').truncate()
 
     await User.truncate()
-    let i = 1
-    roles.forEach(async (r) => {
+    for (let i = 0; i < roles.length; i++) {
       let userData = {
-        name: r,
-        email: changeCase.snakeCase(r) + '@langsungjalan.com',
+        name: roles[i],
+        email: changeCase.snakeCase(roles[i]) + '@langsungjalan.com',
         password: 'P4sw0rd@langsungjalan.com',
         phone: '123456789',
         is_active: 1,
       }
       let user = await User.create(userData)
-      await user.roles().attach(i++)
-    })
+      await user.roles().attach(i + 1)
+    }
+
     // await Factory
     //   .model('App/Models/User')
     //   .createMany(15)

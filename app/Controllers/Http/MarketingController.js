@@ -20,7 +20,9 @@ class MarketingController {
     if (search && search != '') {
       const data = await User.query()
         .with('supervisors')
-        .where('role_id', 4)
+        .whereHas('roles', builder => {
+          builder.where('role_id', 4)
+        })
         .where('name', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
@@ -37,10 +39,12 @@ class MarketingController {
       }
 
       const data = await User.query()
-        .where('role_id', 4)
+        .whereHas('roles', builder => {
+          builder.where('role_id', 4)
+        })
         .with('supervisors')
         .orderBy('name')
-        .paginate(parseInt(this.page), parseInt(this.limit))
+        .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
       await RedisHelper.set(redisKey, parsed)
@@ -56,8 +60,8 @@ class MarketingController {
 
   async store({ request, response, auth }) {
     let body = request.only(fillable)
-    body.role_id = 4
     const data = await User.create(body)
+    await data.roles().attach(4)
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete('Marketing_*')
     await RedisHelper.delete('User_*')
@@ -127,13 +131,13 @@ class MarketingController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-
     const activity = `Delete Marketing '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('Marketing_*')
     await RedisHelper.delete('User_*')
     // Delete Relationship
     await data.tokens().delete()
+    await data.roles().detach()
     await data.supervisors().detach()
     // Delete Data
     await data.delete()

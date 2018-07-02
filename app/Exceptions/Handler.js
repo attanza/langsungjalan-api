@@ -49,9 +49,9 @@ class ExceptionHandler extends BaseExceptionHandler {
     }
 
     if (error.name === 'ForbiddenException') {
-      return response.status(404).send({
+      return response.status(403).send({
         meta: {
-          status: 404,
+          status: 403,
           message: 'Forbidden'
         }
       })
