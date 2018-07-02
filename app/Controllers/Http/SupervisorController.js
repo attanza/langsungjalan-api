@@ -19,7 +19,9 @@ class SupervisorController {
     if (!limit) limit = 10
     if (search && search != '') {
       const data = await User.query()
-        .where('role_id', 3)
+        .whereHas('roles', builder => {
+          builder.where('role_id', 3)
+        })
         .where('name', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
@@ -36,7 +38,9 @@ class SupervisorController {
       }
 
       const data = await User.query()
-        .where('role_id', 3)
+        .whereHas('roles', builder => {
+          builder.where('role_id', 3)
+        })
         .orderBy('name')
         .paginate(parseInt(this.page), parseInt(this.limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
@@ -54,8 +58,8 @@ class SupervisorController {
 
   async store({ request, response, auth }) {
     let body = request.only(fillable)
-    body.role_id = 3
     const data = await User.create(body)
+    await data.roles().attach(3)
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete('Supervisor_*')
     await RedisHelper.delete('User_*')
@@ -131,6 +135,7 @@ class SupervisorController {
     // Delete Relationship
     await data.tokens().delete()
     await data.marketings().detach()
+    await data.roles().detach()
     // Delete Data
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
@@ -150,8 +155,12 @@ class SupervisorController {
     // Check Marketings
     let filteredMarketings = []
     marketings.forEach(async(m) => {
-      let marketing = await User.find(m)
-      if (marketing.role_id === 4) {
+      let marketing = await User.query().whereHas('roles', builder => {
+        builder.where('role_id', 4)
+      })
+        .where('id', m)
+        .first()
+      if (marketing) {
         filteredMarketings.push(marketing.id)
       }
     })

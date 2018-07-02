@@ -3,7 +3,10 @@
 const changeCase = require('change-case')
 const Database = use('Database')
 const Permission = use('App/Models/Permission')
-const resources = ['User', 'Role', 'Permission', 'University', 'Product', 'Schedule', 'StudyProgram', 'Marketing']
+const resources = [
+  'User', 'Role', 'Permission', 'University', 'Product', 'Schedule', 'StudyProgram', 'Marketing',
+  'Supervisor'
+]
 const actions = ['create', 'read', 'update', 'delete']
 
 class PermissionSeeder {
