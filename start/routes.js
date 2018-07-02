@@ -100,11 +100,11 @@ Route
 
     Route.post('supervisor/attach-marketing', 'SupervisorController.attachMarketing')
       .validator('AddMarketing')
-      .middleware('admin')
+      .middleware('can:create_supervisor')
 
     Route.put('supervisor/detach-marketing', 'SupervisorController.detachMarketing')
       .validator('AddMarketing')
-      .middleware('admin')
+      .middleware('can:read_supervisor')
 
 
     Route.get('supervisors/search-marketing', 'SupervisorController.searchMarketing')

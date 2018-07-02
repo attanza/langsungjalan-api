@@ -42,7 +42,7 @@ class SupervisorController {
           builder.where('role_id', 3)
         })
         .orderBy('name')
-        .paginate(parseInt(this.page), parseInt(this.limit))
+        .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
       await RedisHelper.set(redisKey, parsed)
@@ -191,13 +191,15 @@ class SupervisorController {
   }
 
   async searchMarketing({request, response}) {
-    let { page, limit, search, role_id } = request.get()
+    let { page, limit, search } = request.get()
 
     if (!page) page = 1
     if (!limit) limit = 10
     if (search && search != '') {
       const data = await User.query()
-        .where('role_id', 3)
+        .whereHas('roles', builder => {
+          builder.where('role_id', 3)
+        })
         .where('name', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)

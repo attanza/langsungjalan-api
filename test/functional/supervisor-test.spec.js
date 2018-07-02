@@ -159,7 +159,7 @@ test('Cannot Show unexisted Supervisor', async ({ client }) => {
  */
 
 test('Unathorized cannot Delete Supervisor', async ({ client }) => {
-  const Supervisor = await User.query().where('role_id', 4).first()
+  const Supervisor = await User.find(4)
   const response = await client
     .delete('/api/v1/supervisors/' + Supervisor.id)
     .end()
@@ -167,8 +167,8 @@ test('Unathorized cannot Delete Supervisor', async ({ client }) => {
 })
 
 test('Authorized can Delete Supervisor', async ({ client }) => {
-  const user = await User.query().where('role_id', 2).first()
-  const editing = await User.query().where('role_id', 3).first()
+  const user = await User.find(1)
+  const editing = await User.find(3)
   const response = await client
     .delete('/api/v1/supervisors/' + editing.id)
     .loginVia(user, 'jwt')
@@ -181,7 +181,7 @@ test('Authorized can Delete Supervisor', async ({ client }) => {
  */
 
 test('Non Admin cannot attach marketing', async ({ client }) => {
-  const user = await User.query().where('role_id', 3).first()
+  const user = await User.find(3)
   const formData = await attachData()
   const response = await client
     .post('/api/v1/supervisor/attach-marketing')
@@ -192,7 +192,7 @@ test('Non Admin cannot attach marketing', async ({ client }) => {
 })
 
 test('Admin can attach marketing', async ({ client }) => {
-  const user = await User.query().where('role_id', 2).first()
+  const user = await User.find(1)
   const formData = await attachData()
   const response = await client
     .put('/api/v1/supervisor/detach-marketing')
@@ -217,8 +217,12 @@ function supervisorData() {
 }
 
 async function attachData() {
-  const supervisor = await User.query().where('role_id', 3).first()
-  const marketing = await User.query().where('role_id', 4).first()
+  const supervisor = await User.query().whereHas('roles', builder => {
+    builder.where('role_id', 3)
+  }).first()
+  const marketing = await User.query().whereHas('roles', builder => {
+    builder.where('role_id', 4)
+  }).first()
 
   return {
     supervisor_id: supervisor.id,
@@ -227,9 +231,13 @@ async function attachData() {
 }
 
 async function getAdmin() {
-  return await User.query().where('role_id', 2).first()
+  return await User.query().whereHas('roles', builder => {
+    builder.where('role_id', 1)
+  }).first()
 }
 
 async function getSupervisor() {
-  return await User.query().where('role_id', 3).first()
+  return await User.query().whereHas('roles', builder => {
+    builder.where('role_id', 3)
+  }).first()
 }
