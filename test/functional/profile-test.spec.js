@@ -51,9 +51,9 @@ test('Authorized can Change Own Password', async ({ client }) => {
     .put(endpoint + '/' + user.id + '/change-password')
     .loginVia(user, 'jwt')
     .send({
-      old_password: 'password',
-      password: 'password',
-      password_confirmation: 'password',
+      old_password: 'P4sw0rd@langsungjalan.com',
+      password: 'P4sw0rd@langsungjalan.com',
+      password_confirmation: 'P4sw0rd@langsungjalan.com',
     })
     .end()
   response.assertStatus(200)
@@ -70,7 +70,7 @@ test('Cannot Change password if old password is incorrect', async ({ client }) =
       password_confirmation: 'password',
     })
     .end()
-  response.assertStatus(400)
+  response.assertStatus(422)
 })
 
 test('Cannot Change password if new password les than 6 characters', async ({ client }) => {

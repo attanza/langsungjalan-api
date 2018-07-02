@@ -12,7 +12,7 @@ class ProfileController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.load('role')
+    await data.load('roles')
     let parsed = ResponseParser.apiItem(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -29,7 +29,7 @@ class ProfileController {
     let body = request.only(['name', 'email', 'phone', 'address', 'description'])
     await data.merge(body)
     await data.save()
-    await data.load('role')
+    await data.load('roles')
     const activity = 'Update Profile'
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('User_*')
@@ -53,12 +53,12 @@ class ProfileController {
     const { old_password, password } = request.only(['old_password', 'password'])
     const isSame = await Hash.verify(old_password, data.password)
     if (!isSame) {
-      return response.status(400).send(ResponseParser.errorResponse('Incorrect old password'))
+      return response.status(422).send(ResponseParser.errorResponse('Incorrect old password'))
     }
     const hashPassword = await Hash.make(password)
     await data.merge({ password: hashPassword })
     await data.save()
-    await data.load('role')
+    await data.load('roles')
     const activity = 'Change Password'
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiUpdated(data.toJSON())
@@ -93,7 +93,7 @@ class ProfileController {
     }
     await data.merge({ photo: `/img/users/${name}` })
     await data.save()
-    await data.load('role')
+    await data.load('roles')
     const activity = 'Update profile photo'
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('User_*')

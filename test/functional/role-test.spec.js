@@ -43,7 +43,7 @@ test('Unathorized cannot create Role', async ({ client }) => {
 })
 
 test('Non Super Administrator cannot Create Role', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await User.find(2)
   const response = await client
     .post('/api/v1/roles')
     .loginVia(user, 'jwt')
@@ -54,8 +54,6 @@ test('Non Super Administrator cannot Create Role', async ({ client }) => {
 
 test('Super Administrator can Create Role', async ({ client }) => {
   const user = await User.find(1)
-  await user.merge({role_id: 1})
-  await user.save()
   const response = await client
     .post('/api/v1/roles')
     .loginVia(user, 'jwt')
@@ -92,7 +90,7 @@ test('Unathorized cannot Update Role', async ({ client }) => {
 })
 
 test('Non Superadmin cannot Update Role', async ({ client }) => {
-  const user = await User.find(1)
+  const user = await User.find(2)
   const editing = await Role.find(2)
   const response = await client
     .put('/api/v1/roles/' + editing.id)
@@ -104,8 +102,6 @@ test('Non Superadmin cannot Update Role', async ({ client }) => {
 
 test('Superadmin can Update Role', async ({ client }) => {
   const user = await User.find(1)
-  await user.merge({role_id: 1})
-  await user.save()
   const editing = await Role.find(2)
   const response = await client
     .put('/api/v1/roles/' + editing.id)
@@ -117,8 +113,6 @@ test('Superadmin can Update Role', async ({ client }) => {
 
 test('Cannot Update unexisted Role', async ({ client }) => {
   const user = await User.find(1)
-  await user.merge({role_id: 1})
-  await user.save()
   const response = await client
     .put('/api/v1/roles/' + 35)
     .loginVia(user, 'jwt')
@@ -132,7 +126,7 @@ test('Cannot Update unexisted Role', async ({ client }) => {
  */
 
 test('Unathorized cannot Show Role', async ({ client }) => {
-  const role = await Role.find(1)
+  const role = await Role.find(2)
   const response = await client
     .get('/api/v1/roles/' + role.id)
     .end()
@@ -163,7 +157,7 @@ test('Cannot Show unexisted Role', async ({ client }) => {
  */
 
 test('Unathorized cannot Delete Role', async ({ client }) => {
-  const role = await Role.find(1)
+  const role = await Role.find(2)
   const response = await client
     .delete('/api/v1/roles/' + role.id)
     .end()
@@ -172,9 +166,6 @@ test('Unathorized cannot Delete Role', async ({ client }) => {
 
 test('Authorized can Delete Role', async ({ client }) => {
   const user = await User.find(1)
-  await user.merge({role_id: 1})
-  await user.save()
-
   const role = await Role.create({
     name: 'Author',
     slug: 'author'
@@ -189,8 +180,6 @@ test('Authorized can Delete Role', async ({ client }) => {
 
 test('Default Role cannot be deleted', async ({ client }) => {
   const user = await User.find(1)
-  await user.merge({role_id: 1})
-  await user.save()
   const response = await client
     .delete('/api/v1/roles/' + 1)
     .loginVia(user, 'jwt')
