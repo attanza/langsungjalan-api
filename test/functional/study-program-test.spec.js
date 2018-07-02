@@ -196,5 +196,7 @@ function StudyProgramData() {
 }
 
 async function getAdmin() {
-  return await User.query().where('role_id', 2).first()
+  return await User.query().whereHas('roles', builder => {
+    builder.where('role_id', 1)
+  }).first()
 }
