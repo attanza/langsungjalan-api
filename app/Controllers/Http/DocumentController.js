@@ -1,8 +1,12 @@
 'use strict'
 
 class DocumentController {
-  async index({view}) {
+  async index({ view }) {
     return view.render('docs.index')
+  }
+
+  async intro({ view }) {
+    return view.render('intro')
   }
 }
 

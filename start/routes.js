@@ -4,11 +4,8 @@ const Route = use('Route')
 const User = use('App/Models/User')
 const Env = use('Env')
 
-Route.get('/', () => {
-  return { greeting: 'Hello world in JSON' }
-})
-
 Route.get('/docs', 'DocumentController.index')
+Route.get('/', 'DocumentController.intro')
 Route.get('/email', async ({ view }) => {
   const user = await User.find(1)
   const baseUrl = Env.get('APP_URL')
