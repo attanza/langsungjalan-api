@@ -1,4 +1,7 @@
 
+html, body {
+  font-family: 'Montserrat', sans-serif;
+}
 .image-wrapper {
   width: 25vw;
   height: auto;
@@ -30,5 +33,20 @@
   height: auto;
 }
 .diagram-wrapper img {
+  width: 100%;
+}
+
+code {
+  background-color: transparent;
+  color: rgb(5, 74, 104);
+  box-shadow: none;
+}
+
+.dia-wrapper {
+  max-width: 100%;
+  height: auto;
+}
+
+.dia-wrapper img {
   width: 100%;
 }

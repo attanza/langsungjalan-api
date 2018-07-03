@@ -8,12 +8,14 @@
             <small class="subheading">Save new Role into database</small>
           </h2>
         </div>
+        <v-container>
+
         <v-layout row wrap class="mt-3">
           <v-flex xs12 style="overflow-x:auto;">
             <table class="table">
               <tr>
-                <th width="30%">End point:</th>
-                <td width="70%">
+                <th width="20%">End point:</th>
+                <td width="80%">
                   <v-chip color="grey darken-2" text-color="white" label>/roles</v-chip>
                 </td>
               </tr>
@@ -42,17 +44,12 @@
                 </th>
                 <td>
                   <pre>
+<code>
 {
-	"meta": {
-		"status": 201,
-		"message": "Created successfully"
-	},
-	"data": {
-		"name": "Author",
-		"slug": "author",
-		"id": 9
-	}
+  "name": "Author",
+  "slug": "author"
 }
+</code>
 						</pre>
                 </td>
               </tr>
@@ -60,31 +57,30 @@
                 <th>Possible Errors</th>
                 <td>
 <pre>
+<code>
 {
-	"meta": {
-		"status": 401,
-		"message": "Unathorized"
-	}
+  "meta": {
+    "status": 401,
+    "message": "Unathorized"
+  }
 },
 {
-	"meta": {
-		"status": 422,
-		"message": "Validation failed"
-	},
-	"details": [
-		{
-			"message": "name is required",
-			"field": "name",
-			"validation": "required"
-		}
-	]
-},
-{
-	"meta": {
-		"status": 403,
-		"message": "Forbidden"
-	}
+  "meta": {
+    "status": 422,
+    "message": "Validation failed"
+  },
+  "details": [{
+    "message": "name is required",
+    "field": "name",
+    "validation": "required"
+  }]
+}, {
+  "meta": {
+    "status": 403,
+    "message": "Forbidden"
+  }
 }
+</code>
 </pre>
                 </td>
               </tr>
@@ -92,6 +88,7 @@
           </v-flex>
 
         </v-layout>
+        </v-container>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </template>
