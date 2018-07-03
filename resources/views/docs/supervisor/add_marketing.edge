@@ -8,12 +8,13 @@
             <small class="subheading">Attach Marketings to Supervisor</small>
           </h2>
         </div>
+        <v-container>
         <v-layout row wrap class="mt-3">
           <v-flex xs12 style="overflow-x:auto;">
             <table class="table">
               <tr>
-                <th width="30%">End point:</th>
-                <td width="70%">
+                <th width="20%">End point:</th>
+                <td width="80%">
                   <v-chip color="grey darken-2" text-color="white" label>/supervisor/add-marketing</v-chip>
                 </td>
               </tr>
@@ -38,16 +39,59 @@
                 </td>
               </tr>
               <tr>
+                <th>Request example</th>
+                <td>
+                  <pre>
+<code>
+{
+  "supervisor_id": 7,
+  "marketings": [4]
+}
+</code>
+                  </pre>
+                </td>
+              </tr>
+              <tr>
                 <th>Response:
                 </th>
                 <td>
                   <pre>
+<code>
 {
-	"meta": {
-		"status": 200
-	},
-	"data": "Marketing attached"
+  "meta": {
+    "status": 200,
+    "message": "Marketing attached"
+  },
+  "data": {
+    "id": 7,
+    "name": "Dani Lesmiadi",
+    "email": "danilesmiadi@gmail.com",
+    "phone": "08122443582",
+    "description": null,
+    "photo": "",
+    "address": "Bandung",
+    "is_active": 0,
+    "created_at": "2018-07-03 14:20:19",
+    "updated_at": "2018-07-03 14:26:44",
+    "marketings": [{
+      "id": 4,
+      "name": "Marketing",
+      "email": "marketing@langsungjalan.com",
+      "phone": "123456789",
+      "description": null,
+      "photo": "",
+      "address": null,
+      "is_active": 1,
+      "created_at": "2018-07-02 16:09:08",
+      "updated_at": "2018-07-02 16:09:08",
+      "pivot": {
+        "marketing_id": 4,
+        "supervisor_id": 7
+      }
+    }]
+  }
 }
+</code>
 						</pre>
                 </td>
               </tr>
@@ -55,31 +99,31 @@
                 <th>Possible Errors</th>
                 <td>
                   <pre>
+<code>
 {
-	"meta": {
-		"status": 401,
-		"message": "Unathorized"
-	}
+  "meta": {
+    "status": 401,
+    "message": "Unathorized"
+  }
 },
 {
-	"meta": {
-		"status": 403,
-		"message": "Forbidden"
-	}
+  "meta": {
+    "status": 403,
+    "message": "Forbidden"
+  }
 },
 {
-	"meta": {
-		"status": 422,
-		"message": "Validation failed"
-	},
-	"details": [
-		{
-			"message": "supervisor_id is required",
-			"field": "supervisor_id",
-			"validation": "required"
-		}
-	]
+  "meta": {
+    "status": 422,
+    "message": "Validation failed"
+  },
+  "details": [{
+    "message": "supervisor_id is required",
+    "field": "supervisor_id",
+    "validation": "required"
+  }]
 }
+</code>
 </pre>
                 </td>
               </tr>
@@ -87,6 +131,7 @@
           </v-flex>
 
         </v-layout>
+        </v-container>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </template>

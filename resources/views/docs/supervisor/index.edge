@@ -28,6 +28,11 @@
           <h3>End Points</h3>
           <v-layout row wrap>
             <v-flex xs12>
+              @include('docs.supervisor.list')
+              @include('docs.supervisor.store')
+              @include('docs.supervisor.show')
+              @include('docs.supervisor.update')
+              @include('docs.supervisor.delete')
               @include('docs.supervisor.add_marketing')
             </v-flex>
           </v-layout>
