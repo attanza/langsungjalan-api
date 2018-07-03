@@ -8,8 +8,14 @@
         <v-container>
           <h3>Description</h3>
           <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi amet dignissimos, sint exercitationem autem et. Minus officia
-            dolores eveniet eaque deleniti, autem qui voluptatibus aspernatur expedita rem nulla ad aliquid?
+Every Web application deals with User Management and Authentication at some stage.
+This "langsungjalan API" is fully featured with <a href="https://jwt.io/" target="_blank">jwt authentication</a>
+which is an industry standard to implement stateless authentication using tokens,
+          </p>
+          <p>
+<v-alert :value="true" type="info">
+  Set the Authorization = 'Bearer {token}' header to authenticate the request.
+</v-alert>
           </p>
           <h3>End Points</h3>
           <v-layout row wrap>
@@ -17,7 +23,6 @@
               @include('docs.auth.login')
             </v-flex>
           </v-layout>
-
         </v-container>
       </v-expansion-panel-content>
     </v-expansion-panel>
