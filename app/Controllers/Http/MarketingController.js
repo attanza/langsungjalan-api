@@ -127,7 +127,11 @@ class MarketingController {
 
   async destroy({ request, response, auth }) {
     const id = request.params.id
-    const data = await User.find(id)
+    const data = await User.query().whereHas('roles', builder => {
+      builder.where('role_id', 4)
+    })
+      .where('id', id)
+      .first()
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }

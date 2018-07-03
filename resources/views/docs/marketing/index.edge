@@ -21,17 +21,19 @@
               <li>description: string</li>
               <li>photo: image|max:5mb</li>
               <li>address: text</li>
-              <li>role_id: integer</li>
               <li>is_active: boolean</li>
             </ul>
           </p>
           <h3>End Points</h3>
           <v-layout row wrap>
             <v-flex xs12>
-              @include('docs.marketing.add_supervisor')
+              @include('docs.marketing.list')
+              @include('docs.marketing.store')
+              @include('docs.marketing.show')
+              @include('docs.marketing.update')
+              @include('docs.marketing.delete')
             </v-flex>
           </v-layout>
-
         </v-container>
       </v-expansion-panel-content>
     </v-expansion-panel>
