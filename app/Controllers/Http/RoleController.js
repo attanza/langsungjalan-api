@@ -123,6 +123,26 @@ class RoleController {
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
+
+  /**
+   * Get Permissions by Role ID
+   */
+  async getPermissions({request, response}) {
+    const id = request.params.id
+    let redisKey = `Permissions_Role_${id}`
+    let cached = await RedisHelper.get(redisKey)
+    if (cached) {
+      return response.status(200).send(cached)
+    }
+    const data = await Role.find(id)
+    if (!data) {
+      return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    const permissions = await data.permissions().fetch()
+    let parsed = ResponseParser.apiItem(permissions.toJSON())
+    await RedisHelper.set(redisKey, parsed)
+    return response.status(200).send(parsed)
+  }
 }
 
 module.exports = RoleController
