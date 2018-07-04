@@ -1,7 +1,6 @@
 'use strict'
 
 const Role = use('App/Models/Role')
-const Permission = use('App/Models/Permission')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 
@@ -115,7 +114,7 @@ class RoleController {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
 
-    if(id < 5) {
+    if (id < 5) {
       return response.status(400).send(ResponseParser.errorResponse('Default Role cannot be deleted'))
     }
     const activity = `Delete Role '${data.name}'`
@@ -128,7 +127,7 @@ class RoleController {
   /**
    * Get Permissions by Role ID
    */
-  async getPermissions({request, response}) {
+  async getPermissions({ request, response }) {
     const id = request.params.id
     let redisKey = `Permissions_Role_${id}`
     let cached = await RedisHelper.get(redisKey)
@@ -139,10 +138,31 @@ class RoleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const permissions = await Permission.query().select('id', 'name', 'slug').fetch()
+    const permissions = await role.permissions().fetch()
     let parsed = ResponseParser.apiItem(permissions.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
+  }
+
+  /**
+   * Attach Permission into Role
+   */
+  async attachPermissions({ request, response }) {
+    const { role_id, permissions } = request.post()
+    const role = await Role.find(role_id)
+    if (!role) {
+      return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    await role.permissions().detach()
+    await role.permissions().attach(permissions)
+    // Redis Process
+    let redisKey = `Permissions_Role_${role_id}`
+    await RedisHelper.delete(redisKey)
+    const data = await role.permissions().fetch()
+    let parsed = ResponseParser.apiItem(data.toJSON())
+    await RedisHelper.set(redisKey, parsed)
+    return response.status(200).send(parsed)
+
   }
 }
 
