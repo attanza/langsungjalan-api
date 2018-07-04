@@ -55,7 +55,9 @@ class ComboDataController {
     }
     const data = await User.query().select('id', 'name')
       .doesntHave('supervisors')
-      .where('role_id', 4)
+      .whereHas('roles', builder => {
+        builder.where('role_id', 4)
+      })
       .orderBy('name')
       .fetch()
     await RedisHelper.set(redisKey, data)
