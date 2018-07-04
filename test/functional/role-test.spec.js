@@ -228,6 +228,24 @@ test('Authorized can Show Role', async ({ client }) => {
 })
 
 /**
+ * Attach Permission into Role ID
+ */
+
+test('Attach Permission into Role', async ({ client }) => {
+  const user = await User.find(1)
+  let postData = {
+    'role_id': 2,
+    'permissions': [1,2,3,4]
+  }
+  const response = await client
+    .put('/api/v1/role/permissions')
+    .send(postData)
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
+
+/**
  * Form Data
  */
 
