@@ -71,7 +71,7 @@ Route
         [['roles.delete'],['can:delete_role']]
       ]))
 
-    Route.get('/role/:id/permissions', 'RoleController.getPermissions')
+    Route.get('/role/:id/permissions', 'RoleController.getPermissions').middleware('can:create_role')
 
     /**
      * Me

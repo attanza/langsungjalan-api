@@ -199,6 +199,6 @@ async function getAdmin() {
 
 async function getMarketing() {
   return await User.query().whereHas('roles', builder => {
-    builder.where('role_id', 3)
+    builder.where('role_id', 4)
   }).first()
 }

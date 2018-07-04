@@ -197,6 +197,37 @@ test('Cannot Delete unexisted Role', async ({ client }) => {
 })
 
 /**
+ * Get Permission by Role ID
+ */
+test('Unathorized cannot Show Permission by Role ID', async ({ client }) => {
+  const role = await Role.find(1)
+  const response = await client
+    .get('/api/v1/role/' + role.id + '/permissions')
+    .end()
+  response.assertStatus(401)
+})
+
+test('Forbidden User cannot Show Permission by Role ID', async ({ client }) => {
+  const user = await User.find(3)
+  const role = await Role.find(1)
+  const response = await client
+    .get('/api/v1/role/' + role.id + '/permissions')
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(403)
+})
+
+test('Authorized can Show Role', async ({ client }) => {
+  const user = await User.find(1)
+  const role = await Role.find(1)
+  const response = await client
+    .get('/api/v1/role/' + role.id + '/permissions')
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
+
+/**
  * Form Data
  */
 
