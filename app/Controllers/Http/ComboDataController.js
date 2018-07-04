@@ -72,7 +72,7 @@ class ComboDataController {
     if (cached != null) {
       return cached
     }
-    const data = await Permission.query().select('id', 'name').fetch()
+    const data = await Permission.query().select('id', 'name').orderBy('id').fetch()
     await RedisHelper.set(redisKey, data)
     let parsed = ResponseParser.apiItem(data.toJSON())
     return parsed
