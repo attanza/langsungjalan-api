@@ -1,6 +1,7 @@
 'use strict'
 
 const Role = use('App/Models/Role')
+const Permission = use('App/Models/Permission')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 
@@ -138,7 +139,7 @@ class RoleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const permissions = await data.permissions().fetch()
+    const permissions = await Permission.query().select('id', 'name', 'slug').fetch()
     let parsed = ResponseParser.apiItem(permissions.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
