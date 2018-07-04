@@ -3,6 +3,7 @@
 const Role = use('App/Models/Role')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
+const fillable = ['name', 'slug', 'description']
 
 /**
  * RoleController
@@ -51,7 +52,7 @@ class RoleController {
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
-    let body = request.only(['name', 'slug', 'permissions'])
+    let body = request.only(fillable)
     const data = await Role.create(body)
     await RedisHelper.delete('Role_*')
     const activity = `Add new Role '${data.name}'`
@@ -86,7 +87,7 @@ class RoleController {
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
-    let body = request.only(['name', 'slug', 'permissions'])
+    let body = request.only(fillable)
     const id = request.params.id
     const data = await Role.find(id)
     if (!data || data.length === 0) {
