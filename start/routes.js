@@ -3,6 +3,7 @@
 const Route = use('Route')
 const User = use('App/Models/User')
 const Env = use('Env')
+const {RedisHelper} = use('App/Helpers')
 
 Route.get('/docs', 'DocumentController.index')
 Route.get('/', 'DocumentController.intro')
@@ -18,6 +19,10 @@ Route.get('/email', async ({ view }) => {
 
 Route
   .group(() => {
+    Route.get('redis/clear', async () => {
+      await RedisHelper.clear()
+    })
+
     Route.post('/login', 'LoginController.login').validator('Login')
     Route.post('/refresh', 'Auth/LoginController.refresh').middleware(['auth:jwt'])
 

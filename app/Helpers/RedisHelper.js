@@ -13,6 +13,10 @@ class RedisHelper {
     await Redis.set(key, JSON.stringify(data))
   }
 
+  async clear() {
+    await Redis.flushall()
+  }
+
   delete(pattern) {
     return new Promise(
       (resolve, reject) => {
