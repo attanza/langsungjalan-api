@@ -19,8 +19,9 @@ Route.get('/email', async ({ view }) => {
 
 Route
   .group(() => {
-    Route.get('redis/clear', async () => {
+    Route.get('redis/clear', async ({response}) => {
       await RedisHelper.clear()
+      return response.send('Redis succesfully cleared')
     })
 
     Route.post('/login', 'LoginController.login').validator('Login')
