@@ -27,6 +27,7 @@ class PermissionController {
         .where('name', 'like', `%${search}%`)
         .orWhere('slug', 'like', `%${search}%`)
         .orWhere('description', 'like', `%${search}%`)
+        .orderBy('id')
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
@@ -38,7 +39,7 @@ class PermissionController {
         return response.status(200).send(cached)
       }
 
-      const data = await Permission.query().orderBy('name').paginate(parseInt(page), parseInt(limit))
+      const data = await Permission.query().orderBy('id').paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
       await RedisHelper.set(redisKey, parsed)
