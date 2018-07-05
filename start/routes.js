@@ -77,6 +77,23 @@ Route
       .middleware('can:create_role')
 
     /**
+     * Roles
+     */
+    Route
+      .resource('permissions', 'PermissionController')
+      .apiOnly()
+      .validator(new Map([
+        [['permissions.store'],['StorePermission']],
+        [['permissions.update'],['UpdatePermission']]
+      ]))
+      .middleware(new Map([
+        [['permissions.index'],['can:read_permission']],
+        [['permissions.store'],['can:create_permission']],
+        [['permissions.update'],['can:update_permission']],
+        [['permissions.delete'],['can:delete_permission']]
+      ]))
+
+    /**
      * Me
      */
     Route.get('me', 'ProfileController.me')
