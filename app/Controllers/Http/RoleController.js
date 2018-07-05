@@ -139,7 +139,7 @@ class RoleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const permissions = await role.permissions().fetch()
+    const permissions = await data.permissions().fetch()
     let parsed = ResponseParser.apiItem(permissions.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
