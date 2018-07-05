@@ -194,17 +194,17 @@ Route
      * Schedule
      */
     Route
-      .resource('schedules', 'ScheduleController')
+      .resource('schedulles', 'ScheduleController')
       .apiOnly()
       .validator(new Map([
-        [['schedules.store', 'schedules.update'],['StoreSchedule']],
-        [['schedules.index'],['List']]
+        [['schedulles.store', 'schedulles.update'],['StoreSchedule']],
+        [['schedulles.index'],['List']]
       ]))
       .middleware(new Map([
-        [['schedules.index'],['can:create_schedule']],
-        [['schedules.store'],['can:create_schedule']],
-        [['schedules.update'],['can:update_schedule']],
-        [['schedules.delete'],['can:delete_schedule']]
+        [['schedulles.index'],['can:create_schedule']],
+        [['schedulles.store'],['can:create_schedule']],
+        [['schedulles.update'],['can:update_schedule']],
+        [['schedulles.delete'],['can:delete_schedule']]
       ]))
 
     /**
