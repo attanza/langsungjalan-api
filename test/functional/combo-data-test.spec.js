@@ -51,3 +51,17 @@ test('Permission Combo Data List', async ({ client }) => {
     .end()
   response.assertStatus(200)
 })
+
+/**
+ * List of Study Program Combo Data
+ */
+
+test('Study Program Combo Data List', async ({ client }) => {
+  const user = await User.find(1)
+
+  const response = await client
+    .get(endpoint + 'StudyProgram')
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
