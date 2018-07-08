@@ -74,3 +74,11 @@ Factory.blueprint('App/Models/StudyName', (faker) => {
   }
 })
 
+Factory.blueprint('App/Models/StudyYear', (faker) => {
+  return {
+    study_program_id: faker.integer({ min: 1, max: 5 }),
+    year: faker.integer({ min: 2015, max: 2020 }).toString(),
+    class_per_year: faker.integer({ min: 8, max: 12 }),
+    students_per_class: faker.integer({ min: 25, max: 40 }),
+  }
+})
