@@ -1,0 +1,53 @@
+@startuml
+hide circle
+hide empty members
+
+entity users {
+  *id
+  name
+  phone
+  email
+  ...
+}
+entity tokens {
+  *id
+  user_id
+  token
+  type
+  is_revoked
+}
+
+entity activations {
+  *id
+  user_id
+  completed
+  completed_at
+}
+
+entity activities {
+  *id
+  ip
+  browser
+  activity
+}
+
+entity roles {
+  *id
+  name
+  slug
+  description
+}
+
+entity role_user {
+  *id
+  user_id
+  role_id
+}
+
+users                 ||--o{ tokens
+users                 ||--o{ activations
+users                 ||--o{ activities
+users                 }|--|{ role_user
+roles                 }|--|{ role_user
+
+@enduml
