@@ -197,7 +197,8 @@ Route
       .resource('studies', 'StudyProgramController')
       .apiOnly()
       .validator(new Map([
-        [['studies.store', 'studies.update'], ['StoreStudyProgram']],
+        [['studies.store'], ['StoreStudyProgram']],
+        [['studies.update'], ['UpdateStudyProgram']],
         [['studies.index'], ['List']]
       ]))
       .middleware(new Map([

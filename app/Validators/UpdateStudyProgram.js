@@ -9,8 +9,8 @@ class UpdateStudyProgram {
     return {
       university_id: 'required|integer',
       study_name_id: 'required|integer',
-      email: `equired|email|unique:study_programs,email,id,${id}`,
-      phone: `equired|max:30|unique:study_programs,phone,id,${id}`,
+      email: `required|email|unique:study_programs,email,id,${id}`,
+      phone: `required|max:30|unique:study_programs,phone,id,${id}`,
       lat: 'number',
       lng: 'number'
     }

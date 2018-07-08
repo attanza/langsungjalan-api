@@ -24,6 +24,7 @@ class StudyProgramController {
     if (search && search != '') {
       const data = await StudyProgram.query()
         .with('university')
+        .with('studyName')
         .where('address', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
@@ -42,6 +43,7 @@ class StudyProgramController {
 
       const data = await StudyProgram.query()
         .with('university')
+        .with('studyName')
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
@@ -62,7 +64,7 @@ class StudyProgramController {
     await RedisHelper.delete('StudyProgram_*')
     const activity = `Add new StudyProgram '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await data.load('university')
+    await data.loadMany(['university', 'studyName'])
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
@@ -83,7 +85,7 @@ class StudyProgramController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.load('university')
+    await data.loadMany(['university', 'studyName'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -106,7 +108,7 @@ class StudyProgramController {
     const activity = `Update StudyProgram '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('StudyProgram_*')
-    await data.load('university')
+    await data.loadMany(['university', 'studyName'])
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }

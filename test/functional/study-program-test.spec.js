@@ -53,10 +53,10 @@ test('Authorized can Create StudyProgram', async ({ client }) => {
   response.assertStatus(201)
   response.assertJSONSubset({
     data: {
-      university_id: 3,
-      name: 'Albert Reeves 3',
-      address: '1077 Ditim Center',
-      email: 'cadewar@jojpojgih3.ws',
+      'university_id': 3,
+      'study_name_id': 1,
+      'address': '1077 Ditim Center',
+      'email': 'cadewar@jojpojgih3.ws',
     }
   })
 })
@@ -94,10 +94,10 @@ test('Authorized can Update StudyProgram', async ({ client }) => {
   response.assertStatus(200)
   response.assertJSONSubset({
     data: {
-      university_id: 3,
-      name: 'Albert Reeves 3',
-      address: '1077 Ditim Center',
-      email: 'cadewar@jojpojgih3.ws',
+      'university_id': 3,
+      'study_name_id': 1,
+      'address': '1077 Ditim Center',
+      'email': 'cadewar@jojpojgih3.ws',
     }
   })
 })
@@ -180,18 +180,18 @@ test('Cannot Delete unexisted StudyProgram', async ({ client }) => {
 
 function StudyProgramData() {
   return {
-    university_id: 3,
-    name: 'Albert Reeves 3',
-    address: '1077 Ditim Center',
-    email: 'cadewar@jojpojgih3.ws',
-    phone: '(358) 958-2553',
-    contact_person: 'Lily Chapman',
-    description: 'Kugwo et fenba ibi ze ib new pecjo obfapag faoka ruinu za arubaz bil tuku vetraasu.',
-    year: '2019',
-    class_per_year: 30,
-    students_per_class: 43,
-    lat: -46.88105,
-    lng: 0.84585,
+    'university_id': 3,
+    'study_name_id': 1,
+    'address': '1077 Ditim Center',
+    'email': 'cadewar@jojpojgih3.ws',
+    'phone': '(358) 958-2553',
+    'contact_person': 'Lily Chapman',
+    'description': 'Kugwo et fenba ibi ze ib new pecjo obfapag faoka ruinu za arubaz bil tuku vetraasu.',
+    'year': '2019',
+    'class_per_year': 30,
+    'students_per_class': 43,
+    'lat': -46.88105,
+    'lng': 0.84585
   }
 }
 
