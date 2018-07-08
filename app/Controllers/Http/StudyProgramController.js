@@ -42,7 +42,6 @@ class StudyProgramController {
 
       const data = await StudyProgram.query()
         .with('university')
-        .orderBy('name')
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 

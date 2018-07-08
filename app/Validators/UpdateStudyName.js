@@ -7,7 +7,7 @@ class UpdateStudyName {
     const id = this.ctx.params.id
 
     return {
-      name: `equired|max:50|unique:study_names,name,id,${id}`,
+      name: `required|max:50|unique:study_names,name,id,${id}`,
       description: 'max:250'
     }
   }

@@ -10,7 +10,7 @@ trait('Test/ApiClient')
 trait('DatabaseTransactions')
 trait('Auth/Client')
 
-const endpoint = 'api/v1/schedules'
+const endpoint = 'api/v1/schedulles'
 
 /**
  * List of Schedule
@@ -18,7 +18,7 @@ const endpoint = 'api/v1/schedules'
 
 test('Unathorized cannot get Schedule List', async ({ client }) => {
   const response = await client
-    .get('/api/v1/schedules')
+    .get(endpoint)
     .end()
   response.assertStatus(401)
 })
@@ -26,7 +26,7 @@ test('Unathorized cannot get Schedule List', async ({ client }) => {
 test('Authorized can get Schedule List', async ({ client }) => {
   const user = await User.find(1)
   const response = await client
-    .get('/api/v1/schedules')
+    .get(endpoint)
     .loginVia(user, 'jwt')
     .end()
   response.assertStatus(200)
