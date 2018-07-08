@@ -124,6 +124,7 @@ class StudyProgramController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+    await data.studyName().dissociate()
     const activity = `Delete StudyProgram '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('StudyProgram_*')
