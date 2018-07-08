@@ -8,20 +8,18 @@
         <v-container>
           <h3>Description</h3>
           <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi amet dignissimos, sint exercitationem autem et. Minus officia
-            dolores eveniet eaque deleniti, autem qui voluptatibus aspernatur expedita rem nulla ad aliquid?
+This endpoint will be used to do the CRUD operation for StudyProgram Model. This StudyProgram model will have relationship
+to The StudyName Model also with StudyYear so it can has dynamic names and years whilst it has deferent detail contacts
           </p>
           <h3>Schema</h3>
           <p>
             <ul class="ml-3">
-              <li>name: 'string|max:50|unique'</li>
+              <li>university_id: required|integer</li>
+              <li>study_name_id: required|integer</li>
               <li>email: 'string|email|unique'</li>
               <li>phone: 'string|max:30|unique'</li>
               <li>contact_person: 'string|max:50'</li>
               <li>address: string</li>
-              <li>year: string|min:4|max:5</li>
-              <li>class_per_year: integer</li>
-              <li>students_per_class: integer</li>
               <li>lat: 'number'</li>
               <li>lng: 'number'</li>
             </ul>

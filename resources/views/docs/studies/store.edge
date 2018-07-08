@@ -32,17 +32,36 @@
                 <th>Body</th>
                 <td>
                   <ul>
-                    <li>name: 'string|max:50|unique'</li>
+                    <li>university_id: required|integer</li>
+                    <li>study_name_id: required|integer</li>
                     <li>email: 'string|email|unique'</li>
                     <li>phone: 'string|max:30|unique'</li>
                     <li>contact_person: 'string|max:50'</li>
                     <li>address: string</li>
-                    <li>year: string|min:4|max:5</li>
-                    <li>class_per_year: integer</li>
-                    <li>students_per_class: integer</li>
                     <li>lat: 'number'</li>
                     <li>lng: 'number'</li>
                   </ul>
+                </td>
+              </tr>
+              <tr>
+                <th>Request Example</th>
+                <td>
+                  <pre>
+<code>
+{
+  "university_id": 3,
+  "study_name_id": 1,
+  "name": "Albert Reeves 3",
+  "address": "1077 Ditim Center",
+  "email": "cadewar@jojpojgih3.ws",
+  "phone": "(358) 958-2553",
+  "contact_person": "Lily Chapman",
+  "description": "Kugwo et fenba ibi ze ib new pecjo obfapag faoka ruinu za arubaz bil tuku vetraasu.",
+  "lat": -46.88105,
+  "lng": 0.84585
+}
+</code>
+                  </pre>
                 </td>
               </tr>
               <tr>
@@ -50,29 +69,42 @@
                 </th>
                 <td>
                   <pre>
+<code>
 {
-	"meta": {
-		"status": 201,
-		"message": "Created successfully"
-	},
-	"data": {
-		"university_id": 3,
-		"name": "Albert Reeves 3",
-		"address": "1077 Ditim Center",
-		"email": "cadewar@jojpojgih3.ws",
-		"phone": "(358) 958-2553",
-		"contact_person": "Lily Chapman",
-		"description": "Kugwo et fenba ibi ze ib new pecjo obfapag faoka ruinu za arubaz bil tuku vetraasu.",
-		"year": "2019",
-		"class_per_year": 30,
-		"students_per_class": 43,
-		"lat": -46.88105,
-		"lng": 0.84585,
-		"created_at": "2018-05-23 23:45:53",
-		"updated_at": "2018-05-23 23:45:53",
-		"id": 26
-	}
+  "meta": {
+    "status": 201,
+    "message": "Created successfully"
+  },
+  "data": {
+    "university_id": 3,
+    "study_name_id": 1,
+    "address": "1077 Ditim Center",
+    "email": "cadewar@jojpojgih3.ws",
+    "phone": "(358) 958-2553",
+    "contact_person": "Lily Chapman",
+    "lat": -46.88105,
+    "lng": 0.84585,
+    "created_at": "2018-07-08 19:54:31",
+    "updated_at": "2018-07-08 19:54:31",
+    "id": 26,
+    "university": {
+      "id": 3,
+      "name": "Tommy Griffith",
+      "address": "1148 Ishut Heights",
+      "email": "gof@enjer.kp",
+      "phone": "(957) 693-9975",
+      "contact_person": "Sarah Mack",
+      "description": "Fola duzouku cow ni zipsiil meranow zum eki weas puvhag imnej si sug god ci voro owaetioze.",
+      "province": "QC",
+      "city": "Ifbosig",
+      "lat": -9.87127,
+      "lng": 8.54081,
+      "created_at": "2018-07-08 19:21:49",
+      "updated_at": "2018-07-08 19:21:49"
+    }
+  }
 }
+</code>
 						</pre>
                 </td>
               </tr>
@@ -80,31 +112,31 @@
                 <th>Possible Errors</th>
                 <td>
 <pre>
+<code>
 {
-	"meta": {
-		"status": 401,
-		"message": "Unathorized"
-	}
+  "meta": {
+    "status": 401,
+    "message": "Unathorized"
+  }
 },
 {
-	"meta": {
-		"status": 422,
-		"message": "Validation failed"
-	},
-	"details": [
-		{
-			"message": "name is required",
-			"field": "name",
-			"validation": "required"
-		}
-	]
+  "meta": {
+    "status": 422,
+    "message": "Validation failed"
+  },
+  "details": [{
+    "message": "name is required",
+    "field": "name",
+    "validation": "required"
+  }]
 },
 {
-	"meta": {
-		"status": 403,
-		"message": "Forbidden"
-	}
+  "meta": {
+    "status": 403,
+    "message": "Forbidden"
+  }
 }
+</code>
 </pre>
                 </td>
               </tr>
