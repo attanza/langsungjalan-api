@@ -6,12 +6,10 @@ class StoreStudyProgram {
   get rules () {
     return {
       university_id: 'required|integer',
-      name: 'required|max:50|unique:universities',
-      email: 'required|email|unique:universities',
-      phone: 'required|max:30|unique:universities',
-      year: 'required|min:4|max:5',
-      class_per_year: 'required|integer',
-      students_per_class:'required|integer',
+      study_name_id: 'required|integer',
+      email: 'required|email|unique:study_programs',
+      phone: 'required|max:30|unique:study_programs',
+      description: 'max:250',
       lat: 'number',
       lng: 'number'
     }
@@ -29,14 +27,10 @@ class StoreStudyProgram {
   get sanitizationRules () {
     return {
       email: 'normalize_email',
-      name: 'escape',
       phone: 'escape',
       contact_person: 'escape',
       address: 'escape',
       description: 'escape',
-      class_per_year: 'toInt',
-      students_per_class: 'toInt',
-
     }
   }
 
