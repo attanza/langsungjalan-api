@@ -196,8 +196,7 @@ Route
       .resource('study-years', 'StudyYearController')
       .apiOnly()
       .validator(new Map([
-        [['study-years.store'], ['StoreStudyYear']],
-        [['study-years.update'], ['UpdateStudyYear']]
+        [['study-years.store', 'study-years.update'], ['StoreStudyYear']]
       ]))
       .middleware(new Map([
         [['study-years.index'], ['can:read_study_year']],

@@ -115,7 +115,7 @@ class StudyYearController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete StudyYear '${data.name}'`
+    const activity = `Delete StudyYear '${data.year}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('StudyYear_*')
     await data.delete()
