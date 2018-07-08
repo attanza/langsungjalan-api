@@ -4,7 +4,13 @@ const StudyYear = use('App/Models/StudyYear')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 const fillable = ['study_program_id', 'year', 'class_per_year', 'students_per_class']
-
+const yearUniqueFailed = [
+  {
+    'message': 'Year is already exist',
+    'field': 'year',
+    'validation': 'unique'
+  }
+]
 /**
  * StudyYearController
  *
@@ -54,6 +60,10 @@ class StudyYearController {
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
+    const exist = await this.checkStudyYear(body)
+    if (exist) {
+      return response.status(201).send(ResponseParser.apiValidationFailed(yearUniqueFailed))
+    }
     const data = await StudyYear.create(body)
     await RedisHelper.delete('StudyYear_*')
     const activity = `Add new StudyYear '${data.year}'`
@@ -120,6 +130,20 @@ class StudyYearController {
     await RedisHelper.delete('StudyYear_*')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
+  }
+
+  async checkStudyYear(body) {
+    const study_program_id = body.study_program_id
+    const year = body.year
+    const count = await StudyYear.query()
+      .where('study_program_id', study_program_id)
+      .where('year', year)
+      .getCount()
+    if (count > 0) {
+      return true
+    } else {
+      return false
+    }
   }
 }
 

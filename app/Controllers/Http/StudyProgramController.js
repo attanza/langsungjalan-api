@@ -25,6 +25,7 @@ class StudyProgramController {
       const data = await StudyProgram.query()
         .with('university')
         .with('studyName')
+        .with('years')
         .where('address', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
@@ -44,6 +45,7 @@ class StudyProgramController {
       const data = await StudyProgram.query()
         .with('university')
         .with('studyName')
+        .with('years')
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
