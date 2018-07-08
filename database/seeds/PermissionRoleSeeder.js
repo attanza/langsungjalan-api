@@ -8,7 +8,7 @@ class PermissionRoleSeeder {
     await Database.table('permission_role').truncate()
     await Database.table('role_user').truncate()
 
-    for (let i = 1; i < 37; i++) {
+    for (let i = 1; i < 41; i++) {
       await Database.table('permission_role').insert({
         role_id: 1,
         permission_id: i

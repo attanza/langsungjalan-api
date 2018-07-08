@@ -67,11 +67,10 @@ Factory.blueprint('App/Models/Product', (faker) => {
   }
 })
 
-/*
-code
-name
-measurement
-price
-description
-*/
+Factory.blueprint('App/Models/StudyName', (faker) => {
+  return {
+    name: faker.sentence({ words: 3 }),
+    description: faker.sentence({ words: 4 }),
+  }
+})
 
