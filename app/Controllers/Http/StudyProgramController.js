@@ -3,7 +3,7 @@
 const StudyProgram = use('App/Models/StudyProgram')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
-
+const fillable = [ 'university_id', 'study_name_id', 'address', 'email', 'phone', 'contact_person', 'lat', 'lng']
 /**
  * StudyProgramController
  *
@@ -24,14 +24,11 @@ class StudyProgramController {
     if (search && search != '') {
       const data = await StudyProgram.query()
         .with('university')
-        .where('name', 'like', `%${search}%`)
-        .orWhere('address', 'like', `%${search}%`)
+        .where('address', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
         .orWhere('contact_person', 'like', `%${search}%`)
         .orWhere('description', 'like', `%${search}%`)
-        .orWhere('class_per_year', 'like', `%${search}%`)
-        .orWhere('students_per_class', 'like', `%${search}%`)
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
@@ -61,10 +58,7 @@ class StudyProgramController {
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
-    let body = request.only([
-      'university_id', 'name', 'address', 'email', 'phone', 'contact_person', 'description', 'year',
-      'class_per_year', 'students_per_class', 'lat', 'lng'
-    ])
+    let body = request.only(fillable)
     const data = await StudyProgram.create(body)
     await RedisHelper.delete('StudyProgram_*')
     const activity = `Add new StudyProgram '${data.name}'`
@@ -102,10 +96,7 @@ class StudyProgramController {
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
-    let body = request.only([
-      'university_id', 'name', 'address', 'email', 'phone', 'contact_person', 'description', 'year',
-      'class_per_year', 'students_per_class', 'lat', 'lng'
-    ])
+    let body = request.only(fillable)
     const id = request.params.id
     const data = await StudyProgram.find(id)
     if (!data || data.length === 0) {
