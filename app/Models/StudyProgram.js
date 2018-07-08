@@ -10,6 +10,10 @@ class StudyProgram extends Model {
   studyName() {
     return this.belongsTo('App/Models/StudyName')
   }
+
+  years() {
+    return this.hasMany('App/Models/StudyYear')
+  }
 }
 
 module.exports = StudyProgram

@@ -190,6 +190,23 @@ Route
       ]))
 
     /**
+   * Study Years
+   */
+    Route
+      .resource('study-years', 'StudyYearController')
+      .apiOnly()
+      .validator(new Map([
+        [['study-years.store'], ['StoreStudyYear']],
+        [['study-years.update'], ['UpdateStudyYear']]
+      ]))
+      .middleware(new Map([
+        [['study-years.index'], ['can:read_study_year']],
+        [['study-years.store'], ['can:create_study_year']],
+        [['study-years.update'], ['can:update_study_year']],
+        [['study-years.delete'], ['can:delete_study_year']]
+      ]))
+
+    /**
      * Study Programs
      */
 
