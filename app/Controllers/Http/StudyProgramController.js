@@ -3,7 +3,7 @@
 const StudyProgram = use('App/Models/StudyProgram')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
-const fillable = [ 'university_id', 'study_name_id', 'address', 'email', 'phone', 'contact_person', 'lat', 'lng']
+const fillable = ['university_id', 'study_name_id', 'address', 'email', 'phone', 'contact_person', 'lat', 'lng']
 /**
  * StudyProgramController
  *
@@ -25,7 +25,9 @@ class StudyProgramController {
       const data = await StudyProgram.query()
         .with('university')
         .with('studyName')
-        .with('years')
+        .with('years', (builder) => {
+          builder.orderBy('year')
+        })
         .where('address', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
@@ -45,7 +47,9 @@ class StudyProgramController {
       const data = await StudyProgram.query()
         .with('university')
         .with('studyName')
-        .with('years')
+        .with('years', (builder) => {
+          builder.orderBy('year')
+        })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
@@ -87,7 +91,12 @@ class StudyProgramController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['university', 'studyName'])
+    await data.loadMany({
+      university: null,
+      studyName: null,
+      years: (builder) => builder.orderBy('year')
+    })
+
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -110,7 +119,11 @@ class StudyProgramController {
     const activity = `Update StudyProgram '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('StudyProgram_*')
-    await data.loadMany(['university', 'studyName'])
+    await data.loadMany({
+      university: null,
+      studyName: null,
+      years: (builder) => builder.orderBy('year')
+    })
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
