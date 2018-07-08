@@ -1,11 +1,11 @@
-<section id="study_name_store" style="width: 100%;">
+<section id="study_year_store" style="width: 100%;">
   <template>
     <v-expansion-panel>
       <v-expansion-panel-content>
         <div slot="header">
           <h2>
-            <v-chip color="success" text-color="white" label>POST /study-names</v-chip>
-            <small class="subheading">Save new Study Name into database</small>
+            <v-chip color="success" text-color="white" label>POST /study-years</v-chip>
+            <small class="subheading">Save new Study Year into database</small>
           </h2>
         </div>
         <v-container>
@@ -16,7 +16,7 @@
               <tr>
                 <th width="20%">End point:</th>
                 <td width="80%">
-                  <v-chip color="grey darken-2" text-color="white" label>/study-names</v-chip>
+                  <v-chip color="grey darken-2" text-color="white" label>/study-years</v-chip>
                 </td>
               </tr>
               <tr>
@@ -34,8 +34,10 @@
                 <th>Body</th>
                 <td>
                   <ul>
-                    <li>name: string:required</li>
-                    <li>slug: string:required</li>
+                    <li>study_program_id: required|integer</li>
+                    <li>year: required|string</li>
+                    <li>class_per_year: required|string</li>
+                    <li>students_per_class: required|string</li>
                   </ul>
                 </td>
               </tr>
@@ -45,8 +47,10 @@
                   <pre>
 <code>
 {
-  "name": "Test Study Name",
-  "description": "Litufov gacza ravokdi pi."
+  "study_program_id": 3,
+  "year": "2015",
+  "class_per_year": 12,
+  "students_per_class": 36
 }
 </code>
                   </pre>
@@ -64,10 +68,12 @@
     "message": "Created successfully"
   },
   "data": {
-    "name": "Test Study Name",
-    "description": "Litufov gacza ravokdi pi.",
-    "created_at": "2018-07-08 19:33:23",
-    "updated_at": "2018-07-08 19:33:23",
+    "study_program_id": 3,
+    "year": "2020",
+    "class_per_year": 12,
+    "students_per_class": 36,
+    "created_at": "2018-07-08 22:07:49",
+    "updated_at": "2018-07-08 22:07:49",
     "id": 26
   }
 }
@@ -85,8 +91,7 @@
     "status": 401,
     "message": "Unathorized"
   }
-},
-{
+}, {
   "meta": {
     "status": 422,
     "message": "Validation failed"
@@ -96,8 +101,17 @@
     "field": "name",
     "validation": "required"
   }]
-},
-{
+}, {
+  "meta": {
+    "status": 422,
+    "message": "Validation failed"
+  },
+  "details": [{
+    "message": "Year is already exist",
+    "field": "year",
+    "validation": "unique"
+  }]
+}, {
   "meta": {
     "status": 403,
     "message": "Forbidden"
