@@ -62,7 +62,7 @@ class StudyYearController {
     let body = request.only(fillable)
     const exist = await this.checkStudyYear(body)
     if (exist) {
-      return response.status(201).send(ResponseParser.apiValidationFailed(yearUniqueFailed))
+      return response.status(422).send(ResponseParser.apiValidationFailed(yearUniqueFailed))
     }
     const data = await StudyYear.create(body)
     await RedisHelper.delete('StudyYear_*')
