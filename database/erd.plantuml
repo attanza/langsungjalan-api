@@ -38,10 +38,55 @@ entity roles {
   description
 }
 
+entity permissions {
+  *id
+  name
+  slug
+  description
+}
+
 entity role_user {
   *id
   user_id
   role_id
+}
+
+entity marketing_supervisor {
+  *id
+  marketing_id
+  supervisor_id
+}
+
+entity universities {
+  *id
+  name
+  address
+  phone
+  email
+  ...
+}
+
+entity study_names {
+  *id
+  name
+  description
+}
+
+entity study_programs {
+  *id
+  university_id
+  study_name_id
+  address
+  email
+  ...
+}
+
+entity study_years {
+  *id
+  study_program_id
+  year
+  class_per_year
+  students_per_class
 }
 
 users                 ||--o{ tokens
@@ -49,5 +94,14 @@ users                 ||--o{ activations
 users                 ||--o{ activities
 users                 }|--|{ role_user
 roles                 }|--|{ role_user
+roles                 }|--|{ permission_role
+permissions           }|--|{ permission_role
+users                 }|--|{ marketing_supervisor
+universities          }|--o| study_programs
+study_programs        ||--|| study_names
+study_programs        ||--|| study_years
+
+
+
 
 @enduml
