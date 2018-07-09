@@ -82,3 +82,10 @@ Factory.blueprint('App/Models/StudyYear', (faker) => {
     students_per_class: faker.integer({ min: 25, max: 40 }),
   }
 })
+
+Factory.blueprint('App/Models/MarketingAction', (faker) => {
+  return {
+    name: faker.sentence({ words: 3 }),
+    description: faker.sentence({ words: 4 }),
+  }
+})
