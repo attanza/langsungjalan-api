@@ -153,6 +153,24 @@ Route
         [['marketings.delete'], ['can:delete_marketing']]
       ]))
 
+      /**
+     * Marketing Actions
+     */
+
+    Route
+      .resource('marketing-actions', 'MarketingActionController')
+      .apiOnly()
+      .validator(new Map([
+        [['marketing-actions.store'], ['StoreMarketingAction']],
+        [['marketing-actions.update'], ['UpdateMarketingAction']],
+        [['marketing-actions.index'], ['List']]]))
+      .middleware(new Map([
+        [['marketing-actions.index'], ['can:read_marketing_action']],
+        [['marketing-actions.store'], ['can:create_marketing_action']],
+        [['marketing-actions.update'], ['can:update_marketing_action']],
+        [['marketing-actions.delete'], ['can:delete_marketing_action']]
+      ]))
+
     /**
      * Universities
      */
