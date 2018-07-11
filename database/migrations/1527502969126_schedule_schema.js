@@ -4,11 +4,11 @@ const Schema = use('Schema')
 
 class ScheduleSchema extends Schema {
   up () {
-    this.create('schedules', (table) => {
+    this.create('schedulles', (table) => {
       table.increments()
       table.integer('marketing_id').unsigned()
-      table.string('action', 250).notNullable()
       table.integer('study_id').unsigned()
+      table.integer('marketing_action_id').unsigned()
       table.dateTime('start_date').notNullable()
       table.dateTime('end_date').notNullable()
       table.string('description').nullable()
@@ -17,7 +17,7 @@ class ScheduleSchema extends Schema {
   }
 
   down () {
-    this.drop('schedules')
+    this.drop('schedulles')
   }
 }
 

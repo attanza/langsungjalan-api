@@ -89,6 +89,14 @@ entity study_years {
   students_per_class
 }
 
+entity study_years {
+  *id
+  study_program_id
+  year
+  class_per_year
+  students_per_class
+}
+
 users                 ||--o{ tokens
 users                 ||--o{ activations
 users                 ||--o{ activities

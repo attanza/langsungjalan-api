@@ -2,12 +2,12 @@
 
 const Model = use('Model')
 
-class Schedule extends Model {
+class Schedulle extends Model {
 
-  static get dates () {
+  static get dates() {
     return super.dates.concat(['start_date', 'end_date'])
   }
-  
+
   marketing() {
     return this.belongsTo('App/Models/User', 'marketing_id')
   }
@@ -15,6 +15,10 @@ class Schedule extends Model {
   study() {
     return this.belongsTo('App/Models/StudyProgram', 'study_id')
   }
+
+  action() {
+    return this.belongsTo('App/Models/MarketingAction')
+  }
 }
 
-module.exports = Schedule
+module.exports = Schedulle

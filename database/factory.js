@@ -38,21 +38,18 @@ Factory.blueprint('App/Models/StudyProgram', (faker) => {
     address: faker.address(),
     contact_person: faker.name(),
     description: faker.sentence(),
-    // year: faker.year({min: 2016, max: 2020}),
-    // class_per_year: faker.integer({ min: 25, max: 40 }),
-    // students_per_class: faker.integer({ min: 40, max: 50 }),
     lat: faker.latitude(),
     lng: faker.longitude(),
   }
 })
 
-Factory.blueprint('App/Models/Schedule', (faker) => {
+Factory.blueprint('App/Models/Schedulle', (faker) => {
   return {
     marketing_id: faker.integer({ min: 1, max: 5 }),
     study_id: faker.integer({ min: 1, max: 5 }),
+    marketing_action_id: faker.integer({ min: 1, max: 5 }),
     start_date: faker.date({year: 2018}),
     end_date: faker.date({year: 2018}),
-    action: faker.sentence({ words: 4 }),
     description: faker.sentence({ words: 4 }),
   }
 })

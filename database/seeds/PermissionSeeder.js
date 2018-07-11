@@ -4,7 +4,7 @@ const changeCase = require('change-case')
 const Database = use('Database')
 const Permission = use('App/Models/Permission')
 const resources = [
-  'User', 'Role', 'Permission', 'University', 'Product', 'Schedule', 'StudyName', 'StudyProgram', 'StudyYear',
+  'User', 'Role', 'Permission', 'University', 'Product', 'Schedulle', 'StudyName', 'StudyProgram', 'StudyYear',
   'Marketing', 'MarketingAction', 'Supervisor'
 ]
 const actions = ['create', 'read', 'update', 'delete']

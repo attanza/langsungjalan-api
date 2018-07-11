@@ -1,10 +1,10 @@
 'use strict'
 
 
-const Schedule = use('App/Models/Schedule')
+const Schedulle = use('App/Models/Schedulle')
 const User = use('App/Models/User')
 
-const { test, trait } = use('Test/Suite')('Schedule')
+const { test, trait } = use('Test/Suite')('Schedulle')
 
 trait('Test/ApiClient')
 trait('DatabaseTransactions')
@@ -13,17 +13,17 @@ trait('Auth/Client')
 const endpoint = 'api/v1/schedulles'
 
 /**
- * List of Schedule
+ * List of Schedulle
  */
 
-test('Unathorized cannot get Schedule List', async ({ client }) => {
+test('Unathorized cannot get Schedulle List', async ({ client }) => {
   const response = await client
     .get(endpoint)
     .end()
   response.assertStatus(401)
 })
 
-test('Authorized can get Schedule List', async ({ client }) => {
+test('Authorized can get Schedulle List', async ({ client }) => {
   const user = await User.find(1)
   const response = await client
     .get(endpoint)
@@ -33,35 +33,35 @@ test('Authorized can get Schedule List', async ({ client }) => {
 })
 
 /**
- * Create Schedule
+ * Create Schedulle
  */
 
-test('Unathorized cannot create Schedule', async ({ client }) => {
+test('Unathorized cannot create Schedulle', async ({ client }) => {
   const response = await client
     .post(endpoint)
-    .send(scheduleData())
+    .send(SchedulleData())
     .end()
   response.assertStatus(401)
 })
 
-test('Authorized can Create Schedule', async ({ client }) => {
+test('Authorized can Create Schedulle', async ({ client }) => {
   const user = await getAdmin()
   const response = await client
     .post(endpoint)
     .loginVia(user, 'jwt')
-    .send(scheduleData())
+    .send(SchedulleData())
     .end()
   response.assertStatus(201)
   response.assertJSONSubset({
     data: {
       'marketing_id': 3,
-      'action': 'Wa ja dipir da2.',
+      'marketing_action_id': 3,
       'study_id': 3,
     }
   })
 })
 
-test('Cannot Create Schedule with uncomplete data', async ({ client }) => {
+test('Cannot Create Schedulle with uncomplete data', async ({ client }) => {
   const user = await User.find(1)
   const response = await client
     .post(endpoint)
@@ -71,61 +71,61 @@ test('Cannot Create Schedule with uncomplete data', async ({ client }) => {
 })
 
 /**
- * Update Schedule
+ * Update Schedulle
  */
 
-test('Unathorized cannot Update Schedule', async ({ client }) => {
-  const editing = await Schedule.find(2)
+test('Unathorized cannot Update Schedulle', async ({ client }) => {
+  const editing = await Schedulle.find(2)
   const response = await client
     .put(endpoint + '/' + editing.id)
-    .send(scheduleData())
+    .send(SchedulleData())
     .end()
   response.assertStatus(401)
 })
 
-test('Authorized can Update Schedule', async ({ client }) => {
+test('Authorized can Update Schedulle', async ({ client }) => {
   const user = await getAdmin()
-  const editing = await Schedule.find(2)
+  const editing = await Schedulle.find(2)
   const response = await client
     .put(endpoint + '/' + editing.id)
     .loginVia(user, 'jwt')
-    .send(scheduleData())
+    .send(SchedulleData())
     .end()
   response.assertStatus(200)
   response.assertJSONSubset({
     data: {
       'marketing_id': 3,
-      'action': 'Wa ja dipir da2.',
+      'marketing_action_id': 3,
       'study_id': 3,
     }
   })
 })
 
-test('Cannot Update unexisted Schedule', async ({ client }) => {
+test('Cannot Update unexisted Schedulle', async ({ client }) => {
   const user = await getAdmin()
   const response = await client
     .put(endpoint + '/' + 35)
     .loginVia(user, 'jwt')
-    .send(scheduleData())
+    .send(SchedulleData())
     .end()
   response.assertStatus(400)
 })
 
 /**
- * Show Schedule
+ * Show Schedulle
  */
 
-test('Unathorized cannot Show Schedule', async ({ client }) => {
-  const data = await Schedule.find(1)
+test('Unathorized cannot Show Schedulle', async ({ client }) => {
+  const data = await Schedulle.find(1)
   const response = await client
     .get(endpoint + '/' + data.id)
     .end()
   response.assertStatus(401)
 })
 
-test('Authorized can Show Schedule', async ({ client }) => {
+test('Authorized can Show Schedulle', async ({ client }) => {
   const user = await User.find(1)
-  const editing = await Schedule.find(2)
+  const editing = await Schedulle.find(2)
   const response = await client
     .get(endpoint + '/' + editing.id)
     .loginVia(user, 'jwt')
@@ -133,7 +133,7 @@ test('Authorized can Show Schedule', async ({ client }) => {
   response.assertStatus(200)
 })
 
-test('Cannot Show unexisted Schedule', async ({ client }) => {
+test('Cannot Show unexisted Schedulle', async ({ client }) => {
   const user = await User.find(1)
   const response = await client
     .get(endpoint + '/' + 35)
@@ -143,20 +143,20 @@ test('Cannot Show unexisted Schedule', async ({ client }) => {
 })
 
 /**
- * Delete Schedule
+ * Delete Schedulle
  */
 
-test('Unathorized cannot Delete Schedule', async ({ client }) => {
-  const data = await Schedule.find(1)
+test('Unathorized cannot Delete Schedulle', async ({ client }) => {
+  const data = await Schedulle.find(1)
   const response = await client
     .delete(endpoint + '/' + data.id)
     .end()
   response.assertStatus(401)
 })
 
-test('Authorized can Delete Schedule', async ({ client }) => {
+test('Authorized can Delete Schedulle', async ({ client }) => {
   const user = await User.find(1)
-  const editing = await Schedule.find(2)
+  const editing = await Schedulle.find(2)
   const response = await client
     .delete(endpoint + '/' + editing.id)
     .loginVia(user, 'jwt')
@@ -164,7 +164,7 @@ test('Authorized can Delete Schedule', async ({ client }) => {
   response.assertStatus(200)
 })
 
-test('Cannot Delete unexisted Schedule', async ({ client }) => {
+test('Cannot Delete unexisted Schedulle', async ({ client }) => {
   const user = await User.find(1)
   const response = await client
     .delete(endpoint + '/' + 35)
@@ -177,10 +177,10 @@ test('Cannot Delete unexisted Schedule', async ({ client }) => {
  * Form Data
  */
 
-function scheduleData() {
+function SchedulleData() {
   return {
     'marketing_id': 3,
-    'action': 'Wa ja dipir da2.',
+    'marketing_action_id': 3,
     'study_id': 3,
     'start_date': '2018-04-01T17:00:00.000Z',
     'end_date': '2018-10-16T17:00:00.000Z',

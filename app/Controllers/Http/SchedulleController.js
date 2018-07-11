@@ -1,9 +1,9 @@
 'use strict'
 
-const Schedule = use('App/Models/Schedule')
+const Schedulle = use('App/Models/Schedulle')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
-
+const fillable = ['marketing_id', 'marketing_action_id', 'study_id', 'start_date', 'end_date', 'description']
 /*
 marketing_id
 action
@@ -13,10 +13,10 @@ end_date
 description
 */
 
-class ScheduleController {
+class SchedulleController {
   /**
    * Index
-   * Get List of Schedule
+   * Get List of Schedulle
    */
   async index({ request, response }) {
     let { page, limit, search } = request.get()
@@ -25,24 +25,24 @@ class ScheduleController {
     if (!limit) limit = 10
 
     if (search && search != '') {
-      const data = await Schedule.query()
+      const data = await Schedulle.query()
         .with('marketing')
         .with('study')
-        .where('action', 'like', `%${search}%`)
+        .with('action')
         .orWhere('description', 'like', `%${search}%`)
         .orderBy('created_at')
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     } else {
-      let redisKey = `Schedule_${page}_${limit}`
+      let redisKey = `Schedulle_${page}_${limit}`
       let cached = await RedisHelper.get(redisKey)
 
       if (cached != null) {
         return response.status(200).send(cached)
       }
 
-      const data = await Schedule.query()
+      const data = await Schedulle.query()
         .with('marketing')
         .with('study')
         .orderBy('created_at')
@@ -57,14 +57,14 @@ class ScheduleController {
 
   /**
    * Store
-   * Store New Schedule
+   * Store New Schedulle
    */
   async store({ request, response, auth }) {
-    let body = request.only(['marketing_id', 'action', 'study_id', 'start_date', 'end_date', 'description'])
-    const data = await Schedule.create(body)
+    let body = request.only(fillable)
+    const data = await Schedulle.create(body)
     await data.loadMany(['marketing', 'study'])
-    await RedisHelper.delete('Schedule_*')
-    const activity = `Add new Schedule '${data.name}'`
+    await RedisHelper.delete('Schedulle_*')
+    const activity = `Add new Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
@@ -72,20 +72,20 @@ class ScheduleController {
 
   /**
    * Show
-   * Schedule by id
+   * Schedulle by id
    */
   async show({ request, response }) {
     const id = request.params.id
-    let redisKey = `Schedule_${id}`
+    let redisKey = `Schedulle_${id}`
     let cached = await RedisHelper.get(redisKey)
     if (cached) {
       return response.status(200).send(cached)
     }
-    const data = await Schedule.find(id)
+    const data = await Schedulle.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['marketing', 'study'])
+    await data.loadMany(['marketing', 'study', 'action'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -93,41 +93,41 @@ class ScheduleController {
 
   /**
    * Update
-   * Update Schedule by Id
+   * Update Schedulle by Id
    */
   async update({ request, response, auth }) {
-    let body = request.only(['marketing_id', 'action', 'study_id', 'start_date', 'end_date', 'description'])
+    let body = request.only(fillable)
     const id = request.params.id
-    const data = await Schedule.find(id)
+    const data = await Schedulle.find(id)
     if (!data || data.length === 0) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
     await data.merge(body)
     await data.save()
-    const activity = `Update Schedule '${data.name}'`
+    const activity = `Update Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Schedule_*')
-    await data.loadMany(['marketing', 'study'])
+    await RedisHelper.delete('Schedulle_*')
+    await data.loadMany(['marketing', 'study', 'action'])
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
 
   /**
    * Delete
-   * Delete Schedule by Id
+   * Delete Schedulle by Id
    */
   async destroy({ request, response, auth }) {
     const id = request.params.id
-    const data = await Schedule.find(id)
+    const data = await Schedulle.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete Schedule '${data.name}'`
+    const activity = `Delete Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Schedule*')
+    await RedisHelper.delete('Schedulle*')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
 }
 
-module.exports = ScheduleController
+module.exports = SchedulleController
