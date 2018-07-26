@@ -3,8 +3,9 @@
 const User = use('App/Models/User')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits, ActivationTraits } = use('App/Traits')
+const Hash = use('Hash')
 
-const fillable = ['name', 'email', 'password', 'phone', 'address', 'description', 'is_active']
+const fillable = ['name', 'email', 'phone', 'address', 'description', 'is_active']
 
 class MarketingController {
 
@@ -60,6 +61,8 @@ class MarketingController {
 
   async store({ request, response, auth }) {
     let body = request.only(fillable)
+    let { password } = request.post()
+    body.password = password
     const data = await User.create(body)
     await data.roles().attach(4)
     await ActivationTraits.createAndActivate(data)
@@ -146,6 +149,27 @@ class MarketingController {
     // Delete Data
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
+  }
+
+  /**
+   * Change Password
+   */
+  async changePassword({ request, response }) {
+    const { id } = request.params
+
+    const data = await User.find(id)
+    if (!data) {
+      return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    const { old_password, password } = request.post()
+    const isSame = await Hash.verify(old_password, data.password)
+    if (!isSame) {
+      return response.status(400).send(ResponseParser.errorResponse('Old password incorect'))
+    }
+    await data.merge({ password })
+    await data.save()
+    return response.status(200).send(ResponseParser.successResponse(data, 'Password updated'))
+
   }
 }
 

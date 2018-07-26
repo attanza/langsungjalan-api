@@ -153,6 +153,10 @@ Route
         [['marketings.delete'], ['can:delete_marketing']]
       ]))
 
+    Route.put('marketings/:id/change-password', 'MarketingController.changePassword')
+      .validator('ChangePassword')
+      .middleware('can:update_marketing')
+
       /**
      * Marketing Actions
      */
