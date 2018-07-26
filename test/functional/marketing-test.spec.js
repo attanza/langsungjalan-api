@@ -176,6 +176,25 @@ test('Authorized can Delete Marketing', async ({ client }) => {
   response.assertStatus(200)
 })
 
+/**
+ * Change Password
+ */
+
+test('Authorized can Change Password', async ({ client }) => {
+  const user = await getAdmin()
+  const editing = await getMarketing()
+  const response = await client
+    .put('/api/v1/marketings/' + editing.id + '/change-password')
+    .loginVia(user, 'jwt')
+    .send({
+      'old_password': 'P4sw0rd@langsungjalan.com',
+      'password': 'P4sw0rd@langsungjalan.com',
+      'password_confirmation': 'P4sw0rd@langsungjalan.com'
+    })
+    .end()
+  response.assertStatus(200)
+})
+
 
 /**
  * Form Data

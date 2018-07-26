@@ -61,11 +61,12 @@ test('Super Administrator can Create StudyYear', async ({ client }) => {
     .loginVia(user, 'jwt')
     .send(StudyYearData())
     .end()
+    console.log('response', response) //eslint-disable-line
   response.assertStatus(201)
   response.assertJSONSubset({
     data: {
       'study_program_id': 3,
-      'year': '2015',
+      'year': '2030',
       'class_per_year': 12,
       'students_per_class': 36
     }
