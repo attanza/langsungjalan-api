@@ -166,7 +166,8 @@ class MarketingController {
     if (!isSame) {
       return response.status(400).send(ResponseParser.errorResponse('Old password incorect'))
     }
-    await data.merge({ password })
+    const hashPassword = await Hash.make(password)
+    await data.merge({ password: hashPassword })
     await data.save()
     return response.status(200).send(ResponseParser.successResponse(data, 'Password updated'))
 
