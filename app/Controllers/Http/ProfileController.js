@@ -17,7 +17,7 @@ class ProfileController {
     return response.status(200).send(parsed)
   }
   /**
-   * Profiel Update
+   * Profile Update
    * @param {any} user data
    * @returns user collection
    */
