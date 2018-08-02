@@ -6,7 +6,8 @@ const redisDeletePattern = require('redis-delete-pattern')
 class RedisHelper {
 
   async get(key) {
-    return await Redis.get(key)
+    const data = await Redis.get(key)
+    return JSON.parse(data)
   }
 
   async set(key, data) {

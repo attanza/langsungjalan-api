@@ -32,6 +32,46 @@ test('Authorized can get Schedulle List', async ({ client }) => {
   response.assertStatus(200)
 })
 
+// List with Query
+
+test('Query with marketing id', async ({ client }) => {
+  const user = await User.find(1)
+  const response = await client
+    .get(endpoint + '?marketing_id=3')
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
+
+test('Query with start date and end date', async ({ client }) => {
+  const user = await User.find(1)
+  const response = await client
+    .get(endpoint + '?start_date=2018-04-02&end_date=2018-10-17')
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
+
+test('Query with marketing, start date and end date', async ({ client }) => {
+  const user = await User.find(1)
+  const response = await client
+    .get(endpoint + '?start_date=2018-04-02&end_date=2018-10-17&marketing_id=3')
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
+
+test('Query with search', async ({ client }) => {
+  const user = await User.find(1)
+  const response = await client
+    .get(endpoint + '?search_by=marketing_id&serach_query=3')
+    .loginVia(user, 'jwt')
+    .end()
+  response.assertStatus(200)
+})
+
+// ?search_by=marketing_id&search_query=5
+
 /**
  * Create Schedulle
  */

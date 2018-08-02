@@ -2,7 +2,7 @@
 
 const Schedulle = use('App/Models/Schedulle')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
+const { ActivityTraits, SchedulleQueryTrait } = use('App/Traits')
 const fillable = ['marketing_id', 'marketing_action_id', 'study_id', 'start_date', 'end_date', 'description']
 /*
 marketing_id
@@ -19,40 +19,10 @@ class SchedulleController {
    * Get List of Schedulle
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-
-    if (search && search != '') {
-      const data = await Schedulle.query()
-        .with('marketing')
-        .with('study')
-        .with('action')
-        .orWhere('description', 'like', `%${search}%`)
-        .orderBy('created_at')
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
-    } else {
-      let redisKey = `Schedulle_${page}_${limit}`
-      let cached = await RedisHelper.get(redisKey)
-
-      if (cached != null) {
-        return response.status(200).send(cached)
-      }
-
-      const data = await Schedulle.query()
-        .with('marketing')
-        .with('study')
-        .orderBy('created_at')
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-
-      await RedisHelper.set(redisKey, parsed)
-
-      return response.status(200).send(parsed)
-    }
+    const data = await SchedulleQueryTrait(request)
+    let parsed = ResponseParser.apiCollection(data)
+    return response.status(200).send(parsed)
   }
 
   /**
