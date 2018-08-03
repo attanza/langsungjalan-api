@@ -25,7 +25,7 @@ Route
     })
 
     Route.post('/login', 'LoginController.login').validator('Login')
-    Route.post('/refresh', 'Auth/LoginController.refresh').middleware(['auth:jwt'])
+    Route.post('/refresh', 'LoginController.refresh').middleware(['auth:jwt'])
 
     Route.get('/forgot-password', 'PasswordController.getForgot').validator('Auth/GetForgot')
 

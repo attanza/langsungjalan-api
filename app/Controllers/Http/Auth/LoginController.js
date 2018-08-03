@@ -40,16 +40,14 @@ class LoginController {
   async refresh({ request, response, auth }) {
     try {
       const user = await auth.getUser()
-      if (!await this.checkUser(user)) {
-        return response.status(400).send(this.errorResponse())
-      }
       const data = await auth
         .newRefreshToken()
         .generateForRefreshToken(request.input('refreshToken'))
-      await user.load('role')
+      await user.load('roles')
       data.user = user
       return response.status(200).send(this.successResponse(data))
     } catch (e) {
+      console.log('e', e) //eslint-disable-line
       return response.status(401).send(this.unauthorizedResponse())
     }
   }
