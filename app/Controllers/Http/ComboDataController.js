@@ -5,7 +5,7 @@ const University = use('App/Models/University')
 const User = use('App/Models/User')
 const Permission = use('App/Models/Permission')
 const StudyProgram = use('App/Models/StudyProgram')
-
+const StudyName = use('App/Models/StudyName')
 
 class ComboDataController {
   async index({ request, response }) {
@@ -32,6 +32,12 @@ class ComboDataController {
     case 'StudyProgram':
     {
       const data = await this.getStudy()
+      return response.status(200).send(data)
+    }
+
+    case 'StudyName':
+    {
+      const data = await this.getStudyName()
       return response.status(200).send(data)
     }
 
@@ -94,6 +100,19 @@ class ComboDataController {
       return cached
     }
     const data = await StudyProgram.query().select('id', 'name').orderBy('id').fetch()
+    await RedisHelper.set(redisKey, data)
+    let parsed = ResponseParser.apiItem(data.toJSON())
+    return parsed
+  }
+
+  async getStudyName() {
+    let redisKey = 'StudyName_Combo'
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached != null) {
+      return cached
+    }
+    const data = await StudyName.query().select('id', 'name').orderBy('id').fetch()
     await RedisHelper.set(redisKey, data)
     let parsed = ResponseParser.apiItem(data.toJSON())
     return parsed

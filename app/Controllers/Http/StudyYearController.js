@@ -23,13 +23,16 @@ class StudyYearController {
    * Get List of StudyYears
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
+    let { page, limit, search, study_program_id } = request.get()
 
     if (!page) page = 1
     if (!limit) limit = 10
+    if (!study_program_id) study_program_id = ''
+
 
     if (search && search != '') {
       const data = await StudyYear.query()
+        .where('study_program_id', 'like', `%${study_program_id}%`)
         .where('year', 'like', `%${search}%`)
         .orWhere('class_per_year', 'like', `%${search}%`)
         .orWhere('students_per_class', 'like', `%${search}%`)
@@ -37,14 +40,16 @@ class StudyYearController {
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     } else {
-      let redisKey = `StudyYear_${page}_${limit}`
+      let redisKey = `StudyYear_${page}_${limit}_${study_program_id}`
       let cached = await RedisHelper.get(redisKey)
 
       if (cached != null) {
         return response.status(200).send(cached)
       }
 
-      const data = await StudyYear.query().orderBy('year').paginate(parseInt(page), parseInt(limit))
+      const data = await StudyYear.query()
+        .where('study_program_id', 'like', `%${study_program_id}%`)
+        .orderBy('year').paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
       await RedisHelper.set(redisKey, parsed)
