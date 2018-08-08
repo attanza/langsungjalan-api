@@ -61,7 +61,7 @@ class SchedulleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['marketing', 'study', 'action'])
+    await data.loadMany(['marketing', 'study.studyName', 'action'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)

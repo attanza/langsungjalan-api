@@ -6,7 +6,7 @@ class StorePermission {
   get rules() {
     return {
       name: 'required|max:50|unique:permissions',
-      slug: 'required|max:50|unique:permissions',
+      // slug: 'required|max:50|unique:permissions',
       description: 'max:250'
     }
   }

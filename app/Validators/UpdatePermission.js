@@ -8,7 +8,7 @@ class UpdatePermission {
 
     return {
       name: 'required|max:50|unique:permissions,name,id,' + id,
-      slug: 'required|max:80|unique:permissions,slug,id,' + id,
+      // slug: 'required|max:80|unique:permissions,slug,id,' + id,
       description: 'max:250'
     }
   }

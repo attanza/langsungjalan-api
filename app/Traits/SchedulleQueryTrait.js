@@ -33,7 +33,7 @@ module.exports = async (request) => {
 async function queryBySearch(search_by, search_query, page, limit, sort_by, sort_mode) {
   let data = await Schedulle.query()
     .with('marketing')
-    .with('study')
+    .with('study.studyName')
     .with('action')
     .where(search_by, 'like', `%${search_query}%`)
     .orderBy(sort_by, sort_mode)
@@ -45,7 +45,7 @@ async function queryBySearch(search_by, search_query, page, limit, sort_by, sort
 async function queryByDate(start_date, end_date, page, limit, sort_by, sort_mode) {
   let data = await Schedulle.query()
     .with('marketing')
-    .with('study')
+    .with('study.studyName')
     .with('action')
     .whereBetween('start_date', [start_date, end_date])
     .orderBy(sort_by, sort_mode)
@@ -57,7 +57,7 @@ async function queryByDate(start_date, end_date, page, limit, sort_by, sort_mode
 async function queryByMarketing(marketing_id, page, limit, sort_by, sort_mode) {
   let data = await Schedulle.query()
     .with('marketing')
-    .with('study')
+    .with('study.studyName')
     .with('action')
     .where('marketing_id', parseInt(marketing_id))
     .orderBy(sort_by, sort_mode)
@@ -69,7 +69,7 @@ async function queryByMarketing(marketing_id, page, limit, sort_by, sort_mode) {
 async function queryByMarketingAndDates(marketing_id, start_date, end_date, page, limit, sort_by, sort_mode) {
   let data = await Schedulle.query()
     .with('marketing')
-    .with('study')
+    .with('study.studyName')
     .with('action')
     .where('marketing_id', parseInt(marketing_id))
     .whereBetween('start_date', [start_date, end_date])
@@ -87,7 +87,7 @@ async function defaultQuery(page, limit, sort_by, sort_mode) {
   }
   let data = await Schedulle.query()
     .with('marketing')
-    .with('study')
+    .with('study.studyName')
     .with('action')
     .orderBy(sort_by, sort_mode)
     .paginate(parseInt(page), parseInt(limit))

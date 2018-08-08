@@ -3,7 +3,8 @@
 const Permission = use('App/Models/Permission')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
-const fillable = ['name', 'slug', 'description']
+const changeCase = require('change-case')
+const fillable = ['name', 'description']
 
 /**
  * PermissionController
@@ -55,6 +56,7 @@ class PermissionController {
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
+    body.slug = changeCase.snakeCase(body.name)
     const data = await Permission.create(body)
     await RedisHelper.delete('Permission_*')
     const activity = `Add new Permission '${data.name}'`
