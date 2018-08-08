@@ -3,7 +3,14 @@
 const Schedulle = use('App/Models/Schedulle')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits, SchedulleQueryTrait } = use('App/Traits')
-const fillable = ['marketing_id', 'marketing_action_id', 'study_id', 'start_date', 'end_date', 'description']
+const fillable = [
+  'marketing_id',
+  'marketing_action_id',
+  'study_id',
+  'start_date',
+  'end_date',
+  'description'
+]
 /*
 marketing_id
 action
@@ -19,7 +26,6 @@ class SchedulleController {
    * Get List of Schedulle
    */
   async index({ request, response }) {
-
     const data = await SchedulleQueryTrait(request)
     let parsed = ResponseParser.apiCollection(data)
     return response.status(200).send(parsed)
