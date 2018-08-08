@@ -38,7 +38,7 @@ class SchedulleController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await Schedulle.create(body)
-    await data.loadMany(['marketing', 'study'])
+    await data.loadMany(['marketing', 'study.studyName', 'action'])
     await RedisHelper.delete('Schedulle_*')
     const activity = `Add new Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
@@ -83,7 +83,7 @@ class SchedulleController {
     const activity = `Update Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('Schedulle_*')
-    await data.loadMany(['marketing', 'study', 'action'])
+    await data.loadMany(['marketing', 'study.studyName', 'action'])
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
