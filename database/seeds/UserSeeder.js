@@ -1,5 +1,6 @@
 'use strict'
 
+const Factory = use('Factory')
 const User = use('App/Models/User')
 const Database = use('Database')
 const moment = require('moment')
@@ -35,6 +36,7 @@ class UserSeeder {
     //   .model('App/Models/User')
     //   .createMany(15)
     await this.setActivation()
+    await this.seedMarketing()
   }
 
   async setActivation() {
@@ -56,36 +58,13 @@ class UserSeeder {
     }
   }
 
-  getDefaultUser() {
-    return [
-      {
-        name: 'Super Administrator',
-        email: 'superadmin@langsungjalan.com',
-        password: 'password',
-        phone: faker.phone(),
-        address: faker.address(),
-        is_active: 1,
-        role_id: faker.integer({ min: 1, max: 5 })
-      },
-      {
-        name: 'Administrator',
-        email: 'admin@langsungjalan.com',
-        password: 'password',
-        phone: faker.phone(),
-        address: faker.address(),
-        is_active: 1,
-        role_id: faker.integer({ min: 1, max: 5 })
-      },
-      {
-        name: 'Super Administrator',
-        email: 'superadmin@langsungjalan.com',
-        password: 'password',
-        phone: faker.phone(),
-        address: faker.address(),
-        is_active: 1,
-        role_id: faker.integer({ min: 1, max: 5 })
-      }
-    ]
+  async seedMarketing() {
+    const usersArray = await Factory
+      .model('App/Models/User')
+      .createMany(5)
+    for (let i = 0; i < usersArray.length; i++) {
+      await usersArray[i].roles().attach(4)
+    }
   }
 }
 

@@ -3,7 +3,6 @@
 const User = use('App/Models/User')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits, ActivationTraits } = use('App/Traits')
-
 const fillable = ['name', 'email', 'password', 'phone', 'address', 'description', 'is_active']
 
 class SupervisorController {
@@ -85,7 +84,6 @@ class SupervisorController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.load('marketings')
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -165,13 +163,13 @@ class SupervisorController {
       }
     })
     await supervisor.marketings().attach(filteredMarketings)
-    await supervisor.load('marketings')
     const activity = 'Attaching Marktings to Supervisor'
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete(`User_${supervisor_id}`)
-    await RedisHelper.delete(`Supervisor_${supervisor_id}`)
-    await RedisHelper.delete('Marketing_Combo')
-    return response.status(200).send(ResponseParser.successResponse(supervisor, 'Marketing attached'))
+    await RedisHelper.delete('User_*')
+    await RedisHelper.delete('Supervisor_*')
+    await RedisHelper.delete('Marketing_*')
+    const data = await User.query().whereIn('id', filteredMarketings)
+    return response.status(200).send(ResponseParser.successResponse(data, 'Marketing attached'))
   }
 
   async detachMarketing({ request, response, auth }) {
@@ -184,9 +182,9 @@ class SupervisorController {
     await supervisor.load('marketings')
     const activity = 'Detach Marktings from Supervisor'
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete(`User_${supervisor_id}`)
-    await RedisHelper.delete(`Supervisor_${supervisor_id}`)
-    await RedisHelper.delete('Marketing_Combo')
+    await RedisHelper.delete('User_*')
+    await RedisHelper.delete('Supervisor_*')
+    await RedisHelper.delete('Marketing_*')
     return response.status(200).send(ResponseParser.successResponse(supervisor, 'Marketing detached'))
   }
 

@@ -211,14 +211,21 @@ async function searchWithSupervisor(page, limit, search, supervisor_id) {
     })
     .whereHas('supervisors', builder => {
       builder.where('supervisor_id', supervisor_id)
+
     })
     .where('name', 'like', `%${search}%`)
-    .orWhere('email', 'like', `%${search}%`)
-    .orWhere('phone', 'like', `%${search}%`)
-    .orWhere('address', 'like', `%${search}%`)
+    // builder.orWhere('email', 'like', `%${search}%`)
+    // builder.orWhere('phone', 'like', `%${search}%`)
+    // builder.orWhere('address', 'like', `%${search}%`)
+
     .paginate(parseInt(page), parseInt(limit))
   return ResponseParser.apiCollection(data.toJSON())
 }
+
+// .where('name', 'like', `%${search}%`)
+// .orWhere('email', 'like', `%${search}%`)
+// .orWhere('phone', 'like', `%${search}%`)
+// .orWhere('address', 'like', `%${search}%`)
 
 async function searchBySupervisor(page, limit, supervisor_id) {
   const redisKey = `Marketing_Supervisor_${supervisor_id}`

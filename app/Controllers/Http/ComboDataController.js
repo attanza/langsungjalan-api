@@ -69,7 +69,7 @@ class ComboDataController {
     }
     const data = await University.query().select('id', 'name').orderBy('name').fetch()
     await RedisHelper.set(redisKey, data)
-    let parsed = ResponseParser.apiItem(data.toJSON())
+    let parsed = data.toJSON()
     return parsed
   }
 
@@ -88,7 +88,7 @@ class ComboDataController {
       .orderBy('name')
       .fetch()
     await RedisHelper.set(redisKey, data)
-    let parsed = ResponseParser.apiItem(data.toJSON())
+    let parsed = data.toJSON()
     return parsed
   }
 
@@ -106,7 +106,7 @@ class ComboDataController {
       .orderBy('name')
       .fetch()
     await RedisHelper.set(redisKey, data)
-    let parsed = ResponseParser.apiItem(data.toJSON())
+    let parsed = data.toJSON()
     return parsed
   }
 
@@ -119,7 +119,7 @@ class ComboDataController {
     }
     const data = await Permission.query().select('id', 'name').orderBy('id').fetch()
     await RedisHelper.set(redisKey, data)
-    let parsed = ResponseParser.apiItem(data.toJSON())
+    let parsed = data.toJSON()
     return parsed
   }
 
@@ -136,7 +136,7 @@ class ComboDataController {
       .leftJoin('study_names', 'study_programs.study_name_id', 'study_names.id')
       .orderBy('study_names.name')
       .fetch()
-    let parsed = ResponseParser.apiItem(data.toJSON())
+    let parsed = data.toJSON()
     await RedisHelper.set(redisKey, parsed)
     return parsed
   }
@@ -150,7 +150,7 @@ class ComboDataController {
     }
     const data = await StudyName.query().select('id', 'name').orderBy('id').fetch()
     await RedisHelper.set(redisKey, data)
-    let parsed = ResponseParser.apiItem(data.toJSON())
+    let parsed = data.toJSON()
     return parsed
   }
 
@@ -163,7 +163,7 @@ class ComboDataController {
     }
     const data = await MarketingAction.query().select('id', 'name').orderBy('name').fetch()
     await RedisHelper.set(redisKey, data)
-    let parsed = ResponseParser.apiItem(data.toJSON())
+    let parsed = data.toJSON()
     return parsed
   }
 }
