@@ -17,9 +17,9 @@ class LoginController {
       // Check user
       const user = await User.findBy('email', email)
       if (!await this.checkUser(user, email, password)) {
-        console.log('no user') //eslint-disable-line
         return response.status(400).send(this.errorResponse())
       }
+      await user.tokens().delete()
       const data = await auth.withRefreshToken().attempt(email, password)
       // Include user data into token data
       await user.load('roles')

@@ -132,7 +132,7 @@ Route
       .middleware('can:read_supervisor')
 
 
-    Route.get('supervisors/search-marketing', 'SupervisorController.searchMarketing')
+    Route.get('supervisor/search-marketing', 'SupervisorController.searchMarketing')
       .middleware('admin')
 
     /**

@@ -5,32 +5,40 @@ const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits, ActivationTraits } = use('App/Traits')
 const Hash = use('Hash')
 
-const fillable = ['name', 'email', 'phone', 'address', 'description', 'is_active']
+const fillable = [
+  'name',
+  'email',
+  'phone',
+  'address',
+  'description',
+  'is_active'
+]
 
 class MarketingController {
-
   /**
    * Index
    * Get List of Marketing
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
+    // TODO fix search with specific condition in user model
+    let { page, limit, search, supervisor_id } = request.get()
     if (!page) page = 1
     if (!limit) limit = 10
+    if (!search) search = ''
 
-    if (search && search != '') {
-      const data = await User.query()
-        .with('supervisors')
-        .whereHas('roles', builder => {
-          builder.where('role_id', 4)
-        })
-        .where('name', 'like', `%${search}%`)
-        .orWhere('email', 'like', `%${search}%`)
-        .orWhere('phone', 'like', `%${search}%`)
-        .orWhere('address', 'like', `%${search}%`)
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
+    if(search && supervisor_id) {
+      return response
+        .status(200)
+        .send(await searchWithSupervisor(page, limit, search, supervisor_id))
+    }
+    else if (search != '') {
+      return response
+        .status(200)
+        .send(await searchMarketing(page, limit, search))
+    } else if (supervisor_id) {
+      return response
+        .status(200)
+        .send(await searchBySupervisor(page, limit, supervisor_id))
     } else {
       let redisKey = `Marketing_${page}_${limit}`
       let cached = await RedisHelper.get(redisKey)
@@ -43,7 +51,9 @@ class MarketingController {
         .whereHas('roles', builder => {
           builder.where('role_id', 4)
         })
-        .with('supervisors')
+        .with('supervisors', builder => {
+          builder.select('id', 'name')
+        })
         .orderBy('name')
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
@@ -87,7 +97,9 @@ class MarketingController {
     if (cached) {
       return response.status(200).send(cached)
     }
-    const data = await User.query().where('id', id).first()
+    const data = await User.query()
+      .where('id', id)
+      .first()
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
@@ -120,7 +132,6 @@ class MarketingController {
     await RedisHelper.delete('User_*')
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
-
   }
 
   /**
@@ -130,9 +141,10 @@ class MarketingController {
 
   async destroy({ request, response, auth }) {
     const id = request.params.id
-    const data = await User.query().whereHas('roles', builder => {
-      builder.where('role_id', 4)
-    })
+    const data = await User.query()
+      .whereHas('roles', builder => {
+        builder.where('role_id', 4)
+      })
       .where('id', id)
       .first()
     if (!data) {
@@ -164,14 +176,64 @@ class MarketingController {
     const { old_password, password } = request.post()
     const isSame = await Hash.verify(old_password, data.password)
     if (!isSame) {
-      return response.status(400).send(ResponseParser.errorResponse('Old password incorect'))
+      return response
+        .status(400)
+        .send(ResponseParser.errorResponse('Old password incorect'))
     }
     const hashPassword = await Hash.make(password)
     await data.merge({ password: hashPassword })
     await data.save()
-    return response.status(200).send(ResponseParser.successResponse(data, 'Password updated'))
-
+    return response
+      .status(200)
+      .send(ResponseParser.successResponse(data, 'Password updated'))
   }
 }
 
 module.exports = MarketingController
+
+async function searchMarketing(page, limit, search) {
+  const data = await User.query()
+    .with('supervisors', builder => {
+      builder.select('id', 'name')
+    })
+    .where('name', 'like', `%${search}%`)
+    .orWhere('email', 'like', `%${search}%`)
+    .orWhere('phone', 'like', `%${search}%`)
+    .orWhere('address', 'like', `%${search}%`)
+    .paginate(parseInt(page), parseInt(limit))
+  return ResponseParser.apiCollection(data.toJSON())
+}
+
+async function searchWithSupervisor(page, limit, search, supervisor_id) {
+  const data = await User.query()
+    .with('supervisors', builder => {
+      builder.select('id', 'name')
+    })
+    .whereHas('supervisors', builder => {
+      builder.where('supervisor_id', supervisor_id)
+    })
+    .where('name', 'like', `%${search}%`)
+    .orWhere('email', 'like', `%${search}%`)
+    .orWhere('phone', 'like', `%${search}%`)
+    .orWhere('address', 'like', `%${search}%`)
+    .paginate(parseInt(page), parseInt(limit))
+  return ResponseParser.apiCollection(data.toJSON())
+}
+
+async function searchBySupervisor(page, limit, supervisor_id) {
+  const redisKey = `Marketing_Supervisor_${supervisor_id}`
+  const cached = await RedisHelper.get(redisKey)
+  if (cached) return cached
+  const data = await User.query()
+    .with('supervisors', builder => {
+      builder.select('id', 'name')
+    })
+    .whereHas('supervisors', builder => {
+      builder.where('supervisor_id', supervisor_id)
+    })
+    .paginate(parseInt(page), parseInt(limit))
+  const output = ResponseParser.apiCollection(data.toJSON())
+  await RedisHelper.set(redisKey, output)
+  return output
+
+}
