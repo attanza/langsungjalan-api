@@ -22,6 +22,7 @@ class ExceptionHandler extends BaseExceptionHandler {
    */
   async handle (error, { response }) {
     if (error.name === 'InvalidJwtToken') {
+      console.log('InvalidJwtToken') //eslint-disable-line
       return response.status(401).send({
         meta: {
           status: 401,
@@ -31,6 +32,7 @@ class ExceptionHandler extends BaseExceptionHandler {
     }
 
     if (error.name === 'ExpiredJwtToken') {
+      console.log('ExpiredJwtToken') //eslint-disable-line
       return response.status(401).send({
         meta: {
           status: 401,

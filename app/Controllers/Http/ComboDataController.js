@@ -148,7 +148,7 @@ class ComboDataController {
     if (cached != null) {
       return cached
     }
-    const data = await StudyName.query().select('id', 'name').orderBy('id').fetch()
+    const data = await StudyName.query().select('id', 'name').orderBy('name').fetch()
     await RedisHelper.set(redisKey, data)
     let parsed = data.toJSON()
     return parsed
