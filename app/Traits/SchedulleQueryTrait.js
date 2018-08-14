@@ -12,8 +12,8 @@ module.exports = async (request) => {
   if (!sort_mode) sort_mode = 'desc'
 
   if (marketing_id && start_date && end_date) {
-    start_date = moment(start_date).format('YYYY-MM-DD')
-    end_date = moment(end_date).format('YYYY-MM-DD')
+    start_date = moment(start_date).format('YYYY-MM-DD HH:mm:ss')
+    end_date = moment(end_date).format('YYYY-MM-DD HH:mm:ss')
     return await queryByMarketingAndDates(marketing_id, start_date, end_date, page, limit, sort_by, sort_mode)
   }
   if (marketing_id) {
@@ -23,8 +23,8 @@ module.exports = async (request) => {
     return await queryBySearch(search_by, search_query, page, limit, sort_by, sort_mode)
   }
   if (start_date && end_date) {
-    start_date = moment(start_date).format('YYYY-MM-DD')
-    end_date = moment(end_date).format('YYYY-MM-DD')
+    start_date = moment(start_date).format('YYYY-MM-DD HH:mm:ss')
+    end_date = moment(end_date).format('YYYY-MM-DD HH:mm:ss')
     return await queryByDate(start_date, end_date, page, limit, sort_by, sort_mode)
   }
   return await defaultQuery(page, limit, sort_by, sort_mode)
