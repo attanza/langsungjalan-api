@@ -33,6 +33,12 @@ class StudyProgramController {
         .orWhere('phone', 'like', `%${search}%`)
         .orWhere('contact_person', 'like', `%${search}%`)
         .orWhere('description', 'like', `%${search}%`)
+        .orWhereHas('university', (builder) => {
+          builder.where('name', 'like', `%${search}%`)
+        })
+        .orWhereHas('studyName', (builder) => {
+          builder.where('name', 'like', `%${search}%`)
+        })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
