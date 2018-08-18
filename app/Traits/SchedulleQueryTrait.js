@@ -35,7 +35,7 @@ async function queryBySearch(search_by, search_query, page, limit, sort_by, sort
     .with('marketing')
     .with('study.studyName')
     .with('action')
-    .where(search_by, 'like', `%${search_query}%`)
+    .where(search_by, search_query)
     .orderBy(sort_by, sort_mode)
     .paginate(parseInt(page), parseInt(limit))
   return data.toJSON()
