@@ -4,6 +4,7 @@ const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 const Hash = use('Hash')
 const Helpers = use('Helpers')
+const User = use('App/Models/User')
 
 class ProfileController {
 
@@ -46,23 +47,29 @@ class ProfileController {
    */
 
   async changePassword({ request, response, auth }) {
-    const data = await auth.getUser()
+    const { id } = request.params
+
+    if(id !== auth.user.id) {
+      return response.status(403).send(ResponseParser.forbiddenResponse())
+    }
+
+    const data = await User.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const { old_password, password } = request.only(['old_password', 'password'])
+    const { old_password, password } = request.post()
     const isSame = await Hash.verify(old_password, data.password)
     if (!isSame) {
-      return response.status(422).send(ResponseParser.errorResponse('Incorrect old password'))
+      return response
+        .status(400)
+        .send(ResponseParser.errorResponse('Old password incorect'))
     }
     const hashPassword = await Hash.make(password)
     await data.merge({ password: hashPassword })
     await data.save()
-    await data.load('roles')
-    const activity = 'Change Password'
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
+    return response
+      .status(200)
+      .send(ResponseParser.successResponse(data, 'Password updated'))
   }
 
   /**
