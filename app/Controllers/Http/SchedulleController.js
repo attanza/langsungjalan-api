@@ -3,6 +3,7 @@
 const Schedulle = use('App/Models/Schedulle')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits, SchedulleQueryTrait } = use('App/Traits')
+const moment = require('moment')
 const fillable = [
   'marketing_id',
   'marketing_action_id',
@@ -37,6 +38,10 @@ class SchedulleController {
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
+    let start_date = moment(body.start_date).format('YYYY-MM-DD')
+    if(!body.end_date || body.end_date === '') {
+      body.end_date = start_date + ' 17:00'
+    }
     const data = await Schedulle.create(body)
     await data.loadMany(['marketing', 'study.studyName', 'action'])
     await RedisHelper.delete('Schedulle_*')

@@ -9,7 +9,7 @@ class StoreSchedulle {
       marketing_action_id: 'required|integer',
       study_id: 'required|integer',
       start_date: 'required|date',
-      end_date: 'required|date',
+      end_date: 'date',
       description: 'max:250'
     }
   }

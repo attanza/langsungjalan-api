@@ -70,7 +70,7 @@ test('Cannot Change password if old password is incorrect', async ({ client }) =
       password_confirmation: 'password',
     })
     .end()
-  response.assertStatus(422)
+  response.assertStatus(400)
 })
 
 test('Cannot Change password if new password les than 6 characters', async ({ client }) => {

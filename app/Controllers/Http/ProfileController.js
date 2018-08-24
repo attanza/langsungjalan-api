@@ -48,8 +48,7 @@ class ProfileController {
 
   async changePassword({ request, response, auth }) {
     const { id } = request.params
-
-    if(id !== auth.user.id) {
+    if(id != auth.user.id) {
       return response.status(403).send(ResponseParser.forbiddenResponse())
     }
 
