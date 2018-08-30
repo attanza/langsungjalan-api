@@ -7,6 +7,7 @@ const Permission = use('App/Models/Permission')
 const StudyProgram = use('App/Models/StudyProgram')
 const StudyName = use('App/Models/StudyName')
 const MarketingAction = use('App/Models/MarketingAction')
+const Database = use('Database')
 
 class ComboDataController {
   async index({ request, response }) {
@@ -85,6 +86,7 @@ class ComboDataController {
       .whereHas('roles', builder => {
         builder.where('role_id', 4)
       })
+      .where('is_active', 1)
       .orderBy('name')
       .fetch()
     await RedisHelper.set(redisKey, data)
@@ -103,6 +105,7 @@ class ComboDataController {
       .whereHas('roles', builder => {
         builder.where('role_id', 4)
       })
+      .where('is_active', 1)
       .orderBy('name')
       .fetch()
     await RedisHelper.set(redisKey, data)
@@ -132,9 +135,14 @@ class ComboDataController {
     }
     // const data = await StudyProgram.query().with('studyName').select('id', 'study_name_id').orderBy('id').fetch()
     const data = await StudyProgram.query()
-      .select('study_programs.id', 'study_names.name')
+      // .select('study_programs.id', 'study_names.name', 'CONCAT(study_names.name, ' ,',universities.name) AS university')
+      // .leftJoin('study_names', 'study_programs.study_name_id', 'study_names.id')
+      // .leftJoin('universities', 'universities.id', 'study_programs.university_id')
+
+      // .orderBy('study_names.name')
+      .select(Database.raw('study_programs.id, study_names.name, CONCAT(study_names.name, " ~ ",universities.name) AS university'))
       .leftJoin('study_names', 'study_programs.study_name_id', 'study_names.id')
-      .orderBy('study_names.name')
+      .leftJoin('universities', 'universities.id', 'study_programs.university_id')
       .fetch()
     let parsed = data.toJSON()
     await RedisHelper.set(redisKey, parsed)
