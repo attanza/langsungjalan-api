@@ -26,14 +26,3 @@ class StudyProgramSchema extends Schema {
 
 module.exports = StudyProgramSchema
 
-/*
-university_id
-name
-address
-email
-phone
-contact_person
-description
-lat
-lng
-*/

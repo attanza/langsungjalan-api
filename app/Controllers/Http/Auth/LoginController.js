@@ -13,7 +13,7 @@ const User = use('App/Models/User')
 class LoginController {
   async login({ request, response, auth }) {
     try {
-      const { email, password } = request.only(['email', 'password'])
+      const { email, password } = request.post()
       // Check user
       const user = await User.findBy('email', email)
       if (!await this.checkUser(user, email, password)) {
@@ -57,9 +57,18 @@ class LoginController {
    */
 
   async checkUser(user, email, password) {
-    if (!user) return false
-    if (!await Hash.verify(password, user.password)) return false
-    if (!user.is_active) return false
+    if (!user) {
+      console.log('no user') //eslint-disable-line
+      return false
+    }
+    if (!await Hash.verify(password, user.password)) {
+      console.log('password not matched') //eslint-disable-line
+      return false
+    }
+    if (!user.is_active) {
+      console.log('user not active') //eslint-disable-line
+      return false
+    }
     return true
   }
 

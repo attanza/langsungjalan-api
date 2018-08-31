@@ -5,7 +5,8 @@ const Env = use('Env')
 class User extends Model {
   static boot() {
     super.boot()
-    this.addHook('beforeCreate', 'User.hashPassword')
+    this.addHook('beforeCreate', ['User.hashPassword', 'User.generateUid'])
+
   }
 
   static get hidden() {

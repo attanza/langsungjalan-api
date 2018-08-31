@@ -1,21 +1,10 @@
 'use strict'
 
 const Route = use('Route')
-const User = use('App/Models/User')
-const Env = use('Env')
 const { RedisHelper } = use('App/Helpers')
 
 Route.get('/docs', 'DocumentController.index')
 Route.get('/', 'DocumentController.intro')
-Route.get('/email', async ({ view }) => {
-  const user = await User.find(1)
-  const baseUrl = Env.get('APP_URL')
-  user.baseUrl = baseUrl
-  return view.render('emails/forgot_password', {
-    user: user.toJSON()
-  })
-})
-
 
 Route
   .group(() => {
@@ -27,7 +16,7 @@ Route
     Route.post('/login', 'LoginController.login').validator('Login')
     Route.post('/refresh', 'LoginController.refresh').middleware(['auth:jwt'])
 
-    Route.get('/forgot-password', 'PasswordController.getForgot').validator('Auth/GetForgot')
+    Route.post('/forgot-password', 'PasswordController.getForgot').validator('Auth/GetForgot')
 
     Route.get('/reset', 'PasswordController.showPasswordForm').as('reset')
     Route.post('/reset', 'PasswordController.postReset')

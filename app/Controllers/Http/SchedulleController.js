@@ -1,7 +1,7 @@
 'use strict'
 
 const Schedulle = use('App/Models/Schedulle')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
+const { RedisHelper, ResponseParser, PushNotifications } = use('App/Helpers')
 const { ActivityTraits, SchedulleQueryTrait } = use('App/Traits')
 const moment = require('moment')
 const fillable = [
@@ -39,15 +39,22 @@ class SchedulleController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     let start_date = moment(body.start_date).format('YYYY-MM-DD')
-    if(!body.end_date || body.end_date === '') {
+    if (!body.end_date || body.end_date === '') {
       body.end_date = start_date + ' 17:00'
     }
     const data = await Schedulle.create(body)
-    await data.loadMany(['marketing', 'study.studyName', 'action', 'study.university'])
+    await data.loadMany([
+      'marketing',
+      'study.studyName',
+      'action',
+      'study.university'
+    ])
     await RedisHelper.delete('Schedulle_*')
     const activity = `Add new Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
+    let fcmData = { to: parsed.data.marketing.uid}
+    await PushNotifications.sendToMobile('newSchedulle', fcmData)
     return response.status(201).send(parsed)
   }
 
@@ -88,7 +95,12 @@ class SchedulleController {
     const activity = `Update Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('Schedulle_*')
-    await data.loadMany(['marketing', 'study.studyName', 'action', 'study.university'])
+    await data.loadMany([
+      'marketing',
+      'study.studyName',
+      'action',
+      'study.university'
+    ])
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
