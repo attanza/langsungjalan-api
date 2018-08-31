@@ -13,6 +13,8 @@ class PushNotification {
   }
 
   async sendToMobile(topic, data) {
+    console.log('topic', topic) //eslint-disable-line
+    console.log('data', data) //eslint-disable-line
     const message = {
       data,
       topic
@@ -24,10 +26,10 @@ class PushNotification {
       .send(message)
       .then(response => {
         // Response is a message ID string.
-        console.log('Successfully sent message:', response) //eslint-disable-line
+        console.log('FCM Success Response : ', response) //eslint-disable-line
       })
       .catch(error => {
-        console.log('Error sending message:', error) //eslint-disable-line
+        console.log('FCM Error Response : ', error) //eslint-disable-line
       })
   }
 }
