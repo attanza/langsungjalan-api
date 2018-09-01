@@ -229,7 +229,7 @@ Route
         [['studies.index'], ['List']]
       ]))
       .middleware(new Map([
-        [['studies.index'], ['can:create_study_program']],
+        [['studies.index'], ['can:read_study_program']],
         [['studies.store'], ['can:create_study_program']],
         [['studies.update'], ['can:update_study_program']],
         [['studies.delete'], ['can:delete_study_program']]
@@ -246,7 +246,7 @@ Route
         [['schedulles.index'], ['List']]
       ]))
       .middleware(new Map([
-        [['schedulles.index'], ['can:create_schedulle']],
+        [['schedulles.index'], ['can:read_schedulle']],
         [['schedulles.store'], ['can:create_schedulle']],
         [['schedulles.update'], ['can:update_schedulle']],
         [['schedulles.delete'], ['can:delete_schedulle']]
@@ -263,7 +263,7 @@ Route
         [['products.index'], ['List']]
       ]))
       .middleware(new Map([
-        [['products.index'], ['can:create_product']],
+        [['products.index'], ['can:read_product']],
         [['products.store'], ['can:create_product']],
         [['products.update'], ['can:update_product']],
         [['products.delete'], ['can:delete_product']]
