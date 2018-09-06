@@ -42,7 +42,7 @@ Route
         [['users.index'], ['can:read_user']],
         [['users.store'], ['can:create_user']],
         [['users.update'], ['can:update_user']],
-        [['users.delete'], ['can:delete_user']]
+        [['users.destroy'], ['can:delete_user']]
       ]))
 
     /**
@@ -59,7 +59,7 @@ Route
         [['roles.index'], ['can:read_role']],
         [['roles.store'], ['can:create_role']],
         [['roles.update'], ['can:update_role']],
-        [['roles.delete'], ['can:delete_role']]
+        [['roles.destroy'], ['can:delete_role']]
       ]))
 
     Route.get('/role/:id/permissions', 'RoleController.getPermissions').middleware('can:read_role')
@@ -81,7 +81,7 @@ Route
         [['permissions.index'], ['can:read_permission']],
         [['permissions.store'], ['can:create_permission']],
         [['permissions.update'], ['can:update_permission']],
-        [['permissions.delete'], ['can:delete_permission']]
+        [['permissions.destroy'], ['can:delete_permission']]
       ]))
 
     /**
@@ -105,7 +105,7 @@ Route
         [['supervisors.index'], ['can:read_supervisor']],
         [['supervisors.store'], ['can:create_supervisor']],
         [['supervisors.update'], ['can:update_supervisor']],
-        [['supervisors.delete'], ['can:delete_supervisor']]
+        [['supervisors.destroy'], ['can:delete_supervisor']]
       ]))
 
     Route.post('supervisor/attach-marketing', 'SupervisorController.attachMarketing')
@@ -135,7 +135,7 @@ Route
         [['marketings.index'], ['can:read_marketing']],
         [['marketings.store'], ['can:create_marketing']],
         [['marketings.update'], ['can:update_marketing']],
-        [['marketings.delete'], ['can:delete_marketing']]
+        [['marketings.destroy'], ['can:delete_marketing']]
       ]))
 
     Route.put('marketings/:id/change-password', 'MarketingController.changePassword')
@@ -157,7 +157,7 @@ Route
         [['marketing-actions.index'], ['can:read_marketing_action']],
         [['marketing-actions.store'], ['can:create_marketing_action']],
         [['marketing-actions.update'], ['can:update_marketing_action']],
-        [['marketing-actions.delete'], ['can:delete_marketing_action']]
+        [['marketing-actions.destroy'], ['can:delete_marketing_action']]
       ]))
 
     /**
@@ -176,7 +176,7 @@ Route
         [['universities.index'], ['can:read_university']],
         [['universities.store'], ['can:create_university']],
         [['universities.update'], ['can:update_university']],
-        [['universities.delete'], ['can:delete_university']]
+        [['universities.destroy'], ['can:delete_university']]
       ]))
 
     /**
@@ -193,7 +193,7 @@ Route
         [['study-names.index'], ['can:read_study_name']],
         [['study-names.store'], ['can:create_study_name']],
         [['study-names.update'], ['can:update_study_name']],
-        [['study-names.delete'], ['can:delete_study_name']]
+        [['study-names.destroy'], ['can:delete_study_name']]
       ]))
 
     /**
@@ -209,7 +209,7 @@ Route
         [['study-years.index'], ['can:read_study_year']],
         [['study-years.store'], ['can:create_study_year']],
         [['study-years.update'], ['can:update_study_year']],
-        [['study-years.delete'], ['can:delete_study_year']]
+        [['study-years.destroy'], ['can:delete_study_year']]
       ]))
 
     /**
@@ -228,7 +228,7 @@ Route
         [['studies.index'], ['can:read_study_program']],
         [['studies.store'], ['can:create_study_program']],
         [['studies.update'], ['can:update_study_program']],
-        [['studies.delete'], ['can:delete_study_program']]
+        [['studies.destroy'], ['can:delete_study_program']]
       ]))
 
     /**
@@ -245,7 +245,7 @@ Route
         [['schedulles.index'], ['can:read_schedulle']],
         [['schedulles.store'], ['can:create_schedulle']],
         [['schedulles.update'], ['can:update_schedulle']],
-        [['schedulles.delete'], ['can:delete_schedulle']]
+        [['schedulles.destroy'], ['can:delete_schedulle']]
       ]))
 
     /**
@@ -262,7 +262,7 @@ Route
         [['products.index'], ['can:read_product']],
         [['products.store'], ['can:create_product']],
         [['products.update'], ['can:update_product']],
-        [['products.delete'], ['can:delete_product']]
+        [['products.destroy'], ['can:delete_product']]
       ]))
 
     /**
