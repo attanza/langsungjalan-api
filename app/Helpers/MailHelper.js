@@ -8,10 +8,7 @@ const from = Env.get('MAIL_FROM')
 
 class MailHelper {
   async getForgotPassword(user) {
-    const baseUrl = Env.get('APP_URL')
-    user.baseUrl = baseUrl
-    console.log('user', user.toJSON()) //eslint-disable-line
-    await Mail.send('emails.forgot_password', user.toJSON(), (message) => {
+    await Mail.send('emails.forgot_password', user, (message) => {
       message
         .to(user.email)
         .from(from)

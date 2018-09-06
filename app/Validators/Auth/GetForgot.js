@@ -6,6 +6,8 @@ class GetForgot {
   get rules () {
     return {
       email: 'required',
+      phone: 'required',
+
     }
   }
 

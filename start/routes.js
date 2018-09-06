@@ -15,11 +15,7 @@ Route
 
     Route.post('/login', 'LoginController.login').validator('Login')
     Route.post('/refresh', 'LoginController.refresh').middleware(['auth:jwt'])
-
-    Route.post('/forgot-password', 'PasswordController.getForgot').validator('Auth/GetForgot')
-
-    Route.get('/reset', 'PasswordController.showPasswordForm').as('reset')
-    Route.post('/reset', 'PasswordController.postReset')
+    Route.post('/reset', 'PasswordController.postReset').validator('Auth/GetForgot')
   })
   .prefix('api/v1')
   .namespace('Auth')
@@ -268,6 +264,7 @@ Route
         [['products.update'], ['can:update_product']],
         [['products.delete'], ['can:delete_product']]
       ]))
+
     /**
      * For Combo Box / Select Box
      */
