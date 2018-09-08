@@ -1,6 +1,8 @@
 'use strict'
 
 const User = use('App/Models/User')
+const Role = use('App/Models/Role')
+
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits, ActivationTraits } = use('App/Traits')
 const Hash = use('Hash')
@@ -48,8 +50,8 @@ class MarketingController {
       }
 
       const data = await User.query()
-        .whereHas('roles', builder => {
-          builder.where('role_id', 4)
+        .whereHas('roles', async (builder) => {
+          builder.where('slug', 'marketing')
         })
         .with('supervisors', builder => {
           builder.select('id', 'name')
@@ -74,7 +76,7 @@ class MarketingController {
     let { password } = request.post()
     body.password = password
     const data = await User.create(body)
-    await data.roles().attach(4)
+    await data.roles().attach(await getMarketingRoleId())
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete('Marketing_*')
     await RedisHelper.delete('User_*')
@@ -141,12 +143,7 @@ class MarketingController {
 
   async destroy({ request, response, auth }) {
     const id = request.params.id
-    const data = await User.query()
-      .whereHas('roles', builder => {
-        builder.where('role_id', 4)
-      })
-      .where('id', id)
-      .first()
+    const data = await User.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
@@ -196,6 +193,9 @@ async function searchMarketing(page, limit, search) {
     .with('supervisors', builder => {
       builder.select('id', 'name')
     })
+    .whereHas('roles', async (builder) => {
+      builder.where('slug', 'marketing')
+    })
     .where('name', 'like', `%${search}%`)
     .orWhere('email', 'like', `%${search}%`)
     .orWhere('phone', 'like', `%${search}%`)
@@ -213,6 +213,9 @@ async function searchWithSupervisor(page, limit, search, supervisor_id) {
       builder.where('supervisor_id', supervisor_id)
 
     })
+    .whereHas('roles', async (builder) => {
+      builder.where('slug', 'marketing')
+    })
     .where('name', 'like', `%${search}%`)
     // builder.orWhere('email', 'like', `%${search}%`)
     // builder.orWhere('phone', 'like', `%${search}%`)
@@ -221,11 +224,6 @@ async function searchWithSupervisor(page, limit, search, supervisor_id) {
     .paginate(parseInt(page), parseInt(limit))
   return ResponseParser.apiCollection(data.toJSON())
 }
-
-// .where('name', 'like', `%${search}%`)
-// .orWhere('email', 'like', `%${search}%`)
-// .orWhere('phone', 'like', `%${search}%`)
-// .orWhere('address', 'like', `%${search}%`)
 
 async function searchBySupervisor(page, limit, supervisor_id) {
   const redisKey = `Marketing_Supervisor_${supervisor_id}`
@@ -238,9 +236,22 @@ async function searchBySupervisor(page, limit, supervisor_id) {
     .whereHas('supervisors', builder => {
       builder.where('supervisor_id', supervisor_id)
     })
+    .whereHas('roles', async (builder) => {
+      builder.where('role_id', await getMarketingRoleId())
+    })
     .paginate(parseInt(page), parseInt(limit))
   const output = ResponseParser.apiCollection(data.toJSON())
   await RedisHelper.set(redisKey, output)
   return output
+}
 
+async function getMarketingRoleId() {
+  let redisKey = 'MerktingId'
+  let cached = await RedisHelper.get(redisKey)
+  if(cached) {
+    return cached
+  }
+  let marketingRole = await Role.findBy('slug', 'marketing')
+  await RedisHelper.set(redisKey, marketingRole.id)
+  return marketingRole.id
 }

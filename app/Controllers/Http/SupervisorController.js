@@ -1,6 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User')
+const Role = use('App/Models/Role')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits, ActivationTraits } = use('App/Traits')
 const fillable = ['name', 'email', 'password', 'phone', 'address', 'description', 'is_active']
@@ -19,7 +20,7 @@ class SupervisorController {
     if (search && search != '') {
       const data = await User.query()
         .whereHas('roles', builder => {
-          builder.where('role_id', 3)
+          builder.where('slug', 'supervisor')
         })
         .where('name', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
@@ -38,7 +39,7 @@ class SupervisorController {
 
       const data = await User.query()
         .whereHas('roles', builder => {
-          builder.where('role_id', 3)
+          builder.where('slug', 'supervisor')
         })
         .orderBy('name')
         .paginate(parseInt(page), parseInt(limit))
@@ -58,7 +59,7 @@ class SupervisorController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await User.create(body)
-    await data.roles().attach(3)
+    await data.roles().attach(await getSupervisorRoleId())
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete('Supervisor_*')
     await RedisHelper.delete('User_*')
@@ -210,3 +211,14 @@ class SupervisorController {
 }
 
 module.exports = SupervisorController
+
+async function getSupervisorRoleId() {
+  let redisKey = 'SupervisorId'
+  let cached = await RedisHelper.get(redisKey)
+  if(cached) {
+    return cached
+  }
+  let supervisorRole = await Role.findBy('slug', 'supervisor')
+  await RedisHelper.set(redisKey, supervisorRole.id)
+  return supervisorRole.id
+}

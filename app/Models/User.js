@@ -30,7 +30,7 @@ class User extends Model {
 
   getPhoto() {
     if (this.photo) {
-      return `${Env.get('APP_URL')}/${this.photo}`
+      return `${Env.get('APP_URL')}${this.photo}`
     } else return ''
   }
 

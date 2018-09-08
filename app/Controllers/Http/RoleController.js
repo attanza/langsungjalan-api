@@ -121,6 +121,7 @@ class RoleController {
     const activity = `Delete Role '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('Role_*')
+    await data.permissions().detach()
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

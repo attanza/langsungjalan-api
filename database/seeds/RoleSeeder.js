@@ -10,12 +10,13 @@ class RoleSeeder {
 
     await Role.truncate()
     const roles = ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student']
-    roles.forEach(async(role) => {
+    for (let i = 0; i < roles.length; i++) {
       await Role.create({
-        name: role,
-        slug: Slug(role)
+        name: roles[i],
+        slug: Slug(roles[i])
       })
-    })
+
+    }
 
   }
 }

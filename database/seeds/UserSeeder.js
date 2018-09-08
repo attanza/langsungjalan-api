@@ -9,7 +9,6 @@ const now = moment().format('YYYY-MM-DD HH:mm:ss')
 const roles = ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student']
 const changeCase = require('change-case')
 
-
 class UserSeeder {
   async run() {
     await Database.raw('SET FOREIGN_KEY_CHECKS = 0;')
