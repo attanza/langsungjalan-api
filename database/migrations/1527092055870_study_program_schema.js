@@ -13,8 +13,8 @@ class StudyProgramSchema extends Schema {
       table.string('phone', 30).unique()
       table.string('contact_person', 50).notNullable()
       table.string('description', 250).nullable()
-      table.float('lat', 10, 6).nullable()
-      table.float('lng', 10, 6).nullable()
+      table.float('lat', 10, 6).default(-6.175110)
+      table.float('lng', 10, 6).default(106.865036)
       table.timestamps()
     })
   }

@@ -14,8 +14,8 @@ class UniversitySchema extends Schema {
       table.string('description', 250).nullable()
       table.string('province', 50).notNullable()
       table.string('city', 50).notNullable()
-      table.float('lat', 10, 6).nullable()
-      table.float('lng', 10, 6).nullable()
+      table.float('lat', 10, 6).default(-6.175110)
+      table.float('lng', 10, 6).default(106.865036)
       table.timestamps()
     })
   }
