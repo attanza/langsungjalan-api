@@ -59,6 +59,7 @@ class ProductController {
     let body = request.only(['code', 'name', 'measurement', 'price', 'description'])
     const data = await Product.create(body)
     await RedisHelper.delete('Product_*')
+    await RedisHelper.delete('Dashboard_Data')
     const activity = `Add new Product '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -103,6 +104,7 @@ class ProductController {
     const activity = `Update Product '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('Product_*')
+    await RedisHelper.delete('Dashboard_Data')
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -120,6 +122,7 @@ class ProductController {
     const activity = `Delete Product '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('Product_*')
+    await RedisHelper.delete('Dashboard_Data')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

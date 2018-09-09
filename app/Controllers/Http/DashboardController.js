@@ -14,12 +14,17 @@ class DashboardController {
       return response.status(200).send(cached)
     }
 
-    const dashboard = await Dashboard.first()
+    const dashboard = await this.storeDashboardData()
     await RedisHelper.set(redisKey, dashboard)
     return response.status(200).send(dashboard)
   }
 
   async store({ response }) {
+    const dashboard = await this.storeDashboardData()
+    return response.status(200).send(dashboard)
+  }
+
+  async storeDashboardData() {
     const totalMarketings = await User.query()
       .whereHas('roles', builder => {
         builder.where('slug', 'marketing')
@@ -43,7 +48,7 @@ class DashboardController {
 
     const redisKey = 'Dashboard_Data'
     await RedisHelper.delete(redisKey)
-    return response.status(200).send(dashboard)
+    return dashboard
   }
 }
 

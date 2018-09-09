@@ -57,6 +57,7 @@ class UniversityController {
     let body = request.only(fillable)
     const data = await University.create(body)
     await RedisHelper.delete('University_*')
+    await RedisHelper.delete('Dashboard_Data')
     const activity = `Add new University '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -100,6 +101,7 @@ class UniversityController {
     const activity = `Update University '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('University_*')
+    await RedisHelper.delete('Dashboard_Data')
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -119,6 +121,7 @@ class UniversityController {
     const activity = `Delete University '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('University_*')
+    await RedisHelper.delete('Dashboard_Data')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
