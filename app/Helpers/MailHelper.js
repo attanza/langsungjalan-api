@@ -15,6 +15,15 @@ class MailHelper {
         .subject('Forgot Password Request')
     })
   }
+
+  async sendEveryMenutes(user) {
+    await Mail.send('emails.every_menutes', user, (message) => {
+      message
+        .to(user.email)
+        .from(from)
+        .subject('Every Menutes Mail')
+    })
+  }
 }
 
 module.exports = new MailHelper()

@@ -22,7 +22,8 @@ const providers = [
   '@adonisjs/drive/providers/DriveProvider',
   '@adonisjs/mail/providers/MailProvider',
   '@adonisjs/session/providers/SessionProvider',
-  'adonis-acl/providers/AclProvider'
+  'adonis-acl/providers/AclProvider',
+  'adonis-scheduler/providers/SchedulerProvider'
 ]
 
 /*
@@ -38,6 +39,7 @@ const aceProviders = [
   '@adonisjs/lucid/providers/MigrationsProvider',
   '@adonisjs/vow/providers/VowProvider',
   'adonis-acl/providers/CommandsProvider',
+  'adonis-scheduler/providers/CommandsProvider'
 ]
 
 /*
@@ -55,6 +57,7 @@ const aceProviders = [
 const aliases = {
   Role: 'Adonis/Acl/Role',
   Permission: 'Adonis/Acl/Permission',
+  Scheduler: 'Adonis/Addons/Scheduler'
 }
 
 /*

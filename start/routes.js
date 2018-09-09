@@ -25,8 +25,17 @@ Route
  * Auth:jwt Route
  */
 
+
+
 Route
   .group(() => {
+
+  /**
+   * Dashboard
+   */
+
+    Route.get('dashboard-data', 'DashboardController.index')
+
     /**
      * Users
      */

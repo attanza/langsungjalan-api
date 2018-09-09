@@ -2,6 +2,9 @@
 
 const Server = use('Server')
 
+const Scheduler = use('Adonis/Addons/Scheduler')
+Scheduler.run()
+
 /*
 |--------------------------------------------------------------------------
 | Global Middleware
