@@ -35,6 +35,8 @@ Route
    */
 
     Route.get('dashboard-data', 'DashboardController.index')
+    Route.post('dashboard-data', 'DashboardController.store')
+
 
     /**
      * Users
