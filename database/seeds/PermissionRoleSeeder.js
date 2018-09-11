@@ -2,13 +2,18 @@
 
 const Database = use('Database')
 
+const resources = [
+  'User', 'Role', 'Permission', 'University', 'Product', 'Schedulle', 'StudyName', 'StudyProgram', 'StudyYear',
+  'Marketing', 'MarketingAction', 'Supervisor', 'MarketingReport'
+]
+
 class PermissionRoleSeeder {
   async run() {
     await Database.raw('SET FOREIGN_KEY_CHECKS = 0;')
     await Database.table('permission_role').truncate()
     await Database.table('role_user').truncate()
 
-    for (let i = 1; i < 49; i++) {
+    for (let i = 1; i < (resources.length * 4) + 1; i++) {
       await Database.table('permission_role').insert({
         role_id: 1,
         permission_id: i
