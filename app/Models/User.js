@@ -30,7 +30,7 @@ class User extends Model {
 
   getPhoto() {
     if (this.photo) {
-      return `${Env.get('APP_URL')}${this.photo}`
+      return `${getBaseUrl}${this.photo}`
     } else return ''
   }
 
@@ -48,3 +48,12 @@ class User extends Model {
 }
 
 module.exports = User
+
+function getBaseUrl() {
+  let environment = Env.get('NODE_ENV')
+  if(environment === 'production') {
+    return Env.get('PRODUCTION_APP_URL')
+  } else {
+    return Env.get('APP_URL')
+  }
+}
