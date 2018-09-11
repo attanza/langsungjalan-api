@@ -30,7 +30,7 @@ class User extends Model {
 
   getPhoto() {
     if (this.photo) {
-      return `${getBaseUrl}${this.photo}`
+      return `${getBaseUrl()}${this.photo}`
     } else return ''
   }
 
