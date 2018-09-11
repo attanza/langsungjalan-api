@@ -172,6 +172,24 @@ Route
       ]))
 
     /**
+     * Marketing Reports
+     */
+
+    Route
+      .resource('marketing-reports', 'MarketingActionController')
+      .apiOnly()
+      .validator(new Map([
+        [['marketing-reports.store'], ['StoreMarketingReport']],
+        [['marketing-reports.update'], ['StoreMarketingReport']],
+        [['marketing-reports.index'], ['List']]]))
+      .middleware(new Map([
+        [['marketing-reports.index'], ['can:read_marketing_report']],
+        [['marketing-reports.store'], ['can:create_marketing_report']],
+        [['marketing-reports.update'], ['can:update_marketing_report']],
+        [['marketing-reports.destroy'], ['can:delete_marketing_report']]
+      ]))
+
+    /**
      * Universities
      */
 
