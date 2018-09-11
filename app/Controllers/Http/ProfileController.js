@@ -89,7 +89,6 @@ class ProfileController {
     if (!photo) {
       return response.status(400).send(ResponseParser.errorResponse('Photo is not an image file'))
     }
-
     const name = `${new Date().getTime()}.${photo.subtype}`
 
     await photo.move(Helpers.publicPath('img/users'), { name })

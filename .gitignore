@@ -11,3 +11,4 @@ langsungjalan_firebase.json
 
 # The development sqlite file
 database/development.sqlite
+public/img
