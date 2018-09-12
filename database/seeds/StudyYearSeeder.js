@@ -9,7 +9,7 @@ class StudyYearSeeder {
     await StudyYear.truncate()
     await Factory
       .model('App/Models/StudyYear')
-      .createMany(25)
+      .createMany(3)
   }
 }
 

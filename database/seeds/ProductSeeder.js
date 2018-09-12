@@ -8,7 +8,7 @@ class ProductSeeder {
     await Product.truncate()
     await Factory
       .model('App/Models/Product')
-      .createMany(25)
+      .createMany(3)
   }
 }
 

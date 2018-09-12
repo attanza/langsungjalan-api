@@ -1,15 +1,20 @@
 'use strict'
 
-const Factory = use('Factory')
 const MarketingAction = use('App/Models/MarketingAction')
+const actions = ['Atur Jadwal', 'Presentasi', 'Bagi Paket']
 
 class MarketingActionSeeder {
   async run () {
     await MarketingAction.truncate()
-    await Factory
-      .model('App/Models/MarketingAction')
-      .createMany(25)
+    for (let i = 0; i < actions.length; i++) {
+      await MarketingAction.create({
+        name: actions[i]
+      })
+    }
   }
 }
 
 module.exports = MarketingActionSeeder
+
+
+// Atur jadwal, presentasi, bagi paket

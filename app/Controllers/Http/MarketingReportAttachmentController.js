@@ -5,7 +5,7 @@ const MarketingReport = use('App/Models/MarketingReport')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 const Helpers = use('Helpers')
-
+const Drive = use('Drive')
 const fillable = ['marketing_report_id', 'caption', 'tags']
 
 /**
@@ -20,34 +20,9 @@ class MarketingReportAttachmentController {
    * Get List of MarketingReportAttachments
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
+    let data = await this.marketingReportQuery(request)
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-
-    if (search && search != '') {
-      const data = await MarketingReportAttachment.query()
-        .where('url', 'like', `%${search}%`)
-        .orWhere('caption', 'like', `%${search}%`)
-        .orWhere('tags', 'like', `%${search}%`)
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
-    } else {
-      let redisKey = `MarketingReportAttachment_${page}_${limit}`
-      let cached = await RedisHelper.get(redisKey)
-
-      if (cached != null) {
-        return response.status(200).send(cached)
-      }
-
-      const data = await MarketingReportAttachment.query().orderBy('id').paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-
-      await RedisHelper.set(redisKey, parsed)
-
-      return response.status(200).send(parsed)
-    }
+    return response.status(200).send(data)
   }
 
   /**
@@ -142,11 +117,77 @@ class MarketingReportAttachmentController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+
+    let exists = await Drive.exists(Helpers.publicPath(data.url))
+    if(exists) {
+      await Drive.delete(Helpers.publicPath(data.url))
+    }
     const activity = `Delete MarketingReportAttachment '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('MarketingReportAttachment_*')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
+  }
+
+  async marketingReportQuery(request) {
+    let { page, limit, search, marketing_report_id } = request.get()
+
+    if (!page) page = 1
+    if (!limit) limit = 10
+
+    if(marketing_report_id) {
+      if (search && search != '') {
+        const data = await MarketingReportAttachment.query()
+          .where('url', 'like', `%${search}%`)
+          .orWhere('caption', 'like', `%${search}%`)
+          .orWhere('tags', 'like', `%${search}%`)
+          .where('marketing_report_id', parseInt(marketing_report_id))
+          .paginate(parseInt(page), parseInt(limit))
+        let parsed = ResponseParser.apiCollection(data.toJSON())
+        return parsed
+      } else {
+        let redisKey = `MarketingReportAttachment_${page}_${limit}_MarketingReportId_${marketing_report_id}`
+        let cached = await RedisHelper.get(redisKey)
+
+        if (cached != null) {
+          return cached
+        }
+
+        const data = await MarketingReportAttachment.query()
+          .where('marketing_report_id', parseInt(marketing_report_id))
+          .orderBy('id')
+          .paginate(parseInt(page), parseInt(limit))
+        let parsed = ResponseParser.apiCollection(data.toJSON())
+
+        await RedisHelper.set(redisKey, parsed)
+
+        return parsed
+      }
+    } else {
+      if (search && search != '') {
+        const data = await MarketingReportAttachment.query()
+          .where('url', 'like', `%${search}%`)
+          .orWhere('caption', 'like', `%${search}%`)
+          .orWhere('tags', 'like', `%${search}%`)
+          .paginate(parseInt(page), parseInt(limit))
+        let parsed = ResponseParser.apiCollection(data.toJSON())
+        return parsed
+      } else {
+        let redisKey = `MarketingReportAttachment_${page}_${limit}`
+        let cached = await RedisHelper.get(redisKey)
+
+        if (cached != null) {
+          return cached
+        }
+
+        const data = await MarketingReportAttachment.query().orderBy('id').paginate(parseInt(page), parseInt(limit))
+        let parsed = ResponseParser.apiCollection(data.toJSON())
+
+        await RedisHelper.set(redisKey, parsed)
+
+        return parsed
+      }
+    }
   }
 }
 

@@ -84,3 +84,29 @@ Factory.blueprint('App/Models/MarketingAction', (faker) => {
     description: faker.sentence({ words: 4 }),
   }
 })
+
+Factory.blueprint('App/Models/MarketingReport', (faker) => {
+  return {
+    marketing_id: faker.integer({ min: 1, max: 3 }),
+    schedulle_id: faker.integer({ min: 1, max: 3 }),
+    marketing_action_id: faker.integer({ min: 1, max: 3 }),
+    method: 'By Meeting',
+    contact_person: faker.name(),
+    contact_person_phone: faker.phone(),
+    count_year: faker.integer({ min: 2015, max: 2020 }).toString(),
+    count_class: faker.integer({ min: 5, max: 8 }),
+    average_students: faker.integer({ min: 20, max: 30 }),
+    count_attendances: faker.integer({ min: 15, max: 25}),
+    count_student_dps: faker.integer({ min: 15, max: 20}),
+    count_shared_packages: faker.integer({ min: 20, max: 30}),
+    count_orders: faker.integer({ min: 10, max: 15}),
+    count_cancel_order: faker.integer({ min: 1, max: 5}),
+    count_dps: faker.integer({ min: 10, max: 15}),
+    schedulle: faker.date({year: 2018}),
+    terms: faker.sentence({ words: 4 }),
+    result: faker.sentence({ words: 2 }),
+    lat: faker.latitude(),
+    lng: faker.longitude(),
+    description: faker.sentence({ words: 4 }),
+  }
+})

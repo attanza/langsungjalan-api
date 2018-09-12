@@ -8,7 +8,7 @@ class SchedulleSeeder {
     await Schedulle.truncate()
     await Factory
       .model('App/Models/Schedulle')
-      .createMany(25)
+      .createMany(3)
   }
 }
 

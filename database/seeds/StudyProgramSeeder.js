@@ -8,7 +8,7 @@ class StudyProgramSeeder {
     await StudyProgram.truncate()
     await Factory
       .model('App/Models/StudyProgram')
-      .createMany(25)
+      .createMany(3)
   }
 }
 

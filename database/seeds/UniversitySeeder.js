@@ -18,7 +18,7 @@ class UniversitySeeder {
     await University.truncate()
     await Factory
       .model('App/Models/University')
-      .createMany(25)
+      .createMany(3)
   }
 }
 

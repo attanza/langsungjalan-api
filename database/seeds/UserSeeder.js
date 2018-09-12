@@ -15,6 +15,7 @@ class UserSeeder {
     await Database.table('users').truncate()
     await Database.table('tokens').truncate()
     await Database.table('activations').truncate()
+    await Database.table('activities').truncate()
     await Database.table('marketing_supervisor').truncate()
     await Database.table('role_user').truncate()
 
