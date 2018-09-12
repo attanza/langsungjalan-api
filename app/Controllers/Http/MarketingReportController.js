@@ -42,57 +42,9 @@ class MarketingReportController {
    * Get List of MarketingReports
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
+    let data = await this.marketingReportQuery(request)
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-
-    if (search && search != '') {
-      const data = await MarketingReport.query()
-        .with('marketing')
-        .with('action')
-        .with('schedulle')
-        .where('method', 'like', `%${search}%`)
-        .orWhere('contact_person', 'like', `%${search}%`)
-        .orWhere('contact_person_phone', 'like', `%${search}%`)
-        .orWhere('count_year', 'like', `%${search}%`)
-        .orWhere('count_class', 'like', `%${search}%`)
-        .orWhere('average_students', 'like', `%${search}%`)
-        .orWhere('count_attendances', 'like', `%${search}%`)
-        .orWhere('count_student_dps', 'like', `%${search}%`)
-        .orWhere('count_shared_packages', 'like', `%${search}%`)
-        .orWhere('count_orders', 'like', `%${search}%`)
-        .orWhere('count_cancel_order', 'like', `%${search}%`)
-        .orWhere('count_dps', 'like', `%${search}%`)
-        .orWhere('count_payments', 'like', `%${search}%`)
-        .orWhere('schedulle', 'like', `%${search}%`)
-        .orWhere('terms', 'like', `%${search}%`)
-        .orWhere('result', 'like', `%${search}%`)
-        .orWhere('description', 'like', `%${search}%`)
-        .orderBy('created_at', 'desc')
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
-    } else {
-      let redisKey = `MarketingReport_${page}_${limit}`
-      let cached = await RedisHelper.get(redisKey)
-
-      if (cached != null) {
-        return response.status(200).send(cached)
-      }
-
-      const data = await MarketingReport.query()
-        .with('marketing')
-        .with('action')
-        .with('schedulle')
-        .orderBy('created_at', 'desc')
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-
-      await RedisHelper.set(redisKey, parsed)
-
-      return response.status(200).send(parsed)
-    }
+    return response.status(200).send(data)
   }
 
   /**
@@ -170,6 +122,113 @@ class MarketingReportController {
     await RedisHelper.delete('MarketingReport_*')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
+  }
+
+  async marketingReportQuery(request) {
+    let { page, limit, search, marketing_id } = request.get()
+
+    if (!page) page = 1
+    if (!limit) limit = 10
+
+    if(marketing_id) {
+      if (search && search != '') {
+        const data = await MarketingReport.query()
+          .with('marketing')
+          .with('action')
+          .with('schedulle')
+          .where('method', 'like', `%${search}%`)
+          .orWhere('contact_person', 'like', `%${search}%`)
+          .orWhere('contact_person_phone', 'like', `%${search}%`)
+          .orWhere('count_year', 'like', `%${search}%`)
+          .orWhere('count_class', 'like', `%${search}%`)
+          .orWhere('average_students', 'like', `%${search}%`)
+          .orWhere('count_attendances', 'like', `%${search}%`)
+          .orWhere('count_student_dps', 'like', `%${search}%`)
+          .orWhere('count_shared_packages', 'like', `%${search}%`)
+          .orWhere('count_orders', 'like', `%${search}%`)
+          .orWhere('count_cancel_order', 'like', `%${search}%`)
+          .orWhere('count_dps', 'like', `%${search}%`)
+          .orWhere('count_payments', 'like', `%${search}%`)
+          .orWhere('schedulle', 'like', `%${search}%`)
+          .orWhere('terms', 'like', `%${search}%`)
+          .orWhere('result', 'like', `%${search}%`)
+          .orWhere('description', 'like', `%${search}%`)
+          .where('marketing_id', parseInt(marketing_id))
+          .orderBy('created_at', 'desc')
+          .paginate(parseInt(page), parseInt(limit))
+        let parsed = ResponseParser.apiCollection(data.toJSON())
+        return parsed
+      } else {
+        let redisKey = `MarketingReport_${page}_${limit}_MarketingID_${marketing_id}`
+        let cached = await RedisHelper.get(redisKey)
+
+        if (cached != null) {
+          return cached
+        }
+
+        const data = await MarketingReport.query()
+          .with('marketing')
+          .with('action')
+          .with('schedulle')
+          .where('marketing_id', parseInt(marketing_id))
+          .orderBy('created_at', 'desc')
+          .paginate(parseInt(page), parseInt(limit))
+        let parsed = ResponseParser.apiCollection(data.toJSON())
+
+        await RedisHelper.set(redisKey, parsed)
+
+        return parsed
+      }
+    } else {
+      if (search && search != '') {
+        const data = await MarketingReport.query()
+          .with('marketing')
+          .with('action')
+          .with('schedulle')
+          .where('method', 'like', `%${search}%`)
+          .orWhere('contact_person', 'like', `%${search}%`)
+          .orWhere('contact_person_phone', 'like', `%${search}%`)
+          .orWhere('count_year', 'like', `%${search}%`)
+          .orWhere('count_class', 'like', `%${search}%`)
+          .orWhere('average_students', 'like', `%${search}%`)
+          .orWhere('count_attendances', 'like', `%${search}%`)
+          .orWhere('count_student_dps', 'like', `%${search}%`)
+          .orWhere('count_shared_packages', 'like', `%${search}%`)
+          .orWhere('count_orders', 'like', `%${search}%`)
+          .orWhere('count_cancel_order', 'like', `%${search}%`)
+          .orWhere('count_dps', 'like', `%${search}%`)
+          .orWhere('count_payments', 'like', `%${search}%`)
+          .orWhere('schedulle', 'like', `%${search}%`)
+          .orWhere('terms', 'like', `%${search}%`)
+          .orWhere('result', 'like', `%${search}%`)
+          .orWhere('description', 'like', `%${search}%`)
+          .orderBy('created_at', 'desc')
+          .paginate(parseInt(page), parseInt(limit))
+        let parsed = ResponseParser.apiCollection(data.toJSON())
+        return parsed
+      } else {
+        let redisKey = `MarketingReport_${page}_${limit}`
+        let cached = await RedisHelper.get(redisKey)
+
+        if (cached != null) {
+          return cached
+        }
+
+        const data = await MarketingReport.query()
+          .with('marketing')
+          .with('action')
+          .with('schedulle')
+          .orderBy('created_at', 'desc')
+          .paginate(parseInt(page), parseInt(limit))
+        let parsed = ResponseParser.apiCollection(data.toJSON())
+
+        await RedisHelper.set(redisKey, parsed)
+
+        return parsed
+      }
+    }
+
+
   }
 }
 
