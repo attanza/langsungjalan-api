@@ -49,6 +49,9 @@ class MarketingReportController {
 
     if (search && search != '') {
       const data = await MarketingReport.query()
+        .with('marketing')
+        .with('action')
+        .with('schedulle')
         .where('method', 'like', `%${search}%`)
         .orWhere('contact_person', 'like', `%${search}%`)
         .orWhere('contact_person_phone', 'like', `%${search}%`)
@@ -66,6 +69,7 @@ class MarketingReportController {
         .orWhere('terms', 'like', `%${search}%`)
         .orWhere('result', 'like', `%${search}%`)
         .orWhere('description', 'like', `%${search}%`)
+        .orderBy('created_at', 'desc')
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
@@ -77,7 +81,12 @@ class MarketingReportController {
         return response.status(200).send(cached)
       }
 
-      const data = await MarketingReport.query().orderBy('name').paginate(parseInt(page), parseInt(limit))
+      const data = await MarketingReport.query()
+        .with('marketing')
+        .with('action')
+        .with('schedulle')
+        .orderBy('created_at', 'desc')
+        .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
       await RedisHelper.set(redisKey, parsed)
@@ -94,8 +103,9 @@ class MarketingReportController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await MarketingReport.create(body)
+    await data.loadMany(['marketing', 'schedulle', 'action'])
     await RedisHelper.delete('MarketingReport_*')
-    const activity = `Add new MarketingReport '${data.name}'`
+    const activity = `Add new MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
@@ -116,6 +126,7 @@ class MarketingReportController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+    await data.loadMany(['marketing', 'schedulle', 'action'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -135,7 +146,8 @@ class MarketingReportController {
     }
     await data.merge(body)
     await data.save()
-    const activity = `Update MarketingReport '${data.name}'`
+    await data.loadMany(['marketing', 'schedulle', 'action'])
+    const activity = `Update MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('MarketingReport_*')
     let parsed = ResponseParser.apiUpdated(data.toJSON())

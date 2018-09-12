@@ -7,7 +7,7 @@ class MarketingReportAttachmentSchema extends Schema {
     this.create('marketing_report_attachments', (table) => {
       table.increments()
       table.integer('marketing_report_id').unsigned()
-      table.string('url').notNullable()
+      table.string('url')
       table.string('caption')
       table.string('tags')
       table.timestamps()

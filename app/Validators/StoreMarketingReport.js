@@ -40,9 +40,9 @@ class StoreMarketingReport {
       marketing_id: 'toInt',
       schedulle_id: 'toInt',
       marketing_action_id: 'toInt',
-      method: 'trim|escape',
-      contact_person: 'trim|escape',
-      contact_person_phone: 'trim|escape',
+      method: 'escape',
+      contact_person: 'escape',
+      contact_person_phone: 'escape',
       count_year: 'toInt',
       count_class: 'toInt',
       average_students: 'toInt',
@@ -53,10 +53,9 @@ class StoreMarketingReport {
       count_cancel_order: 'toInt',
       count_dps: 'toInt',
       count_payments: 'toInt',
-      schedulle: 'date',
-      terms: 'trim|escape',
-      result: 'trim|escape',
-      description: 'trim|escape',
+      terms: 'escape',
+      result: 'escape',
+      description: 'escape',
     }
   }
 }

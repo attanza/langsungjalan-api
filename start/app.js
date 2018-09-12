@@ -24,6 +24,7 @@ const providers = [
   '@adonisjs/session/providers/SessionProvider',
   'adonis-acl/providers/AclProvider',
   'adonis-scheduler/providers/SchedulerProvider',
+  '@adonisjs/drive/providers/DriveProvider'
 ]
 
 /*

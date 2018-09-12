@@ -2,6 +2,7 @@
 
 const Model = use('Model')
 const Env = use('Env')
+
 class User extends Model {
   static boot() {
     super.boot()
@@ -19,10 +20,6 @@ class User extends Model {
       '@provider:Adonis/Acl/HasPermission'
     ]
   }
-
-  // roles() {
-  //   return this.belongsToMany('App/Models/Role')
-  // }
 
   tokens() {
     return this.hasMany('App/Models/Token')
