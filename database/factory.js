@@ -29,8 +29,8 @@ Factory.blueprint('App/Models/University', (faker) => {
 
 Factory.blueprint('App/Models/StudyProgram', (faker) => {
   return {
-    university_id: faker.integer({ min: 1, max: 5 }),
-    study_name_id: faker.integer({ min: 1, max: 5 }),
+    university_id: faker.integer({ min: 1, max: 3 }),
+    study_name_id: faker.integer({ min: 1, max: 3 }),
     email: faker.email(),
     phone: faker.phone(),
     address: faker.address(),
@@ -43,9 +43,9 @@ Factory.blueprint('App/Models/StudyProgram', (faker) => {
 
 Factory.blueprint('App/Models/Schedulle', (faker) => {
   return {
-    marketing_id: faker.integer({ min: 1, max: 5 }),
-    study_id: faker.integer({ min: 1, max: 5 }),
-    marketing_action_id: faker.integer({ min: 1, max: 5 }),
+    marketing_id: faker.integer({ min: 1, max: 3 }),
+    study_id: faker.integer({ min: 1, max: 3 }),
+    marketing_action_id: faker.integer({ min: 1, max: 3 }),
     start_date: faker.date({year: 2018}),
     end_date: faker.date({year: 2018}),
     description: faker.sentence({ words: 4 }),
@@ -71,7 +71,7 @@ Factory.blueprint('App/Models/StudyName', (faker) => {
 
 Factory.blueprint('App/Models/StudyYear', (faker) => {
   return {
-    study_program_id: faker.integer({ min: 1, max: 5 }),
+    study_program_id: faker.integer({ min: 1, max: 3 }),
     year: faker.integer({ min: 2015, max: 2020 }).toString(),
     class_per_year: faker.integer({ min: 8, max: 12 }),
     students_per_class: faker.integer({ min: 25, max: 40 }),
