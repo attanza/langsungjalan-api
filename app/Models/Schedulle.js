@@ -19,6 +19,10 @@ class Schedulle extends Model {
   action() {
     return this.belongsTo('App/Models/MarketingAction')
   }
+
+  report() {
+    return this.hasOne('App/Models/MarketingReport')
+  }
 }
 
 module.exports = Schedulle

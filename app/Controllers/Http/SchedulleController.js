@@ -115,6 +115,11 @@ class SchedulleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+    await data.load('report')
+    let dataJson = data.toJSON()
+    if(dataJson.report) {
+      return response.status(400).send(ResponseParser.errorResponse('This Schedulle has report, cannot be deleted'))
+    }
     const activity = `Delete Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('Schedulle*')

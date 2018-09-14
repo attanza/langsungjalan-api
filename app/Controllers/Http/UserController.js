@@ -46,8 +46,8 @@ class UserController {
     let { roles } = request.post()
     if (roles) {
       await this.attachRoles(data, roles)
+      await data.load('roles')
     }
-    await data.load('roles')
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete('User_*')
     const activity = `Add new User '${data.name}'`
