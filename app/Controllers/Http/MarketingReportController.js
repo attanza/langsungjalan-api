@@ -20,7 +20,7 @@ const fillable = [
   'count_cancel_order',
   'count_dps',
   'count_payments',
-  'schedulle',
+  'schedulle_date',
   'terms',
   'result',
   'lat',

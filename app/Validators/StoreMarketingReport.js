@@ -19,7 +19,7 @@ class StoreMarketingReport {
       count_cancel_order: 'integer',
       count_dps: 'integer',
       count_payments: 'integer',
-      schedulle: 'date',
+      schedulle_date: 'date',
       terms: 'string',
       result: 'string',
       lat: 'number',

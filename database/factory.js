@@ -102,7 +102,7 @@ Factory.blueprint('App/Models/MarketingReport', (faker) => {
     count_orders: faker.integer({ min: 10, max: 15}),
     count_cancel_order: faker.integer({ min: 1, max: 5}),
     count_dps: faker.integer({ min: 10, max: 15}),
-    schedulle: faker.date({year: 2018}),
+    schedulle_date: faker.date({year: 2018}),
     terms: faker.sentence({ words: 4 }),
     result: faker.sentence({ words: 2 }),
     lat: faker.latitude(),

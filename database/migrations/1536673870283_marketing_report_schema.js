@@ -22,7 +22,7 @@ class MarketingReportSchema extends Schema {
       table.integer('count_cancel_order')
       table.integer('count_dps')
       table.integer('count_payments')
-      table.dateTime('schedulle')
+      table.dateTime('schedulle_date')
       table.text('terms')
       table.string('result', 30)
       table.float('lat', 10, 6).default(-6.175110)

@@ -3,6 +3,10 @@
 const Model = use('Model')
 
 class MarketingReport extends Model {
+  static get dates () {
+    return super.dates.concat(['schedulle_date'])
+  }
+
   marketing() {
     return this.belongsTo('App/Models/User', 'marketing_id')
   }
