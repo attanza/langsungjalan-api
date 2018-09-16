@@ -32,6 +32,7 @@
     "@adonisjs/vow": "^1.0.15",
     "adonis-acl": "^1.1.0",
     "adonis-scheduler": "^3.0.2",
+    "adonis-spreadsheet": "^1.0.1",
     "adonis-swagger-jsdoc": "^1.0.1",
     "change-case": "^3.0.2",
     "firebase-admin": "^6.0.0",

@@ -3,6 +3,9 @@
 const Route = use('Route')
 const { RedisHelper } = use('App/Helpers')
 
+const SpreadSheet = use('SpreadSheet')
+const User = use('App/Models/User')
+
 Route.get('/docs', 'DocumentController.index')
 Route.get('/', 'DocumentController.intro')
 
@@ -16,6 +19,9 @@ Route
     Route.post('/login', 'LoginController.login').validator('Login')
     Route.post('/refresh', 'LoginController.refresh').middleware(['auth:jwt'])
     Route.post('/reset', 'PasswordController.postReset').validator('Auth/GetForgot')
+
+
+
   })
   .prefix('api/v1')
   .namespace('Auth')
@@ -24,8 +30,6 @@ Route
 /**
  * Auth:jwt Route
  */
-
-
 
 Route
   .group(() => {
@@ -316,6 +320,15 @@ Route
      * For Combo Box / Select Box
      */
     Route.get('combo-data', 'ComboDataController.index')
+
+    /**
+     * Export Data
+     */
+
+    Route.get('export-data', 'DataExportController.index').validator('ExportData')
+
+
+
   })
   .prefix('api/v1')
   .formats(['json'])
