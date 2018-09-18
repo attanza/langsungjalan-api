@@ -5,6 +5,12 @@ const changeCase = require('change-case')
 const User = use('App/Models/User')
 const University = use('App/Models/University')
 const StudyProgram = use('App/Models/StudyProgram')
+const StudyName = use('App/Models/StudyName')
+const Role = use('App/Models/Role')
+const MarketingAction = use('App/Models/MarketingAction')
+const Permission = use('App/Models/Permission')
+const Product = use('App/Models/Product')
+
 const moment = require('moment')
 
 class DataExportController {
@@ -39,6 +45,26 @@ class DataExportController {
 
       case 'StudyProgram':
         data = await this.getStudyPrograms(sort_by, sort_mode, limit, range_by, range_start, range_end)
+        break
+
+      case 'StudyName':
+        data = await this.getStudyNames(sort_by, sort_mode, limit, range_by, range_start, range_end)
+        break
+
+      case 'MarketingAction':
+        data = await this.getMarketingActions(sort_by, sort_mode, limit, range_by, range_start, range_end)
+        break
+
+      case 'Role':
+        data = await this.getRoles(sort_by, sort_mode, limit, range_by, range_start, range_end)
+        break
+
+      case 'Permission':
+        data = await this.getPermissions(sort_by, sort_mode, limit, range_by, range_start, range_end)
+        break
+
+      case 'Product':
+        data = await this.getProducts(sort_by, sort_mode, limit, range_by, range_start, range_end)
         break
 
       default:
@@ -139,6 +165,51 @@ class DataExportController {
       output.push(data)
     })
     return output
+  }
+
+  async getStudyNames(sort_by, sort_mode, limit, range_by, range_start, range_end) {
+    let dbData = await StudyName.query()
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+    return dbData
+  }
+
+  async getMarketingActions(sort_by, sort_mode, limit, range_by, range_start, range_end) {
+    let dbData = await MarketingAction.query()
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+    return dbData
+  }
+
+  async getRoles(sort_by, sort_mode, limit, range_by, range_start, range_end) {
+    let dbData = await Role.query()
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+    return dbData
+  }
+
+  async getPermissions(sort_by, sort_mode, limit, range_by, range_start, range_end) {
+    let dbData = await Permission.query()
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+    return dbData
+  }
+
+  async getProducts(sort_by, sort_mode, limit, range_by, range_start, range_end) {
+    let dbData = await Product.query()
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+    return dbData
   }
 }
 
