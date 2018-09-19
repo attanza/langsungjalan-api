@@ -1,26 +1,16 @@
 'use strict'
 
 const Route = use('Route')
-const { RedisHelper } = use('App/Helpers')
-
-const SpreadSheet = use('SpreadSheet')
-const User = use('App/Models/User')
+const { RedisHelper, ResponseParser } = use('App/Helpers')
 
 Route.get('/docs', 'DocumentController.index')
 Route.get('/', 'DocumentController.intro')
 
 Route
   .group(() => {
-    Route.get('redis/clear', async ({ response }) => {
-      await RedisHelper.clear()
-      return response.send('Redis succesfully cleared')
-    })
-
     Route.post('/login', 'LoginController.login').validator('Login')
     Route.post('/refresh', 'LoginController.refresh').middleware(['auth:jwt'])
     Route.post('/reset', 'PasswordController.postReset').validator('Auth/GetForgot')
-
-
 
   })
   .prefix('api/v1')
@@ -34,7 +24,16 @@ Route
 Route
   .group(() => {
 
-  /**
+    /**
+     * Redis
+     */
+
+    Route.get('redis/clear', async ({ response }) => {
+      await RedisHelper.clear()
+      return response.status(200).send(ResponseParser.successResponse('Redis Clear'))
+    }).middleware(['can:clear_redis'])
+
+    /**
    * Dashboard
    */
 

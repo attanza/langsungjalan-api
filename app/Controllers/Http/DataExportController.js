@@ -124,45 +124,44 @@ class DataExportController {
       .orderBy(sort_by, sort_mode)
       .limit(parseInt(limit))
       .fetch()
+
     return dbData
   }
 
   async getStudyPrograms(sort_by, sort_mode, limit, range_by, range_start, range_end) {
+    console.log(sort_by, sort_mode, limit, range_by, range_start, range_end) //eslint-disable-line
     let dbData = await StudyProgram.query()
-      .with('university', builder => {
-        builder.select('id', 'name')
-      })
-      .with('studyName', builder => {
-        builder.select('id', 'name')
-      })
+      .with('university')
+      .with('studyName')
       .with('years')
       .whereBetween(range_by,[range_start,range_end])
       .orderBy(sort_by, sort_mode)
       .limit(parseInt(limit))
       .fetch()
 
-      // "id": 2,
-      // "study_program_id": 1,
-      // "year": "2019",
-      // "class_per_year": 12,
-      // "students_per_class": 25,
-
     dbData = dbData.toJSON()
+    console.log('dbData', dbData) //eslint-disable-line
     let output = []
-    dbData.map(d => {
-      // Relation ship Parsing
-      let university = ''
-      let studyName = ''
-      let data = Object.assign({}, d)
-      delete data.university
-      delete data.studyName
+    dbData.forEach(data => {
+      let d = Object.assign({}, data)
+      if(d.university) delete d.university
+      if(data.university) d.university = data.university.name
 
-      if (d.university) university = d.university.name
-      if (d.studyName) studyName = d.studyName.name
+      if(d.studyName) delete d.studyName
+      if(data.studyName) d.studyName = data.studyName.name
 
-      data.university = university
-      data.studyName = studyName
-      output.push(data)
+      if(d.years) delete d.years
+      let years = ''
+      if(data.years) {
+        data.years.map(y => {
+          let year = ''
+          year += `[year: ${y.year}, class_per_year: ${y.class_per_year}, students_per_class: ${y.students_per_class}], `
+          years += year
+        })
+      }
+      d.years = years
+
+      output.push(d)
     })
     return output
   }

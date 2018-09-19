@@ -22,6 +22,18 @@ class PermissionSeeder {
         await Permission.create(body)
       })
     })
+    await this.addOtherPermissions()
+  }
+
+  async addOtherPermissions() {
+    let permissions = ['Clear Redis']
+    permissions.forEach(async (permission) => {
+      let body = {
+        name: changeCase.sentenceCase(permission),
+        slug: changeCase.snakeCase(permission)
+      }
+      await Permission.create(body)
+    })
   }
 }
 
