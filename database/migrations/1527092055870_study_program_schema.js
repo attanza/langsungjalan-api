@@ -6,11 +6,11 @@ class StudyProgramSchema extends Schema {
   up () {
     this.create('study_programs', (table) => {
       table.increments()
-      table.integer('university_id').unsigned()
-      table.integer('study_name_id').unsigned()
+      table.integer('university_id').unsigned().index()
+      table.integer('study_name_id').unsigned().index()
       table.text('address').nullable()
-      table.string('email', 150).unique()
-      table.string('phone', 30).unique()
+      table.string('email', 150).unique().index()
+      table.string('phone', 30).unique().index()
       table.string('contact_person', 50).notNullable()
       table.string('description', 250).nullable()
       table.float('lat', 10, 6).default(-6.175110)

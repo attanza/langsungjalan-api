@@ -6,9 +6,9 @@ class MarketingReportSchema extends Schema {
   up () {
     this.create('marketing_reports', (table) => {
       table.increments()
-      table.integer('marketing_id').unsigned()
-      table.integer('schedulle_id').unsigned()
-      table.integer('marketing_action_id').unsigned()
+      table.integer('marketing_id').unsigned().index()
+      table.integer('schedulle_id').unsigned().index()
+      table.integer('marketing_action_id').unsigned().index()
       table.string('method', 50)
       table.string('contact_person', 50)
       table.string('contact_person_phone', 30)

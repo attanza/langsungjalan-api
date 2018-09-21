@@ -6,7 +6,7 @@ class ActivitySchema extends Schema {
   up () {
     this.create('activities', (table) => {
       table.increments()
-      table.integer('user_id').unsigned()
+      table.integer('user_id').unsigned().index()
       table.string('ip').notNullable()
       table.string('browser').notNullable()
       table.string('activity').notNullable()

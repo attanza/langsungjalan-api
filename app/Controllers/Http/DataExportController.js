@@ -43,6 +43,10 @@ class DataExportController {
         data = await this.getSupervisor(sort_by, sort_mode, limit, range_by, range_start, range_end)
         break
 
+      case 'Marketing':
+        data = await this.getMarketing(sort_by, sort_mode, limit, range_by, range_start, range_end)
+        break
+
       case 'StudyProgram':
         data = await this.getStudyPrograms(sort_by, sort_mode, limit, range_by, range_start, range_end)
         break
@@ -128,8 +132,20 @@ class DataExportController {
     return dbData
   }
 
+  async getMarketing(sort_by, sort_mode, limit, range_by, range_start, range_end) {
+    let dbData = await User.query()
+      .whereHas('roles', builder => {
+        builder.where('slug', 'marketing')
+      })
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+
+    return dbData
+  }
+
   async getStudyPrograms(sort_by, sort_mode, limit, range_by, range_start, range_end) {
-    console.log(sort_by, sort_mode, limit, range_by, range_start, range_end) //eslint-disable-line
     let dbData = await StudyProgram.query()
       .with('university')
       .with('studyName')
@@ -140,7 +156,6 @@ class DataExportController {
       .fetch()
 
     dbData = dbData.toJSON()
-    console.log('dbData', dbData) //eslint-disable-line
     let output = []
     dbData.forEach(data => {
       let d = Object.assign({}, data)

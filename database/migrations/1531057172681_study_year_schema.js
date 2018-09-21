@@ -6,7 +6,7 @@ class StudyYearSchema extends Schema {
   up () {
     this.create('study_years', (table) => {
       table.increments()
-      table.integer('study_program_id').unsigned()
+      table.integer('study_program_id').unsigned().index()
       table.string('year', 5).notNullable()
       table.integer('class_per_year').notNullable()
       table.integer('students_per_class').notNullable()
