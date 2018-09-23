@@ -3,25 +3,48 @@
 const StudyProgram = use('App/Models/StudyProgram')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
-const fillable = ['university_id', 'study_name_id', 'address', 'email', 'phone', 'contact_person', 'lat', 'lng']
+const fillable = [
+  'university_id',
+  'study_name_id',
+  'address',
+  'email',
+  'phone',
+  'contact_person',
+  'lat',
+  'lng'
+]
 /**
  * StudyProgramController
  *
  */
 
 class StudyProgramController {
-
   /**
    * Index
    * Get List of StudyPrograms
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
+    let {
+      page,
+      limit,
+      search,
+      search_by,
+      search_query,
+      between_date,
+      start_date,
+      end_date,
+      sort_by,
+      sort_mode,
+      university_id,
+      study_name_id
+    } = request.get()
 
     if (!page) page = 1
     if (!limit) limit = 10
+    if (!sort_by) sort_by = 'id'
+    if (!sort_mode) sort_mode = 'desc'
 
-    if (search && search != '') {
+    if(search && search != '') {
       const data = await StudyProgram.query()
         .with('university')
         .with('studyName')
@@ -42,27 +65,49 @@ class StudyProgramController {
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
-    } else {
-      let redisKey = `StudyProgram_${page}_${limit}`
-      let cached = await RedisHelper.get(redisKey)
-
-      if (cached != null) {
-        return response.status(200).send(cached)
-      }
-
-      const data = await StudyProgram.query()
-        .with('university')
-        .with('studyName')
-        .with('years', (builder) => {
-          builder.orderBy('year')
-        })
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-
-      await RedisHelper.set(redisKey, parsed)
-
-      return response.status(200).send(parsed)
     }
+
+    const redisKey = `StudyProgram_${page}${limit}${search_by}${search_query}${between_date}${start_date}${end_date}${sort_by}${sort_mode}${university_id}${study_name_id}`
+
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached) {
+      console.log('from redis') //eslint-disable-line
+      return response.status(200).send(cached)
+    }
+
+    const data = await StudyProgram.query()
+      .with('university')
+      .with('studyName')
+      .with('years', builder => {
+        builder.orderBy('year')
+      })
+      .where(function() {
+        if (search_by && search_query) {
+          return this.where(search_by, 'like', `%${search_query}%`)
+        }
+      })
+      .where(function() {
+        if (university_id) {
+          return this.where('university_id', parseInt(university_id))
+        }
+      })
+      .where(function() {
+        if (study_name_id) {
+          return this.where('study_name_id', parseInt(study_name_id))
+        }
+      })
+      .where(function() {
+        if (between_date && start_date && end_date) {
+          return this.whereBetween(between_date, [start_date, end_date])
+        }
+      })
+      .orderBy(sort_by, sort_mode)
+      .paginate(parseInt(page), parseInt(limit))
+
+    let parsed = ResponseParser.apiCollection(data.toJSON())
+    await RedisHelper.set(redisKey, parsed)
+    return response.status(200).send(parsed)
   }
 
   /**
@@ -80,7 +125,6 @@ class StudyProgramController {
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
-
 
   /**
    * Show
@@ -100,7 +144,7 @@ class StudyProgramController {
     await data.loadMany({
       university: null,
       studyName: null,
-      years: (builder) => builder.orderBy('year')
+      years: builder => builder.orderBy('year')
     })
 
     let parsed = ResponseParser.apiItem(data.toJSON())
@@ -128,7 +172,7 @@ class StudyProgramController {
     await data.loadMany({
       university: null,
       studyName: null,
-      years: (builder) => builder.orderBy('year')
+      years: builder => builder.orderBy('year')
     })
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
