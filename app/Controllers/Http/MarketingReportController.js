@@ -117,7 +117,7 @@ class MarketingReportController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete MarketingReport '${data.name}'`
+    const activity = `Delete MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('MarketingReport_*')
     await data.delete()

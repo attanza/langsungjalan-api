@@ -10,13 +10,14 @@ const Role = use('App/Models/Role')
 const MarketingAction = use('App/Models/MarketingAction')
 const Permission = use('App/Models/Permission')
 const Product = use('App/Models/Product')
+const Activity = use('App/Models/Activity')
 
 const moment = require('moment')
 
 class DataExportController {
   async index({ request, response }) {
     try {
-      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end } = request.get()
+      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id } = request.get()
 
       if (!sort_by) sort_by = 'id'
       if (!sort_mode) sort_mode = 'asc'
@@ -69,6 +70,10 @@ class DataExportController {
 
       case 'Product':
         data = await this.getProducts(sort_by, sort_mode, limit, range_by, range_start, range_end)
+        break
+
+      case 'Activity':
+        data = await this.getActivities(sort_by, sort_mode, limit, range_by, range_start, range_end, user_id)
         break
 
       default:
@@ -224,6 +229,28 @@ class DataExportController {
       .limit(parseInt(limit))
       .fetch()
     return dbData
+  }
+
+  async getActivities(sort_by, sort_mode, limit, range_by, range_start, range_end, user_id){
+    let dbData = await Activity.query()
+      .with('user', builder => {
+        builder.select('id', 'name')
+      })
+      .where('user_id', user_id)
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+    dbData = dbData.toJSON()
+    let output = []
+    dbData.forEach(data => {
+      let d = Object.assign({}, data)
+      delete d.user
+      delete d.user_id
+      if(data.user) d.user = data.user.name
+      output.push(d)
+    })
+    return output
   }
 }
 

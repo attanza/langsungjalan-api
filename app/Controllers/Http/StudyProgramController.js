@@ -118,9 +118,10 @@ class StudyProgramController {
     let body = request.only(fillable)
     const data = await StudyProgram.create(body)
     await RedisHelper.delete('StudyProgram_*')
-    const activity = `Add new StudyProgram '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
     await data.loadMany(['university', 'studyName'])
+    let jsonData = data.toJSON()
+    const activity = `Add new StudyProgram '${jsonData.studyName.name}' for ${jsonData.university.name} university`
+    await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
@@ -165,14 +166,11 @@ class StudyProgramController {
     }
     await data.merge(body)
     await data.save()
-    const activity = `Update StudyProgram '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('StudyProgram_*')
-    await data.loadMany({
-      university: null,
-      studyName: null,
-      years: builder => builder.orderBy('year')
-    })
+    await data.loadMany(['university', 'studyName', 'years'])
+    let jsonData = data.toJSON()
+    const activity = `Add new StudyProgram '${jsonData.studyName.name}' at ${jsonData.university.name} university`
+    await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -189,8 +187,10 @@ class StudyProgramController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+    await data.load('studyName')
+    let jsonData = data.toJSON()
     await data.studyName().dissociate()
-    const activity = `Delete StudyProgram '${data.name}'`
+    const activity = `Delete StudyProgram '${jsonData.studyName.name}' at ${jsonData.university.name} university`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('StudyProgram_*')
     await data.delete()
