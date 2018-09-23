@@ -72,7 +72,6 @@ class StudyProgramController {
     let cached = await RedisHelper.get(redisKey)
 
     if (cached) {
-      console.log('from redis') //eslint-disable-line
       return response.status(200).send(cached)
     }
 

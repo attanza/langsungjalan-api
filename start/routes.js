@@ -40,6 +40,10 @@ Route
     Route.get('dashboard-data', 'DashboardController.index')
     Route.post('dashboard-data', 'DashboardController.store')
 
+    /**
+     * Activities
+     */
+    Route.get('activities', 'ActivityController.index')
 
     /**
      * Users
