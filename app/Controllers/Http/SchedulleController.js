@@ -2,7 +2,7 @@
 
 const Schedulle = use('App/Models/Schedulle')
 const { RedisHelper, ResponseParser, PushNotifications } = use('App/Helpers')
-const { ActivityTraits, SchedulleQueryTrait } = use('App/Traits')
+const { ActivityTraits } = use('App/Traits')
 const moment = require('moment')
 const fillable = [
   'marketing_id',
@@ -27,8 +27,92 @@ class SchedulleController {
    * Get List of Schedulle
    */
   async index({ request, response }) {
-    const data = await SchedulleQueryTrait(request)
-    let parsed = ResponseParser.apiCollection(data)
+    // const data = await SchedulleQueryTrait(request)
+    // let parsed = ResponseParser.apiCollection(data)
+    // return response.status(200).send(parsed)
+
+    let {
+      page,
+      limit,
+      search,
+      search_by,
+      search_query,
+      between_date,
+      start_date,
+      end_date,
+      sort_by,
+      sort_mode,
+      marketing_id,
+      study_id,
+      marketing_action_id
+    } = request.get()
+
+    if (!page) page = 1
+    if (!limit) limit = 10
+    if (!sort_by) sort_by = 'id'
+    if (!sort_mode) sort_mode = 'desc'
+
+    if(search && search != '') {
+      const data = await Schedulle.query()
+        .with('marketing')
+        .with('study.studyName')
+        .with('study.university')
+        .with('action')
+        .where('description', 'like', `%${search}%`)
+        .orWhereHas('marketing', (builder) => {
+          builder.where('name', 'like', `%${search}%`)
+        })
+        .orWhereHas('action', (builder) => {
+          builder.where('name', 'like', `%${search}%`)
+        })
+        .paginate(parseInt(page), parseInt(limit))
+      let parsed = ResponseParser.apiCollection(data.toJSON())
+      return response.status(200).send(parsed)
+    }
+
+    const redisKey = `Schedulle_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_id}${study_id}${marketing_action_id}`
+
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached) {
+      return response.status(200).send(cached)
+    }
+
+    const data = await Schedulle.query()
+      .with('marketing')
+      .with('study.studyName')
+      .with('study.university')
+      .with('action')
+      .where(function() {
+        if (search_by && search_query) {
+          return this.where(search_by, 'like', `%${search_query}%`)
+        }
+      })
+      .where(function() {
+        if (marketing_id) {
+          return this.where('marketing_id', parseInt(marketing_id))
+        }
+      })
+      .where(function() {
+        if (study_id) {
+          return this.where('study_id', parseInt(study_id))
+        }
+      })
+      .where(function() {
+        if (marketing_action_id) {
+          return this.where('marketing_action_id', parseInt(marketing_action_id))
+        }
+      })
+      .where(function() {
+        if (between_date && start_date && end_date) {
+          return this.whereBetween(between_date, [start_date, end_date])
+        }
+      })
+      .orderBy(sort_by, sort_mode)
+      .paginate(parseInt(page), parseInt(limit))
+
+    let parsed = ResponseParser.apiCollection(data.toJSON())
+    await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
   }
 
