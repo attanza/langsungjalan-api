@@ -11,13 +11,15 @@ const MarketingAction = use('App/Models/MarketingAction')
 const Permission = use('App/Models/Permission')
 const Product = use('App/Models/Product')
 const Activity = use('App/Models/Activity')
+const Schedulle = use('App/Models/Schedulle')
+
 
 const moment = require('moment')
 
 class DataExportController {
   async index({ request, response }) {
     try {
-      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id } = request.get()
+      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id, marketing_id } = request.get()
 
       if (!sort_by) sort_by = 'id'
       if (!sort_mode) sort_mode = 'asc'
@@ -74,6 +76,10 @@ class DataExportController {
 
       case 'Activity':
         data = await this.getActivities(sort_by, sort_mode, limit, range_by, range_start, range_end, user_id)
+        break
+
+      case 'Schedulle':
+        data = await this.getSchedulles(sort_by, sort_mode, limit, range_by, range_start, range_end, marketing_id)
         break
 
       default:
@@ -236,7 +242,11 @@ class DataExportController {
       .with('user', builder => {
         builder.select('id', 'name')
       })
-      .where('user_id', user_id)
+      .where(function() {
+        if (user_id) {
+          return this.where(user_id, 'user_id')
+        }
+      })
       .whereBetween(range_by,[range_start,range_end])
       .orderBy(sort_by, sort_mode)
       .limit(parseInt(limit))
@@ -248,6 +258,56 @@ class DataExportController {
       delete d.user
       delete d.user_id
       if(data.user) d.user = data.user.name
+      output.push(d)
+    })
+    return output
+  }
+
+  async getSchedulles(sort_by, sort_mode, limit, range_by, range_start, range_end, marketing_id){
+    let dbData = await Schedulle.query()
+      .with('marketing', builder => {
+        builder.select('id', 'name')
+      })
+      .with('study.university')
+      .with('study.studyName')
+      .with('action', builder => {
+        builder.select('id', 'name')
+      })
+      .where(function() {
+        if (marketing_id) {
+          return this.where(marketing_id, 'marketing_id')
+        }
+      })
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+    dbData = dbData.toJSON()
+    let output = []
+    dbData.forEach(data => {
+      let d = Object.assign({}, data)
+
+      // Schedulle Marketing
+      delete d.marketing
+      delete d.marketing_id
+      if(data.marketing) d.marketing = data.marketing.name
+
+      // Add University Data
+      d.university = data.study.university.name
+
+      // Schedulle Study Program
+      delete d.study
+      delete d.study_id
+      if(data.study) d.study = data.study.studyName.name
+
+      // Schedulle Study Program
+      delete d.action
+      delete d.marketing_action_id
+      if(data.action) d.action = data.action.name
+
+      // Add Address Data
+      d.address = data.study.address
+
       output.push(d)
     })
     return output
