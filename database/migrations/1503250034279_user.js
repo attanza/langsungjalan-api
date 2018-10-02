@@ -14,6 +14,7 @@ class UserSchema extends Schema {
       table.string('description').nullable()
       table.string('photo').nullable()
       table.text('address').nullable()
+      table.string('lang', 10).default('id')
       table.boolean('is_active').default(0).index()
       table.string('verification_token').nullable()
       table.timestamps()
