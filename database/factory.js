@@ -110,3 +110,13 @@ Factory.blueprint('App/Models/MarketingReport', (faker) => {
     description: faker.sentence({ words: 4 }),
   }
 })
+
+Factory.blueprint('App/Models/ContactPerson', (faker) => {
+  return {
+    marketing_report_id: faker.integer({ min: 1, max: 2 }),
+    name: faker.name(),
+    title: faker.sentence({ words: 4 }),
+    phone: faker.phone(),
+    email: faker.email(),
+  }
+})

@@ -3,7 +3,7 @@
 const Model = use('Model')
 
 class MarketingReport extends Model {
-  static get dates () {
+  static get dates() {
     return super.dates.concat(['schedulle_date'])
   }
 
@@ -21,6 +21,10 @@ class MarketingReport extends Model {
 
   attachments() {
     return this.hasMany('App/Models/MarketingReportAttachment')
+  }
+
+  contacts() {
+    return this.hasMany('App/Models/ContactPerson')
   }
 }
 

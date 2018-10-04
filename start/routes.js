@@ -330,6 +330,35 @@ Route
 
     Route.get('export-data', 'DataExportController.index').validator('ExportData')
 
+    /**
+     * Get Permission by role id
+     */
+
+    Route.get('/role/:id/permissions', 'RoleController.getPermissions').middleware('can:read_role')
+    Route.put('/role/permissions', 'RoleController.attachPermissions')
+      .validator('AttachPermissions')
+      .middleware('can:create_role')
+
+    /**
+     * Contact Person
+     */
+
+    Route
+      .resource('contact-persons', 'ContactPersonController')
+      .apiOnly()
+      .validator(new Map([
+        [['contact-persons.store'], ['StoreContactPerson']],
+        [['contact-persons.update'], ['UpdateContactPerson']]
+      ]))
+      .middleware(new Map([
+        [['contact-persons.index'], ['can:read_contact_person']],
+        [['contact-persons.store'], ['can:create_contact_person']],
+        [['contact-persons.update'], ['can:update_contact_person']],
+        [['contact-persons.destroy'], ['can:delete_contact_person']]
+      ]))
+
+
+
 
 
   })
