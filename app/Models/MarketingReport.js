@@ -26,6 +26,10 @@ class MarketingReport extends Model {
   contacts() {
     return this.hasMany('App/Models/ContactPerson')
   }
+
+  years() {
+    return this.hasMany('App/Models/MarketingReportYear')
+  }
 }
 
 module.exports = MarketingReport

@@ -120,3 +120,12 @@ Factory.blueprint('App/Models/ContactPerson', (faker) => {
     email: faker.email(),
   }
 })
+
+Factory.blueprint('App/Models/MarketingReportYear', (faker) => {
+  return {
+    marketing_report_id: faker.integer({ min: 1, max: 2 }),
+    year: faker.integer({ min: 2015, max: 2020 }).toString(),
+    class: faker.integer({ min: 8, max: 12 }),
+    students: faker.integer({ min: 20, max: 30 }),
+  }
+})

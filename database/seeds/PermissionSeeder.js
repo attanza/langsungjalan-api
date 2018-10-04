@@ -5,7 +5,8 @@ const Database = use('Database')
 const Permission = use('App/Models/Permission')
 const resources = [
   'User', 'Role', 'Permission', 'University', 'Product', 'Schedulle', 'StudyName', 'StudyProgram', 'StudyYear',
-  'Marketing', 'MarketingAction', 'Supervisor', 'MarketingReport', 'MarketingReportAttachment', 'ContactPerson'
+  'Marketing', 'MarketingAction', 'Supervisor', 'MarketingReport', 'MarketingReportAttachment', 'ContactPerson',
+  'MarketingReportYear'
 ]
 const actions = ['create', 'read', 'update', 'delete']
 

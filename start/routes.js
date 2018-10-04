@@ -357,10 +357,23 @@ Route
         [['contact-persons.destroy'], ['can:delete_contact_person']]
       ]))
 
+    /**
+     * Contact Person
+     */
 
-
-
-
+    Route
+      .resource('marketing-report-years', 'MarketingReportYearController')
+      .apiOnly()
+      .validator(new Map([
+        [['marketing-report-years.store'], ['StoreMarketingReportYear']],
+        [['marketing-report-years.update'], ['StoreMarketingReportYear']]
+      ]))
+      .middleware(new Map([
+        [['marketing-report-years.index'], ['can:read_marketing_report_year']],
+        [['marketing-report-years.store'], ['can:create_marketing_report_year']],
+        [['marketing-report-years.update'], ['can:update_marketing_report_year']],
+        [['marketing-report-years.destroy'], ['can:delete_marketing_report_year']]
+      ]))
   })
   .prefix('api/v1')
   .formats(['json'])
