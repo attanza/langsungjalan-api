@@ -6,6 +6,7 @@ class ScheduleSchema extends Schema {
   up () {
     this.create('schedulles', (table) => {
       table.increments()
+      table.string('code', 50).notNullable().index()
       table.integer('marketing_id').unsigned().index()
       table.integer('study_id').unsigned().index()
       table.integer('marketing_action_id').unsigned().index()

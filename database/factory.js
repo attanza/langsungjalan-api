@@ -9,6 +9,7 @@ Factory.blueprint('App/Models/User', (faker) => {
     password: 'password',
     phone: faker.phone(),
     address: faker.address(),
+    is_active: 1
   }
 })
 
@@ -43,6 +44,7 @@ Factory.blueprint('App/Models/StudyProgram', (faker) => {
 
 Factory.blueprint('App/Models/Schedulle', (faker) => {
   return {
+    code: faker.bb_pin(),
     marketing_id: faker.integer({ min: 6, max: 10 }),
     study_id: faker.integer({ min: 1, max: 3 }),
     marketing_action_id: faker.integer({ min: 1, max: 3 }),
@@ -87,16 +89,8 @@ Factory.blueprint('App/Models/MarketingAction', (faker) => {
 
 Factory.blueprint('App/Models/MarketingReport', (faker) => {
   return {
-    marketing_id: faker.integer({ min: 1, max: 3 }),
     schedulle_id: faker.integer({ min: 1, max: 3 }),
-    marketing_action_id: faker.integer({ min: 1, max: 3 }),
     method: 'By Meeting',
-    count_attendances: faker.integer({ min: 15, max: 25}),
-    count_student_dps: faker.integer({ min: 15, max: 20}),
-    count_shared_packages: faker.integer({ min: 20, max: 30}),
-    count_orders: faker.integer({ min: 10, max: 15}),
-    count_cancel_order: faker.integer({ min: 1, max: 5}),
-    count_dps: faker.integer({ min: 10, max: 15}),
     schedulle_date: faker.date({year: 2018}),
     terms: faker.sentence({ words: 4 }),
     result: faker.sentence({ words: 2 }),
@@ -108,7 +102,7 @@ Factory.blueprint('App/Models/MarketingReport', (faker) => {
 
 Factory.blueprint('App/Models/ContactPerson', (faker) => {
   return {
-    marketing_report_id: faker.integer({ min: 1, max: 2 }),
+    marketing_report_id: faker.integer({ min: 1, max: 3 }),
     name: faker.name(),
     title: faker.sentence({ words: 4 }),
     phone: faker.phone(),

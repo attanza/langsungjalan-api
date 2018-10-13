@@ -4,17 +4,8 @@ const MarketingReport = use('App/Models/MarketingReport')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 const fillable = [
-  'marketing_id',
   'schedulle_id',
-  'marketing_action_id',
   'method',
-  'count_attendances',
-  'count_student_dps',
-  'count_shared_packages',
-  'count_orders',
-  'count_cancel_order',
-  'count_dps',
-  'count_payments',
   'schedulle_date',
   'terms',
   'result',
@@ -22,8 +13,6 @@ const fillable = [
   'lng',
   'description',
 ]
-
-
 
 /**
  * MarketingReportController
@@ -37,9 +26,68 @@ class MarketingReportController {
    * Get List of MarketingReports
    */
   async index({ request, response }) {
-    let data = await this.marketingReportQuery(request)
 
-    return response.status(200).send(data)
+    let {
+      page,
+      limit,
+      search,
+      search_by,
+      search_query,
+      between_date,
+      start_date,
+      end_date,
+      sort_by,
+      sort_mode,
+      schedulle_id
+    } = request.get()
+
+    if (!page) page = 1
+    if (!limit) limit = 10
+    if (!sort_by) sort_by = 'id'
+    if (!sort_mode) sort_mode = 'desc'
+
+    if(search && search != '') {
+      const data = await MarketingReport.query()
+        .with('schedulle.study.studyName')
+        .with('schedulle.study.university')
+        .with('schedulle.marketing')
+        .where('method', 'like', `%${search}%`)
+        .orWhereHas('schedulle', (builder) => {
+          builder.where('code', 'like', `%${search}%`)
+        })
+        .paginate(parseInt(page), parseInt(limit))
+      let parsed = ResponseParser.apiCollection(data.toJSON())
+      return response.status(200).send(parsed)
+    }
+
+    const redisKey = `MarketingReport_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${schedulle_id}`
+
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached) {
+      return response.status(200).send(cached)
+    }
+
+    const data = await MarketingReport.query()
+      .with('schedulle.study.studyName')
+      .with('schedulle.study.university')
+      .with('schedulle.marketing')
+      .where(function() {
+        if (search_by && search_query) {
+          return this.where(search_by, 'like', `%${search_query}%`)
+        }
+      })
+      .where(function() {
+        if (between_date && start_date && end_date) {
+          return this.whereBetween(between_date, [start_date, end_date])
+        }
+      })
+      .orderBy(sort_by, sort_mode)
+      .paginate(parseInt(page), parseInt(limit))
+
+    let parsed = ResponseParser.apiCollection(data.toJSON())
+    await RedisHelper.set(redisKey, parsed)
+    return response.status(200).send(parsed)
   }
 
   /**
@@ -50,7 +98,7 @@ class MarketingReportController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await MarketingReport.create(body)
-    await data.loadMany(['marketing', 'schedulle', 'action'])
+    await data.loadMany(['schedulle.study.studyName', 'schedulle.study.university', 'marketing'])
     await RedisHelper.delete('MarketingReport_*')
     const activity = `Add new MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
@@ -73,7 +121,7 @@ class MarketingReportController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['marketing', 'schedulle', 'action'])
+    await data.loadMany(['schedulle.study.studyName', 'schedulle.study.university', 'marketing'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -93,7 +141,7 @@ class MarketingReportController {
     }
     await data.merge(body)
     await data.save()
-    await data.loadMany(['marketing', 'schedulle', 'action'])
+    await data.loadMany(['schedulle.study.studyName', 'schedulle.study.university', 'marketing'])
     const activity = `Update MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('MarketingReport_*')
@@ -117,113 +165,6 @@ class MarketingReportController {
     await RedisHelper.delete('MarketingReport_*')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
-  }
-
-  async marketingReportQuery(request) {
-    let { page, limit, search, marketing_id } = request.get()
-
-    if (!page) page = 1
-    if (!limit) limit = 10
-
-    if(marketing_id) {
-      if (search && search != '') {
-        const data = await MarketingReport.query()
-          .with('marketing')
-          .with('action')
-          .with('schedulle')
-          .where('method', 'like', `%${search}%`)
-          .orWhere('contact_person', 'like', `%${search}%`)
-          .orWhere('contact_person_phone', 'like', `%${search}%`)
-          .orWhere('count_year', 'like', `%${search}%`)
-          .orWhere('count_class', 'like', `%${search}%`)
-          .orWhere('average_students', 'like', `%${search}%`)
-          .orWhere('count_attendances', 'like', `%${search}%`)
-          .orWhere('count_student_dps', 'like', `%${search}%`)
-          .orWhere('count_shared_packages', 'like', `%${search}%`)
-          .orWhere('count_orders', 'like', `%${search}%`)
-          .orWhere('count_cancel_order', 'like', `%${search}%`)
-          .orWhere('count_dps', 'like', `%${search}%`)
-          .orWhere('count_payments', 'like', `%${search}%`)
-          .orWhere('schedulle', 'like', `%${search}%`)
-          .orWhere('terms', 'like', `%${search}%`)
-          .orWhere('result', 'like', `%${search}%`)
-          .orWhere('description', 'like', `%${search}%`)
-          .where('marketing_id', parseInt(marketing_id))
-          .orderBy('created_at', 'desc')
-          .paginate(parseInt(page), parseInt(limit))
-        let parsed = ResponseParser.apiCollection(data.toJSON())
-        return parsed
-      } else {
-        let redisKey = `MarketingReport_${page}_${limit}_MarketingID_${marketing_id}`
-        let cached = await RedisHelper.get(redisKey)
-
-        if (cached != null) {
-          return cached
-        }
-
-        const data = await MarketingReport.query()
-          .with('marketing')
-          .with('action')
-          .with('schedulle')
-          .where('marketing_id', parseInt(marketing_id))
-          .orderBy('created_at', 'desc')
-          .paginate(parseInt(page), parseInt(limit))
-        let parsed = ResponseParser.apiCollection(data.toJSON())
-
-        await RedisHelper.set(redisKey, parsed)
-
-        return parsed
-      }
-    } else {
-      if (search && search != '') {
-        const data = await MarketingReport.query()
-          .with('marketing')
-          .with('action')
-          .with('schedulle')
-          .where('method', 'like', `%${search}%`)
-          .orWhere('contact_person', 'like', `%${search}%`)
-          .orWhere('contact_person_phone', 'like', `%${search}%`)
-          .orWhere('count_year', 'like', `%${search}%`)
-          .orWhere('count_class', 'like', `%${search}%`)
-          .orWhere('average_students', 'like', `%${search}%`)
-          .orWhere('count_attendances', 'like', `%${search}%`)
-          .orWhere('count_student_dps', 'like', `%${search}%`)
-          .orWhere('count_shared_packages', 'like', `%${search}%`)
-          .orWhere('count_orders', 'like', `%${search}%`)
-          .orWhere('count_cancel_order', 'like', `%${search}%`)
-          .orWhere('count_dps', 'like', `%${search}%`)
-          .orWhere('count_payments', 'like', `%${search}%`)
-          .orWhere('schedulle', 'like', `%${search}%`)
-          .orWhere('terms', 'like', `%${search}%`)
-          .orWhere('result', 'like', `%${search}%`)
-          .orWhere('description', 'like', `%${search}%`)
-          .orderBy('created_at', 'desc')
-          .paginate(parseInt(page), parseInt(limit))
-        let parsed = ResponseParser.apiCollection(data.toJSON())
-        return parsed
-      } else {
-        let redisKey = `MarketingReport_${page}_${limit}`
-        let cached = await RedisHelper.get(redisKey)
-
-        if (cached != null) {
-          return cached
-        }
-
-        const data = await MarketingReport.query()
-          .with('marketing')
-          .with('action')
-          .with('schedulle')
-          .orderBy('created_at', 'desc')
-          .paginate(parseInt(page), parseInt(limit))
-        let parsed = ResponseParser.apiCollection(data.toJSON())
-
-        await RedisHelper.set(redisKey, parsed)
-
-        return parsed
-      }
-    }
-
-
   }
 }
 

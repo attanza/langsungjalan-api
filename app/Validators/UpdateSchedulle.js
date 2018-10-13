@@ -4,8 +4,10 @@ const { ResponseParser } = use('App/Helpers')
 
 class StoreSchedulle {
   get rules () {
+    const id = this.ctx.params.id
+
     return {
-      code: 'alpha_numeric|unique:schedulles',
+      code: `alpha_numeric|unique:schedulles,code,id,${id}`,
       marketing_id: 'required|integer',
       marketing_action_id: 'required|integer',
       study_id: 'required|integer',

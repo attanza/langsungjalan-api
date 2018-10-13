@@ -3,8 +3,10 @@
 const Schedulle = use('App/Models/Schedulle')
 const { RedisHelper, ResponseParser, PushNotifications } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
+
 const moment = require('moment')
 const fillable = [
+  'code',
   'marketing_id',
   'marketing_action_id',
   'study_id',
@@ -54,10 +56,6 @@ class SchedulleController {
 
     if(search && search != '') {
       const data = await Schedulle.query()
-        .with('marketing')
-        .with('study.studyName')
-        .with('study.university')
-        .with('action')
         .where('description', 'like', `%${search}%`)
         .orWhereHas('marketing', (builder) => {
           builder.where('name', 'like', `%${search}%`)
@@ -83,6 +81,7 @@ class SchedulleController {
       .with('study.studyName')
       .with('study.university')
       .with('action')
+      .with('report')
       .where(function() {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
@@ -122,6 +121,9 @@ class SchedulleController {
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
+    if(!body.code || body.code == '') {
+      body.code = Math.floor(Date.now() / 1000).toString()
+    }
     let start_date = moment(body.start_date).format('YYYY-MM-DD')
     if (!body.end_date || body.end_date === '') {
       body.end_date = start_date + ' 17:00'
@@ -157,7 +159,7 @@ class SchedulleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['marketing', 'study.studyName', 'action'])
+    await data.loadMany(['marketing', 'study.studyName', 'study.university', 'action', 'report'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)

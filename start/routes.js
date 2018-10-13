@@ -292,7 +292,9 @@ Route
       .resource('schedulles', 'SchedulleController')
       .apiOnly()
       .validator(new Map([
-        [['schedulles.store', 'schedulles.update'], ['StoreSchedulle']],
+        [['schedulles.store'], ['StoreSchedulle']],
+        [['schedulles.update'], ['UpdateSchedulle']],
+
         [['schedulles.index'], ['List']]
       ]))
       .middleware(new Map([

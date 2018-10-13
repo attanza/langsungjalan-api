@@ -10,6 +10,12 @@ class MarketingReportYearSchema extends Schema {
       table.string('year').notNullable()
       table.integer('class').notNullable()
       table.integer('students').notNullable()
+      table.integer('count_attendence')
+      table.integer('people_dp')
+      table.integer('count_dp')
+      table.integer('count_add')
+      table.integer('count_cancel')
+      table.integer('count_packages')
       table.timestamps()
     })
   }
@@ -20,3 +26,4 @@ class MarketingReportYearSchema extends Schema {
 }
 
 module.exports = MarketingReportYearSchema
+

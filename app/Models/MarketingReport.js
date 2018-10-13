@@ -7,16 +7,8 @@ class MarketingReport extends Model {
     return super.dates.concat(['schedulle_date'])
   }
 
-  marketing() {
-    return this.belongsTo('App/Models/User', 'marketing_id')
-  }
-
   schedulle() {
     return this.belongsTo('App/Models/Schedulle')
-  }
-
-  action() {
-    return this.belongsTo('App/Models/MarketingAction')
   }
 
   attachments() {

@@ -12,7 +12,7 @@ const Database = use('Database')
 
 class ComboDataController {
   async index({ request, response }) {
-    const { model } = request.get()
+    const { model, university_id } = request.get()
     switch (model) {
     case 'University':
     {
@@ -46,7 +46,7 @@ class ComboDataController {
 
     case 'StudyProgram':
     {
-      const data = await this.getStudy()
+      const data = await this.getStudy(university_id)
       return response.status(200).send(data)
     }
 
@@ -146,24 +146,29 @@ class ComboDataController {
     return parsed
   }
 
-  async getStudy() {
-    let redisKey = 'StudyProgram_Combo'
+  async getStudy(university_id) {
+    let redisKey = `tudyProgram_Combo_${university_id}`
     let cached = await RedisHelper.get(redisKey)
+    let data
 
     if (cached != null) {
       return cached
     }
-    // const data = await StudyProgram.query().with('studyName').select('id', 'study_name_id').orderBy('id').fetch()
-    const data = await StudyProgram.query()
-      // .select('study_programs.id', 'study_names.name', 'CONCAT(study_names.name, ' ,',universities.name) AS university')
-      // .leftJoin('study_names', 'study_programs.study_name_id', 'study_names.id')
-      // .leftJoin('universities', 'universities.id', 'study_programs.university_id')
+    if(university_id && university_id) {
+      data = await StudyProgram.query()
+        .select(Database.raw('study_programs.id, study_names.name, CONCAT(study_names.name, " ~ ",universities.name) AS university'))
+        .where('study_programs.university_id', university_id)
+        .leftJoin('study_names', 'study_programs.study_name_id', 'study_names.id')
+        .leftJoin('universities', 'universities.id', 'study_programs.university_id')
+        .fetch()
+    } else {
+      data = await StudyProgram.query()
+        .select(Database.raw('study_programs.id, study_names.name, CONCAT(study_names.name, " ~ ",universities.name) AS university'))
+        .leftJoin('study_names', 'study_programs.study_name_id', 'study_names.id')
+        .leftJoin('universities', 'universities.id', 'study_programs.university_id')
+        .fetch()
+    }
 
-      // .orderBy('study_names.name')
-      .select(Database.raw('study_programs.id, study_names.name, CONCAT(study_names.name, " ~ ",universities.name) AS university'))
-      .leftJoin('study_names', 'study_programs.study_name_id', 'study_names.id')
-      .leftJoin('universities', 'universities.id', 'study_programs.university_id')
-      .fetch()
     let parsed = data.toJSON()
     await RedisHelper.set(redisKey, parsed)
     return parsed
