@@ -54,6 +54,17 @@ class MarketingReportController {
         .where('method', 'like', `%${search}%`)
         .orWhereHas('schedulle', (builder) => {
           builder.where('code', 'like', `%${search}%`)
+          builder.orWhereHas('marketing', (builder2) => {
+            builder2.where('name', 'like', `%${search}%`)
+          })
+          builder.orWhereHas('study', (builder2) => {
+            builder2.whereHas('university', (builder3) => {
+              builder3.where('name', 'like', `%${search}%`)
+            })
+            builder2.orWhereHas('studyName', (builder3) => {
+              builder3.where('name', 'like', `%${search}%`)
+            })
+          })
         })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
