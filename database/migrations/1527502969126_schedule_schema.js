@@ -10,7 +10,6 @@ class ScheduleSchema extends Schema {
       table.string('code', 20).notNullable().index()
       table.integer('marketing_id').unsigned().index()
       table.integer('marketing_action_id').unsigned().index()
-      table.integer('marketing_report_id').unsigned().index()
       table.dateTime('date').notNullable()
       table.string('description').nullable()
       table.timestamps()
@@ -23,12 +22,3 @@ class ScheduleSchema extends Schema {
 }
 
 module.exports = ScheduleSchema
-
-/*
-marketing_id
-action
-study_id
-start_date
-end_date
-description
-*/

@@ -1,6 +1,7 @@
 'use strict'
 
 const { ResponseParser } = use('App/Helpers')
+const messages = require('./messages')
 
 class StoreSchedulle {
   get rules () {
@@ -8,28 +9,21 @@ class StoreSchedulle {
       code: 'alpha_numeric|unique:schedulles',
       marketing_id: 'required|integer',
       marketing_action_id: 'required|integer',
-      study_program_id: 'required|integer',
-      marketing_report_id: 'required|integer',
-
+      marketing_target_id: 'required|integer',
       date: 'required|date',
       description: 'max:250'
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required',
-      max: '{{ field }} cannot more then {{ arguments:0 }} characters',
-      date: '{{ field }} is not a valid date format'
-    }
+    return messages
   }
 
   get sanitizationRules () {
     return {
       marketing_id: 'toInt',
-      study_program_id: 'toInt',
+      marketing_target_id: 'toInt',
       marketing_action_id: 'toInt',
-      marketing_report_id: 'toInt',
       date: 'toDate',
       description: 'escape',
     }

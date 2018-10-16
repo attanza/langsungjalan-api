@@ -4,24 +4,14 @@ const Schedulle = use('App/Models/Schedulle')
 const { RedisHelper, ResponseParser, PushNotifications } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 
-const moment = require('moment')
 const fillable = [
   'code',
   'marketing_id',
+  'marketing_target_id',
   'marketing_action_id',
-  'marketing_report_id',
-  'study_program_id',
   'date',
   'description'
 ]
-/*
-marketing_id
-action
-study_id
-start_date
-end_date
-description
-*/
 
 class SchedulleController {
   /**
@@ -44,10 +34,9 @@ class SchedulleController {
       end_date,
       sort_by,
       sort_mode,
-      marketing_id,
-      study_program_id,
+      marketing_target_id,
       marketing_action_id,
-      marketing_report_id
+      marketing_id
     } = request.get()
 
     if (!page) page = 1
@@ -55,24 +44,33 @@ class SchedulleController {
     if (!sort_by) sort_by = 'id'
     if (!sort_mode) sort_mode = 'desc'
 
-    if(search && search != '') {
+    if (search && search != '') {
       const data = await Schedulle.query()
-        .where('description', 'like', `%${search}%`)
-        .orWhereHas('marketing', (builder) => {
+        .with('target')
+        .with('action')
+        .with('report')
+        .with('marketing')
+        .where('code', 'like', `%${search}%`)
+        .orWhere('description', 'like', `%${search}%`)
+        .orWhere('date', 'like', `%${search}%`)
+        .orWhereHas('action', builder => {
           builder.where('name', 'like', `%${search}%`)
         })
-        .orWhereHas('action', (builder) => {
-          builder.where('name', 'like', `%${search}%`)
-        })
-        .orWhereHas('target', (builder) => {
+        .orWhereHas('target', builder => {
           builder.where('code', 'like', `%${search}%`)
+        })
+        .orWhereHas('report', builder => {
+          builder.where('code', 'like', `%${search}%`)
+        })
+        .orWhereHas('marketing', builder => {
+          builder.where('name', 'like', `%${search}%`)
         })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     }
 
-    const redisKey = `Schedulle_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_id}${study_program_id}${marketing_action_id}${marketing_report_id}`
+    const redisKey = `Schedulle_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_id}${marketing_target_id}${marketing_action_id}`
 
     let cached = await RedisHelper.get(redisKey)
 
@@ -81,11 +79,10 @@ class SchedulleController {
     }
 
     const data = await Schedulle.query()
-      .with('marketing')
-      .with('study.studyName')
-      .with('study.university')
+      .with('target')
       .with('action')
       .with('report')
+      .with('marketing')
       .where(function() {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
@@ -97,18 +94,19 @@ class SchedulleController {
         }
       })
       .where(function() {
-        if (study_program_id) {
-          return this.where('study_program_id', parseInt(study_id))
+        if (marketing_target_id) {
+          return this.where(
+            'marketing_target_id',
+            parseInt(marketing_target_id)
+          )
         }
       })
       .where(function() {
         if (marketing_action_id) {
-          return this.where('marketing_action_id', parseInt(marketing_action_id))
-        }
-      })
-      .where(function() {
-        if (marketing_report_id) {
-          return this.where('marketing_report_id', parseInt(marketing_action_id))
+          return this.where(
+            'marketing_action_id',
+            parseInt(marketing_action_id)
+          )
         }
       })
       .where(function() {
@@ -130,27 +128,21 @@ class SchedulleController {
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
-    if(!body.code || body.code == '') {
+    if (!body.code || body.code == '') {
       body.code = Math.floor(Date.now() / 1000).toString()
-    }
-    let start_date = moment(body.start_date).format('YYYY-MM-DD')
-    if (!body.end_date || body.end_date === '') {
-      body.end_date = start_date + ' 17:00'
     }
     const data = await Schedulle.create(body)
     await data.loadMany([
       'marketing',
-      'study.studyName',
+      'report',
       'action',
-      'study.university',
       'report'
-
     ])
     await RedisHelper.delete('Schedulle_*')
     const activity = `Add new Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
-    let fcmData = { to: parsed.data.marketing.uid}
+    let fcmData = { to: parsed.data.marketing.uid }
     await PushNotifications.sendToMobile('newSchedulle', fcmData)
     return response.status(201).send(parsed)
   }
@@ -170,7 +162,12 @@ class SchedulleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['marketing', 'study.studyName', 'study.university', 'action', 'report'])
+    await data.loadMany([
+      'marketing',
+      'report',
+      'action',
+      'report'
+    ])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -194,9 +191,8 @@ class SchedulleController {
     await RedisHelper.delete('Schedulle_*')
     await data.loadMany([
       'marketing',
-      'study.studyName',
+      'report',
       'action',
-      'study.university',
       'report'
     ])
     let parsed = ResponseParser.apiUpdated(data.toJSON())
@@ -213,10 +209,15 @@ class SchedulleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.load('report')
     let dataJson = data.toJSON()
-    if(dataJson.report) {
-      return response.status(400).send(ResponseParser.errorResponse('This Schedulle has report, cannot be deleted'))
+    if (dataJson.report) {
+      return response
+        .status(400)
+        .send(
+          ResponseParser.errorResponse(
+            'This Schedulle has report, cannot be deleted'
+          )
+        )
     }
     const activity = `Delete Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)

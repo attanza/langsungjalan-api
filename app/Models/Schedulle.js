@@ -3,21 +3,16 @@
 const Model = use('Model')
 
 class Schedulle extends Model {
-
   static get dates() {
-    return super.dates.concat(['start_date', 'end_date'])
+    return super.dates.concat(['date'])
   }
 
   marketing() {
     return this.belongsTo('App/Models/User', 'marketing_id')
   }
 
-  study() {
-    return this.belongsTo('App/Models/StudyProgram', 'study_id')
-  }
-
   target() {
-    return this.belongsTo('App/Models/MarketingTarget', 'study_id')
+    return this.belongsTo('App/Models/MarketingTarget')
   }
 
   action() {

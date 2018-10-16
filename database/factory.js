@@ -54,10 +54,9 @@ Factory.blueprint('App/Models/Schedulle', (faker) => {
   return {
     code: faker.bb_pin(),
     marketing_id: faker.integer({ min: 6, max: 10 }),
-    study_id: faker.integer({ min: 1, max: 3 }),
+    marketing_target_id: faker.integer({ min: 1, max: 3 }),
     marketing_action_id: faker.integer({ min: 1, max: 3 }),
-    start_date: faker.date({year: 2018}),
-    end_date: faker.date({year: 2018}),
+    date: faker.date({year: 2018}),
     description: faker.sentence({ words: 4 }),
   }
 })
