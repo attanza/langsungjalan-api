@@ -7,7 +7,7 @@ class ContactPersonSchema extends Schema {
     this.create('contact_people', table => {
       table.increments()
       table
-        .integer('marketing_report_id')
+        .integer('marketing_target_id')
         .unsigned()
         .index()
       table.string('name').notNullable()

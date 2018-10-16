@@ -3,8 +3,8 @@
 const Model = use('Model')
 
 class MarketingReportYear extends Model {
-  report() {
-    return this.belongsTo('App/Models/MarketingReport')
+  target() {
+    return this.belongsTo('App/Models/MarketingTarget')
   }
 }
 

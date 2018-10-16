@@ -4,8 +4,8 @@ const Model = use('Model')
 const Env = use('Env')
 
 class MarketingReportAttachment extends Model {
-  report() {
-    return this.belongsTo('App/Models/MarketingReport')
+  target() {
+    return this.belongsTo('App/Models/MarketingTarget')
   }
 
   getUrl() {

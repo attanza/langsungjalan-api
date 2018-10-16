@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
 const Model = use('Model')
 
 class ContactPerson extends Model {
-  report() {
-    return this.belongsTo('App/Models/MarketingReport')
+  target() {
+    return this.belongsTo('App/Models/MarketingTarget')
   }
 }
 

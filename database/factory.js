@@ -42,6 +42,14 @@ Factory.blueprint('App/Models/StudyProgram', (faker) => {
   }
 })
 
+Factory.blueprint('App/Models/MarketingTarget', (faker) => {
+  return {
+    code: faker.bb_pin(),
+    study_program_id: faker.integer({ min: 1, max: 3 }),
+    description: faker.sentence({ words: 4 }),
+  }
+})
+
 Factory.blueprint('App/Models/Schedulle', (faker) => {
   return {
     code: faker.bb_pin(),
@@ -102,7 +110,7 @@ Factory.blueprint('App/Models/MarketingReport', (faker) => {
 
 Factory.blueprint('App/Models/ContactPerson', (faker) => {
   return {
-    marketing_report_id: faker.integer({ min: 1, max: 3 }),
+    marketing_target_id: faker.integer({ min: 1, max: 3 }),
     name: faker.name(),
     title: faker.sentence({ words: 4 }),
     phone: faker.phone(),
@@ -112,7 +120,7 @@ Factory.blueprint('App/Models/ContactPerson', (faker) => {
 
 Factory.blueprint('App/Models/MarketingReportYear', (faker) => {
   return {
-    marketing_report_id: faker.integer({ min: 1, max: 2 }),
+    marketing_target_id: faker.integer({ min: 1, max: 2 }),
     year: faker.integer({ min: 2015, max: 2020 }).toString(),
     class: faker.integer({ min: 8, max: 12 }),
     students: faker.integer({ min: 20, max: 30 }),

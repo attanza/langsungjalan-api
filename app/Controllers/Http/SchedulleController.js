@@ -9,9 +9,9 @@ const fillable = [
   'code',
   'marketing_id',
   'marketing_action_id',
-  'study_id',
-  'start_date',
-  'end_date',
+  'marketing_report_id',
+  'study_program_id',
+  'date',
   'description'
 ]
 /*
@@ -45,8 +45,9 @@ class SchedulleController {
       sort_by,
       sort_mode,
       marketing_id,
-      study_id,
-      marketing_action_id
+      study_program_id,
+      marketing_action_id,
+      marketing_report_id
     } = request.get()
 
     if (!page) page = 1
@@ -63,12 +64,15 @@ class SchedulleController {
         .orWhereHas('action', (builder) => {
           builder.where('name', 'like', `%${search}%`)
         })
+        .orWhereHas('target', (builder) => {
+          builder.where('code', 'like', `%${search}%`)
+        })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     }
 
-    const redisKey = `Schedulle_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_id}${study_id}${marketing_action_id}`
+    const redisKey = `Schedulle_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_id}${study_program_id}${marketing_action_id}${marketing_report_id}`
 
     let cached = await RedisHelper.get(redisKey)
 
@@ -93,13 +97,18 @@ class SchedulleController {
         }
       })
       .where(function() {
-        if (study_id) {
-          return this.where('study_id', parseInt(study_id))
+        if (study_program_id) {
+          return this.where('study_program_id', parseInt(study_id))
         }
       })
       .where(function() {
         if (marketing_action_id) {
           return this.where('marketing_action_id', parseInt(marketing_action_id))
+        }
+      })
+      .where(function() {
+        if (marketing_report_id) {
+          return this.where('marketing_report_id', parseInt(marketing_action_id))
         }
       })
       .where(function() {
@@ -133,7 +142,9 @@ class SchedulleController {
       'marketing',
       'study.studyName',
       'action',
-      'study.university'
+      'study.university',
+      'report'
+
     ])
     await RedisHelper.delete('Schedulle_*')
     const activity = `Add new Schedulle '${data.name}'`
@@ -185,7 +196,8 @@ class SchedulleController {
       'marketing',
       'study.studyName',
       'action',
-      'study.university'
+      'study.university',
+      'report'
     ])
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)

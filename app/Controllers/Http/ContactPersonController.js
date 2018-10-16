@@ -3,7 +3,7 @@
 const ContactPerson = use('App/Models/ContactPerson')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
-const fillable = ['name', 'title', 'phone', 'email', 'marketing_report_id']
+const fillable = ['name', 'title', 'phone', 'email', 'marketing_target_id']
 
 /**
  * ContactPersonController
@@ -27,7 +27,7 @@ class ContactPersonController {
       end_date,
       sort_by,
       sort_mode,
-      marketing_report_id
+      marketing_target_id
     } = request.get()
 
     if (!page) page = 1
@@ -37,17 +37,20 @@ class ContactPersonController {
 
     if (search && search != '') {
       const data = await ContactPerson.query()
-        .with('report')
+        .with('target')
         .where('name', 'like', `%${search}%`)
         .orWhere('title', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
+        .orWhereHas('target', builder=> {
+          builder.where('code', 'like', `%${search}%` )
+        })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     }
 
-    const redisKey = `ContactPerson_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_report_id}`
+    const redisKey = `ContactPerson_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}`
 
     let cached = await RedisHelper.get(redisKey)
 
@@ -56,15 +59,15 @@ class ContactPersonController {
     }
 
     const data = await ContactPerson.query()
-      .with('report')
+      .with('target')
       .where(function() {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
         }
       })
       .where(function() {
-        if (marketing_report_id) {
-          return this.where('marketing_report_id', parseInt(marketing_report_id))
+        if (marketing_target_id) {
+          return this.where('marketing_target_id', parseInt(marketing_target_id))
         }
       })
       .where(function() {
@@ -110,6 +113,7 @@ class ContactPersonController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+    await data.load('target')
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -129,6 +133,7 @@ class ContactPersonController {
     }
     await data.merge(body)
     await data.save()
+    await data.load('target')
     const activity = `Update ContactPerson '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('ContactPerson_*')
@@ -140,7 +145,6 @@ class ContactPersonController {
    * Delete
    * Delete ContactPerson by Id
    * Can only be done by Super Administrator
-   * Default ContactPerson ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student'] cannot be deleted
    */
   async destroy({ request, response, auth }) {
     const id = request.params.id

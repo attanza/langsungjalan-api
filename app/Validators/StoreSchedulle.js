@@ -8,9 +8,10 @@ class StoreSchedulle {
       code: 'alpha_numeric|unique:schedulles',
       marketing_id: 'required|integer',
       marketing_action_id: 'required|integer',
-      study_id: 'required|integer',
-      start_date: 'required|date',
-      end_date: 'date',
+      study_program_id: 'required|integer',
+      marketing_report_id: 'required|integer',
+
+      date: 'required|date',
       description: 'max:250'
     }
   }
@@ -26,10 +27,10 @@ class StoreSchedulle {
   get sanitizationRules () {
     return {
       marketing_id: 'toInt',
-      study_id: 'toInt',
+      study_program_id: 'toInt',
       marketing_action_id: 'toInt',
-      start_date: 'toDate',
-      end_date: 'toDate',
+      marketing_report_id: 'toInt',
+      date: 'toDate',
       description: 'escape',
     }
   }

@@ -1,7 +1,7 @@
 'use strict'
 
 const { ResponseParser } = use('App/Helpers')
-
+const messages = require('./messages')
 
 class StoreMarketingReportYear {
   get rules() {
@@ -9,16 +9,12 @@ class StoreMarketingReportYear {
       year: 'required|max:5',
       class: 'required|integer',
       students: 'required|integer',
-      marketing_report_id: 'required|integer'
+      marketing_target_id: 'required|integer'
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required',
-      max: '{{ field }} cannot more then {{ arguments:0 }} characters',
-
-    }
+    return messages
   }
 
   get sanitizationRules () {
@@ -26,7 +22,7 @@ class StoreMarketingReportYear {
       year: 'escape',
       class: 'toInt',
       students: 'toInt',
-      marketing_report_id: 'toInt',
+      marketing_target_id: 'toInt',
 
     }
   }

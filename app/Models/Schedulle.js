@@ -16,6 +16,10 @@ class Schedulle extends Model {
     return this.belongsTo('App/Models/StudyProgram', 'study_id')
   }
 
+  target() {
+    return this.belongsTo('App/Models/MarketingTarget', 'study_id')
+  }
+
   action() {
     return this.belongsTo('App/Models/MarketingAction')
   }

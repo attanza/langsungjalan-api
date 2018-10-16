@@ -5,7 +5,7 @@ const Database = use('Database')
 const resources = [
   'User', 'Role', 'Permission', 'University', 'Product', 'Schedulle', 'StudyName', 'StudyProgram', 'StudyYear',
   'Marketing', 'MarketingAction', 'Supervisor', 'MarketingReport', 'MarketingReportAttachment', 'ContactPerson',
-  'MarketingReportYear'
+  'MarketingReportYear', 'MarketingTarget'
 ]
 
 const otherPermissions = ['Clear Redis']

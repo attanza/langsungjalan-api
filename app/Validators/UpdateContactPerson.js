@@ -1,6 +1,7 @@
 'use strict'
 
 const { ResponseParser } = use('App/Helpers')
+const messages = require('./messages')
 
 
 class UpdateContactPerson {
@@ -12,15 +13,13 @@ class UpdateContactPerson {
       title: 'required|max:50',
       phone: `required|max:50|unique:contact_people,phone,id,${id}`,
       email: `required|email|unique:contact_people,email,id,${id}`,
-      marketing_report_id: 'required|integer'
+      marketing_target_id: 'required|integer'
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required',
-      max: '{{ field }} cannot more then {{ arguments:0 }} characters',
-    }
+    return messages
+
   }
 
   get sanitizationRules () {
@@ -29,7 +28,7 @@ class UpdateContactPerson {
       title: 'escape',
       phone: 'escape',
       email: 'escape',
-      marketing_report_id: 'toInt',
+      marketing_target_id: 'toInt',
 
     }
   }

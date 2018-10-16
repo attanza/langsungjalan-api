@@ -3,13 +3,12 @@
 const { ResponseParser } = use('App/Helpers')
 const messages = require('./messages')
 
-class StoreMarketingReportAttachment {
+class StoreMarketingTarget {
   get rules() {
     return {
-      marketing_target_id: 'required',
-      caption: 'string|max:50',
-      tags: 'string|max:50',
-      url: 'string'
+      code: 'required|max:50|unique:marketing_targets',
+      study_program_id: 'required|integer',
+      description: 'string|max:250'
     }
   }
 
@@ -17,16 +16,20 @@ class StoreMarketingReportAttachment {
     return messages
   }
 
-  get sanitizationRules() {
+  get sanitizationRules () {
     return {
-      caption: 'escape',
-      tags: 'escape',
+      code: 'escape',
+      study_program_id: 'toInt',
+      description: 'escape',
+
     }
   }
 
   async fails(errorMessages) {
     return this.ctx.response.status(422).send(ResponseParser.apiValidationFailed(errorMessages))
   }
+
+
 }
 
-module.exports = StoreMarketingReportAttachment
+module.exports = StoreMarketingTarget

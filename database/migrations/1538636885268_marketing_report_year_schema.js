@@ -6,7 +6,7 @@ class MarketingReportYearSchema extends Schema {
   up () {
     this.create('marketing_report_years', (table) => {
       table.increments()
-      table.integer('marketing_report_id').unsigned().index()
+      table.integer('marketing_target_id').unsigned().index()
       table.string('year').notNullable()
       table.integer('class').notNullable()
       table.integer('students').notNullable()

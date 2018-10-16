@@ -3,7 +3,7 @@
 const MarketingReportYear = use('App/Models/MarketingReportYear')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
-const fillable = ['year', 'class', 'students', 'marketing_report_id']
+const fillable = ['year', 'class', 'students', 'marketing_target_id']
 
 /**
  * MarketingReportYearController
@@ -27,7 +27,7 @@ class MarketingReportYearController {
       end_date,
       sort_by,
       sort_mode,
-      marketing_report_id
+      marketing_target_id
     } = request.get()
 
     if (!page) page = 1
@@ -37,16 +37,19 @@ class MarketingReportYearController {
 
     if (search && search != '') {
       const data = await MarketingReportYear.query()
-        .with('report')
+        .with('target')
         .where('year', 'like', `%${search}%`)
         .orWhere('class', 'like', `%${search}%`)
         .orWhere('students', 'like', `%${search}%`)
+        .orWhereHas('target', builder => {
+          builder.where('code', 'like', `%${search}%` )
+        })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     }
 
-    const redisKey = `MarketingReportYear_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_report_id}`
+    const redisKey = `MarketingReportYear_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}`
 
     let cached = await RedisHelper.get(redisKey)
 
@@ -55,15 +58,15 @@ class MarketingReportYearController {
     }
 
     const data = await MarketingReportYear.query()
-      .with('report')
+      .with('target')
       .where(function() {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
         }
       })
       .where(function() {
-        if (marketing_report_id) {
-          return this.where('marketing_report_id', parseInt(marketing_report_id))
+        if (marketing_target_id) {
+          return this.where('marketing_target_id', parseInt(marketing_target_id))
         }
       })
       .where(function() {
@@ -109,6 +112,7 @@ class MarketingReportYearController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+    await data.load('target')
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -128,6 +132,7 @@ class MarketingReportYearController {
     }
     await data.merge(body)
     await data.save()
+    await data.load('target')
     const activity = `Update MarketingReportYear '${data.year}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('MarketingReportYear_*')

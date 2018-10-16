@@ -179,6 +179,24 @@ Route
       ]))
 
     /**
+     * Marketing Targets
+     */
+
+    Route
+      .resource('marketing-targets', 'MarketingTargetController')
+      .apiOnly()
+      .validator(new Map([
+        [['marketing-targets.store'], ['StoreMarketingTarget']],
+        [['marketing-targets.update'], ['UpdateMarketingTarget']],
+        [['marketing-targets.index'], ['List']]]))
+      .middleware(new Map([
+        [['marketing-targets.index'], ['can:read_marketing_target']],
+        [['marketing-targets.store'], ['can:create_marketing_target']],
+        [['marketing-targets.update'], ['can:update_marketing_target']],
+        [['marketing-targets.destroy'], ['can:delete_marketing_target']]
+      ]))
+
+    /**
      * Marketing Reports
      */
 
