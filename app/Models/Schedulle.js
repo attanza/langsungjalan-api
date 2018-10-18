@@ -22,6 +22,10 @@ class Schedulle extends Model {
   report() {
     return this.hasOne('App/Models/MarketingReport')
   }
+
+  contacts() {
+    return this.hasMany('App/Models/MarketingTargetContact')
+  }
 }
 
 module.exports = Schedulle

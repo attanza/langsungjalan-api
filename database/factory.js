@@ -96,11 +96,13 @@ Factory.blueprint('App/Models/MarketingAction', (faker) => {
 
 Factory.blueprint('App/Models/MarketingReport', (faker) => {
   return {
+    code: faker.bb_pin(),
     schedulle_id: faker.integer({ min: 1, max: 3 }),
     method: 'By Meeting',
-    schedulle_date: faker.date({year: 2018}),
+    date: faker.date({year: 2018}),
     terms: faker.sentence({ words: 4 }),
     result: faker.sentence({ words: 2 }),
+    note: faker.sentence({ words: 2 }),
     lat: faker.latitude(),
     lng: faker.longitude(),
     description: faker.sentence({ words: 4 }),
@@ -123,5 +125,15 @@ Factory.blueprint('App/Models/MarketingReportYear', (faker) => {
     year: faker.integer({ min: 2015, max: 2020 }).toString(),
     class: faker.integer({ min: 8, max: 12 }),
     students: faker.integer({ min: 20, max: 30 }),
+  }
+})
+
+Factory.blueprint('App/Models/MarketingTargetContact', (faker) => {
+  return {
+    marketing_target_id: faker.integer({ min: 1, max: 3 }),
+    name: faker.name(),
+    title: faker.sentence({ words: 4 }),
+    phone: faker.phone(),
+    email: faker.email(),
   }
 })

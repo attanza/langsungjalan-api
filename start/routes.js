@@ -205,7 +205,7 @@ Route
       .apiOnly()
       .validator(new Map([
         [['marketing-reports.store'], ['StoreMarketingReport']],
-        [['marketing-reports.update'], ['StoreMarketingReport']],
+        [['marketing-reports.update'], ['UpdateMarketingReport']],
         [['marketing-reports.index'], ['List']]]))
       .middleware(new Map([
         [['marketing-reports.index'], ['can:read_marketing_report']],
@@ -360,25 +360,25 @@ Route
       .middleware('can:create_role')
 
     /**
-     * Contact Person
+     * Marketing Target Contact Person
      */
 
     Route
-      .resource('contact-persons', 'ContactPersonController')
+      .resource('contacts', 'MarketingTargetContactController')
       .apiOnly()
       .validator(new Map([
-        [['contact-persons.store'], ['StoreContactPerson']],
-        [['contact-persons.update'], ['UpdateContactPerson']]
+        [['contacts.store'], ['StoreMarketingTargetContact']],
+        [['contacts.update'], ['StoreMarketingTargetContact']]
       ]))
       .middleware(new Map([
-        [['contact-persons.index'], ['can:read_contact_person']],
-        [['contact-persons.store'], ['can:create_contact_person']],
-        [['contact-persons.update'], ['can:update_contact_person']],
-        [['contact-persons.destroy'], ['can:delete_contact_person']]
+        [['contacts.index'], ['can:read_contact_person']],
+        [['contacts.store'], ['can:create_contact_person']],
+        [['contacts.update'], ['can:update_contact_person']],
+        [['contacts.destroy'], ['can:delete_contact_person']]
       ]))
 
     /**
-     * Contact Person
+     * Contact Reports
      */
 
     Route

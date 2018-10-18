@@ -1,34 +1,37 @@
 'use strict'
 
+const messages = require('./messages')
+
 class StoreMarketingReport {
   get rules() {
     return {
+      code: 'max:20|unique:marketing_reports',
       schedulle_id: 'required|integer',
       method: 'string|max:50',
-      schedulle_date: 'date',
-      terms: 'string',
-      result: 'string',
+      date: 'date',
+      terms: 'string|max:250',
+      result: 'string|max:250',
+      note: 'string|max:250',
       lat: 'number',
       lng: 'number',
-      description: 'string'
+      description: 'string|max:250'
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required',
-      max: '{{ field }} cannot more then {{ arguments:0 }} characters',
-    }
+    return messages
   }
 
   get sanitizationRules() {
     return {
+      code: 'escape',
       schedulle_id: 'toInt',
       method: 'escape',
-      schedulle_date: 'toDate',
+      date: 'toDate',
       terms: 'escape',
       result: 'escape',
       description: 'escape',
+      note: 'escape',
     }
   }
 }

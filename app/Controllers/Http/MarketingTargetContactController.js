@@ -1,31 +1,26 @@
 'use strict'
 
-const MarketingReport = use('App/Models/MarketingReport')
+const MarketingTargetContact = use('App/Models/MarketingTargetContact')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 const fillable = [
-  'code',
-  'schedulle_id',
-  'method',
-  'date',
-  'terms',
-  'result',
-  'note',
-  'lat',
-  'lng',
-  'description',
+  'marketing_target_id',
+  'name',
+  'title',
+  'phone',
+  'email',
 ]
 
 /**
- * MarketingReportController
+ * MarketingTargetContactController
  *
  */
 
-class MarketingReportController {
+class MarketingTargetContactController {
 
   /**
    * Index
-   * Get List of MarketingReports
+   * Get List of MarketingTargetContacts
    */
   async index({ request, response }) {
 
@@ -40,7 +35,7 @@ class MarketingReportController {
       end_date,
       sort_by,
       sort_mode,
-      schedulle_id
+      marketing_target_id
     } = request.get()
 
     if (!page) page = 1
@@ -49,29 +44,18 @@ class MarketingReportController {
     if (!sort_mode) sort_mode = 'desc'
 
     if(search && search != '') {
-      const data = await MarketingReport.query()
-        .with('schedulle')
-        .where('method', 'like', `%${search}%`)
+      const data = await MarketingTargetContact.query()
+        .with('target')
+        .where('name', 'like', `%${search}%`)
         .orWhere('code', 'like', `%${search}%`)
-        // .orWhereHas('schedulle', (builder) => {
-        //   builder.where('code', 'like', `%${search}%`)
-        //   builder.orWhereHas('marketing', (builder2) => {
-        //     builder2.where('name', 'like', `%${search}%`)
-        //   })
-        //   builder.orWhereHas('study', (builder2) => {
-        //     builder2.whereHas('university', (builder3) => {
-        //       builder3.where('name', 'like', `%${search}%`)
-        //     })
-        //     builder2.orWhereHas('studyName', (builder3) => {
-        //       builder3.where('name', 'like', `%${search}%`)
-        //     })
-        //   })
-        // })
+        .orWhere('title', 'like', `%${search}%`)
+        .orWhere('phone', 'like', `%${search}%`)
+        .orWhere('email', 'like', `%${search}%`)
         .where(function() {
-          if (schedulle_id) {
+          if (marketing_target_id) {
             return this.where(
-              'schedulle_id',
-              parseInt(schedulle_id)
+              'marketing_target_id',
+              parseInt(marketing_target_id)
             )
           }
         })
@@ -80,7 +64,7 @@ class MarketingReportController {
       return response.status(200).send(parsed)
     }
 
-    const redisKey = `MarketingReport_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${schedulle_id}`
+    const redisKey = `MarketingTargetContact_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}`
 
     let cached = await RedisHelper.get(redisKey)
 
@@ -88,8 +72,8 @@ class MarketingReportController {
       return response.status(200).send(cached)
     }
 
-    const data = await MarketingReport.query()
-      .with('schedulle')
+    const data = await MarketingTargetContact.query()
+      .with('target')
       .where(function() {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
@@ -101,10 +85,10 @@ class MarketingReportController {
         }
       })
       .where(function() {
-        if (schedulle_id) {
+        if (marketing_target_id) {
           return this.where(
-            'schedulle_id',
-            parseInt(schedulle_id)
+            'marketing_target_id',
+            parseInt(marketing_target_id)
           )
         }
       })
@@ -118,21 +102,15 @@ class MarketingReportController {
 
   /**
    * Store
-   * Store New MarketingReports
+   * Store New MarketingTargetContacts
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
-    if (!body.code || body.code == '') {
-      body.code = Math.floor(Date.now() / 1000).toString()
-    }
-    if (!body.date || body.date == '') {
-      body.date = Date.now()
-    }
-    const data = await MarketingReport.create(body)
-    await data.load('schedulle')
-    await RedisHelper.delete('MarketingReport_*')
-    const activity = `Add new MarketingReport '${data.id}'`
+    const data = await MarketingTargetContact.create(body)
+    await data.load('target')
+    await RedisHelper.delete('MarketingTargetContact_*')
+    const activity = `Add new MarketingTargetContact '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
@@ -140,20 +118,20 @@ class MarketingReportController {
 
   /**
    * Show
-   * MarketingReport by id
+   * MarketingTargetContact by id
    */
   async show({ request, response }) {
     const id = request.params.id
-    let redisKey = `MarketingReport_${id}`
+    let redisKey = `MarketingTargetContact_${id}`
     let cached = await RedisHelper.get(redisKey)
     if (cached) {
       return response.status(200).send(cached)
     }
-    const data = await MarketingReport.find(id)
+    const data = await MarketingTargetContact.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.load('schedulle')
+    await data.load('target')
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -161,43 +139,43 @@ class MarketingReportController {
 
   /**
    * Update
-   * Update MarketingReport by Id
+   * Update MarketingTargetContact by Id
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
     let body = request.only(fillable)
     const id = request.params.id
-    const data = await MarketingReport.find(id)
+    const data = await MarketingTargetContact.find(id)
     if (!data || data.length === 0) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
     await data.merge(body)
     await data.save()
-    await data.load('schedulle')
-    const activity = `Update MarketingReport '${data.id}'`
+    await data.load('target')
+    const activity = `Update MarketingTargetContact '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('MarketingReport_*')
+    await RedisHelper.delete('MarketingTargetContact_*')
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
 
   /**
    * Delete
-   * Delete MarketingReport by Id
+   * Delete MarketingTargetContact by Id
    * Can only be done by Super Administrator
    */
   async destroy({ request, response, auth }) {
     const id = request.params.id
-    const data = await MarketingReport.find(id)
+    const data = await MarketingTargetContact.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete MarketingReport '${data.id}'`
+    const activity = `Delete MarketingTargetContact '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('MarketingReport_*')
+    await RedisHelper.delete('MarketingTargetContact_*')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
 }
 
-module.exports = MarketingReportController
+module.exports = MarketingTargetContactController
