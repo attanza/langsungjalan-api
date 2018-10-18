@@ -38,9 +38,14 @@ class MarketingTargetController {
 
     if(search && search != '') {
       const data = await MarketingTarget.query()
+        .with('study.studyName')
+        .with('study.university')
         .where('code', 'like', `%${search}%`)
         .orWhereHas('study', (builder) => {
-          builder.whereHas('studyName', builder2 => {
+          builder.whereHas('university', builder2 => {
+            builder2.where('name', 'like', `%${search}%`)
+          })
+          builder.orWhereHas('studyName', builder2 => {
             builder2.where('name', 'like', `%${search}%`)
           })
         })
@@ -91,6 +96,7 @@ class MarketingTargetController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await MarketingTarget.create(body)
+    await data.loadMany(['study.studyName', 'study.university'])
     await RedisHelper.delete('MarketingTarget_*')
     const activity = `Add new MarketingTarget '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
@@ -133,6 +139,7 @@ class MarketingTargetController {
     }
     await data.merge(body)
     await data.save()
+    await data.loadMany(['study.studyName', 'study.university'])
     const activity = `Update MarketingTarget '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('MarketingTarget_*')

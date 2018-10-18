@@ -109,16 +109,6 @@ Factory.blueprint('App/Models/MarketingReport', (faker) => {
   }
 })
 
-Factory.blueprint('App/Models/ContactPerson', (faker) => {
-  return {
-    marketing_target_id: faker.integer({ min: 1, max: 3 }),
-    name: faker.name(),
-    title: faker.sentence({ words: 4 }),
-    phone: faker.phone(),
-    email: faker.email(),
-  }
-})
-
 Factory.blueprint('App/Models/MarketingReportYear', (faker) => {
   return {
     marketing_target_id: faker.integer({ min: 1, max: 2 }),

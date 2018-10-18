@@ -8,7 +8,7 @@ class MarketingTargetSchema extends Schema {
       table.increments()
       table.string('code').notNullable().unique().index()
       table.integer('study_program_id').unsigned()
-      table.string('description').notNullable()
+      table.string('description')
       table.timestamps()
     })
   }
