@@ -132,7 +132,7 @@ class SchedulleController {
       body.code = Math.floor(Date.now() / 1000).toString()
     }
     const data = await Schedulle.create(body)
-    await data.loadMany(['marketing', 'report', 'action', 'report'])
+    await data.loadMany(['marketing', 'target', 'action'])
     await RedisHelper.delete('Schedulle_*')
     const activity = `Add new Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
@@ -157,7 +157,7 @@ class SchedulleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['marketing', 'report', 'action', 'report'])
+    await data.loadMany(['marketing', 'target', 'action'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -179,7 +179,7 @@ class SchedulleController {
     const activity = `Update Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('Schedulle_*')
-    await data.loadMany(['marketing', 'report', 'action', 'report'])
+    await data.loadMany(['marketing', 'target', 'action'])
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }

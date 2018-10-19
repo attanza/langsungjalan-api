@@ -18,7 +18,7 @@ const moment = require('moment')
 class DataExportController {
   async index({ request, response }) {
     try {
-      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id, marketing_id, search } = request.get()
+      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id, marketing_id } = request.get()
 
       if (!sort_by) sort_by = 'id'
       if (!sort_mode) sort_mode = 'asc'
