@@ -9,10 +9,11 @@ const StudyProgram = use('App/Models/StudyProgram')
 const StudyName = use('App/Models/StudyName')
 const MarketingAction = use('App/Models/MarketingAction')
 const Database = use('Database')
+const MarketingTarget = use('App/Models/MarketingTarget')
 
 class ComboDataController {
   async index({ request, response }) {
-    const { model, university_id } = request.get()
+    const { model, university_id, search } = request.get()
     switch (model) {
     case 'University':
     {
@@ -59,6 +60,12 @@ class ComboDataController {
     case 'Action':
     {
       const data = await this.getMarketingAction()
+      return response.status(200).send(data)
+    }
+
+    case 'MarketingTarget':
+    {
+      const data = await this.getTarget(search)
       return response.status(200).send(data)
     }
 
@@ -195,6 +202,27 @@ class ComboDataController {
       return cached
     }
     const data = await MarketingAction.query().select('id', 'name').orderBy('name').fetch()
+    await RedisHelper.set(redisKey, data)
+    let parsed = data.toJSON()
+    return parsed
+  }
+
+  async getTarget(search) {
+    if(search && search != '') {
+      return await MarketingTarget.query()
+        .select('id', 'code')
+        .where('code', 'like', `%${search}%`)
+        .orderBy('code')
+        .fetch()
+    }
+
+    let redisKey = 'MarketingTarget_Combo'
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached != null) {
+      return cached
+    }
+    const data = await MarketingTarget.query().select('id', 'code').orderBy('code').fetch()
     await RedisHelper.set(redisKey, data)
     let parsed = data.toJSON()
     return parsed

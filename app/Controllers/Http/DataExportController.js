@@ -13,13 +13,12 @@ const Product = use('App/Models/Product')
 const Activity = use('App/Models/Activity')
 const Schedulle = use('App/Models/Schedulle')
 
-
 const moment = require('moment')
 
 class DataExportController {
   async index({ request, response }) {
     try {
-      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id, marketing_id } = request.get()
+      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id, marketing_id, search } = request.get()
 
       if (!sort_by) sort_by = 'id'
       if (!sort_mode) sort_mode = 'asc'
@@ -81,6 +80,8 @@ class DataExportController {
       case 'Schedulle':
         data = await this.getSchedulles(sort_by, sort_mode, limit, range_by, range_start, range_end, marketing_id)
         break
+
+
 
       default:
         data = null
