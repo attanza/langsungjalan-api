@@ -10,6 +10,8 @@ const StudyName = use('App/Models/StudyName')
 const MarketingAction = use('App/Models/MarketingAction')
 const Database = use('Database')
 const MarketingTarget = use('App/Models/MarketingTarget')
+const Schedulle = use('App/Models/Schedulle')
+
 
 class ComboDataController {
   async index({ request, response }) {
@@ -66,6 +68,12 @@ class ComboDataController {
     case 'MarketingTarget':
     {
       const data = await this.getTarget(search)
+      return response.status(200).send(data)
+    }
+
+    case 'Schedulle':
+    {
+      const data = await this.getSchedulle(search)
       return response.status(200).send(data)
     }
 
@@ -223,6 +231,27 @@ class ComboDataController {
       return cached
     }
     const data = await MarketingTarget.query().select('id', 'code').orderBy('code').fetch()
+    await RedisHelper.set(redisKey, data)
+    let parsed = data.toJSON()
+    return parsed
+  }
+
+  async getSchedulle(search) {
+    if(search && search != '') {
+      return await Schedulle.query()
+        .select('id', 'code')
+        .where('code', 'like', `%${search}%`)
+        .orderBy('code')
+        .fetch()
+    }
+
+    let redisKey = 'Schedulle_Combo'
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached != null) {
+      return cached
+    }
+    const data = await Schedulle.query().select('id', 'code').orderBy('code').fetch()
     await RedisHelper.set(redisKey, data)
     let parsed = data.toJSON()
     return parsed

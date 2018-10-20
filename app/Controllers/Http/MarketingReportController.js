@@ -50,23 +50,17 @@ class MarketingReportController {
 
     if(search && search != '') {
       const data = await MarketingReport.query()
-        .with('schedulle')
+        .with('schedulle.marketing')
         .where('method', 'like', `%${search}%`)
         .orWhere('code', 'like', `%${search}%`)
-        // .orWhereHas('schedulle', (builder) => {
-        //   builder.where('code', 'like', `%${search}%`)
-        //   builder.orWhereHas('marketing', (builder2) => {
-        //     builder2.where('name', 'like', `%${search}%`)
-        //   })
-        //   builder.orWhereHas('study', (builder2) => {
-        //     builder2.whereHas('university', (builder3) => {
-        //       builder3.where('name', 'like', `%${search}%`)
-        //     })
-        //     builder2.orWhereHas('studyName', (builder3) => {
-        //       builder3.where('name', 'like', `%${search}%`)
-        //     })
-        //   })
-        // })
+        .orWhereHas('schedulle', (builder) => {
+          builder.where('code', 'like', `%${search}%`)
+        })
+        .orWhereHas('schedulle', builder => {
+          builder.whereHas('marketing', builder2 => {
+            builder2.where('name', 'like', `%${search}%`)
+          })
+        })
         .where(function() {
           if (schedulle_id) {
             return this.where(
@@ -89,7 +83,7 @@ class MarketingReportController {
     }
 
     const data = await MarketingReport.query()
-      .with('schedulle')
+      .with('schedulle.marketing')
       .where(function() {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
@@ -130,7 +124,7 @@ class MarketingReportController {
       body.date = Date.now()
     }
     const data = await MarketingReport.create(body)
-    await data.load('schedulle')
+    await data.load('schedulle.marketing')
     await RedisHelper.delete('MarketingReport_*')
     const activity = `Add new MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
@@ -153,7 +147,7 @@ class MarketingReportController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.load('schedulle')
+    await data.loadMany(['schedulle.marketing','schedulle.action', 'schedulle.target.study.studyName', 'schedulle.target.study.university'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -173,7 +167,7 @@ class MarketingReportController {
     }
     await data.merge(body)
     await data.save()
-    await data.load('schedulle')
+    await data.load('schedulle.marketing')
     const activity = `Update MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('MarketingReport_*')

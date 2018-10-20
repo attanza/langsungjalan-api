@@ -47,7 +47,6 @@ class MarketingTargetContactController {
       const data = await MarketingTargetContact.query()
         .with('target')
         .where('name', 'like', `%${search}%`)
-        .orWhere('code', 'like', `%${search}%`)
         .orWhere('title', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
