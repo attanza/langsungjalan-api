@@ -3,7 +3,7 @@
 const Model = use('Model')
 const Env = use('Env')
 
-class MarketingReportAttachment extends Model {
+class TargetAttachment extends Model {
   target() {
     return this.belongsTo('App/Models/MarketingTarget')
   }
@@ -15,7 +15,7 @@ class MarketingReportAttachment extends Model {
   }
 }
 
-module.exports = MarketingReportAttachment
+module.exports = TargetAttachment
 
 function getBaseUrl() {
   let environment = Env.get('NODE_ENV')

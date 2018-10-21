@@ -2,9 +2,9 @@
 
 const Schema = use('Schema')
 
-class MarketingReportAttachmentSchema extends Schema {
+class TargetAttachmentSchema extends Schema {
   up () {
-    this.create('marketing_report_attachments', (table) => {
+    this.create('target_attachments', (table) => {
       table.increments()
       table.integer('marketing_target_id').unsigned().index()
       table.string('url')
@@ -15,8 +15,8 @@ class MarketingReportAttachmentSchema extends Schema {
   }
 
   down () {
-    this.drop('marketing_report_attachments')
+    this.drop('target_attachments')
   }
 }
 
-module.exports = MarketingReportAttachmentSchema
+module.exports = TargetAttachmentSchema

@@ -219,17 +219,17 @@ Route
      */
 
     Route
-      .resource('marketing-report-attachments', 'MarketingReportAttachmentController')
+      .resource('attachments', 'TargetAttachmentController')
       .apiOnly()
       .validator(new Map([
-        [['marketing-report-attachments.store'], ['StoreMarketingReportAttachment']],
-        [['marketing-report-attachments.update'], ['StoreMarketingReportAttachment']],
-        [['marketing-report-attachments.index'], ['List']]]))
+        [['attachments.store'], ['StoreMarketingReportAttachment']],
+        [['attachments.update'], ['StoreMarketingReportAttachment']],
+        [['attachments.index'], ['List']]]))
       .middleware(new Map([
-        [['marketing-report-attachments.index'], ['can:read_marketing_report_attachment']],
-        [['marketing-report-attachments.store'], ['can:create_marketing_report_attachment']],
-        [['marketing-report-attachments.update'], ['can:update_marketing_report_attachment']],
-        [['marketing-report-attachments.destroy'], ['can:delete_marketing_report_attachment']]
+        [['attachments.index'], ['can:read_marketing_report_attachment']],
+        [['attachments.store'], ['can:create_marketing_report_attachment']],
+        [['attachments.update'], ['can:update_marketing_report_attachment']],
+        [['attachments.destroy'], ['can:delete_marketing_report_attachment']]
       ]))
 
     /**

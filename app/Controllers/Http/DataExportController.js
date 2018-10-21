@@ -334,7 +334,6 @@ class DataExportController {
       .limit(parseInt(limit))
       .fetch()
     dbData = dbData.toJSON()
-    console.log('dbData', dbData) //eslint-disable-line
     let output = []
     dbData.forEach(data => {
       let d = Object.assign({}, data)
