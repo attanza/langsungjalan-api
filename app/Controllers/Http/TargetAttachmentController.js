@@ -114,6 +114,7 @@ class TargetAttachmentController {
     }
     body.url = `/img/marketing_target/${name}`
     const data = await TargetAttachment.create(body)
+    await data.load('target')
     await RedisHelper.delete('TargetAttachment_*')
     const activity = `Add new TargetAttachment <Target Code ${target.code}>`
     await ActivityTraits.saveActivity(request, auth, activity)
@@ -161,6 +162,7 @@ class TargetAttachmentController {
 
     await data.merge(body)
     await data.save()
+    await data.load('target')
     const activity = `Update TargetAttachment '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('TargetAttachment_*')
@@ -170,8 +172,6 @@ class TargetAttachmentController {
 
   /**
    * Delete
-   * Delete TargetAttachment by Id
-   * Can only be done by Super Administrator
    */
   async destroy({ request, response, auth }) {
     const id = request.params.id
