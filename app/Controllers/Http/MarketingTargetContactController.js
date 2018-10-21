@@ -50,6 +50,9 @@ class MarketingTargetContactController {
         .orWhere('title', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
+        .orWhereHas('target', builder => {
+          builder.where('code', 'like', `%${search}%`)
+        })
         .where(function() {
           if (marketing_target_id) {
             return this.where(

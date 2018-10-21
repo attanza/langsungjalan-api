@@ -12,13 +12,14 @@ const Permission = use('App/Models/Permission')
 const Product = use('App/Models/Product')
 const Activity = use('App/Models/Activity')
 const Schedulle = use('App/Models/Schedulle')
+const MarketingTargetContact = use('App/Models/MarketingTargetContact')
 
 const moment = require('moment')
 
 class DataExportController {
   async index({ request, response }) {
     try {
-      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id, marketing_id } = request.get()
+      let { model, sort_by, sort_mode, limit, range_by, range_start, range_end, user_id, marketing_id, marketing_target_id } = request.get()
 
       if (!sort_by) sort_by = 'id'
       if (!sort_mode) sort_mode = 'asc'
@@ -79,6 +80,10 @@ class DataExportController {
 
       case 'Schedulle':
         data = await this.getSchedulles(sort_by, sort_mode, limit, range_by, range_start, range_end, marketing_id)
+        break
+
+      case 'Contact':
+        data = await this.getContacts(sort_by, sort_mode, limit, range_by, range_start, range_end, marketing_target_id)
         break
 
 
@@ -308,6 +313,36 @@ class DataExportController {
 
       // Add Address Data
       d.address = data.study.address
+
+      output.push(d)
+    })
+    return output
+  }
+
+  async getContacts(sort_by, sort_mode, limit, range_by, range_start, range_end, marketing_target_id) {
+    let dbData = await MarketingTargetContact.query()
+      .with('target', builder => {
+        builder.select('id', 'code')
+      })
+      .where(function() {
+        if (marketing_target_id && marketing_target_id != '') {
+          return this.where('marketing_target_id', marketing_target_id)
+        }
+      })
+      .whereBetween(range_by,[range_start,range_end])
+      .orderBy(sort_by, sort_mode)
+      .limit(parseInt(limit))
+      .fetch()
+    dbData = dbData.toJSON()
+    console.log('dbData', dbData) //eslint-disable-line
+    let output = []
+    dbData.forEach(data => {
+      let d = Object.assign({}, data)
+
+      // Schedulle Marketing
+      delete d.target
+      delete d.marketing_target_id
+      if(data.target) d.target = data.target.code
 
       output.push(d)
     })
