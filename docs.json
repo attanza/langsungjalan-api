@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "940491b3-288d-4c54-810c-bcf6f5cd4a10",
 		"name": "Langsung Jalan API",
-		"description": "Welcome to Langsung Jalan API. This Documentation will describe how to connect to our Back End server to feed up your mobile / front-end applications along with the Request Bodies, Responses, Query Strings etc, which will be required by our Back End Server.\n\n### Base URL\n\nDocumentation:  http://13.251.123.94:7000 \n\nApi Endpoint:  http://13.251.123.94/api/v1 ",
+		"description": "Welcome to Langsung Jalan API. This Documentation will describe how to connect to our Back End server to feed up your mobile / front-end applications along with the Request Bodies, Responses, Query Strings etc, which will be required by our Back End Server.\n\n### Base URL\n\nDocumentation:  http://13.251.123.94/docs\n\nApi Endpoint:  http://13.251.123.94/api/v1 ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
