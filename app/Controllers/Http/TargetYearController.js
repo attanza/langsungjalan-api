@@ -1,19 +1,19 @@
 'use strict'
 
-const MarketingReportYear = use('App/Models/MarketingReportYear')
+const TargetYear = use('App/Models/TargetYear')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
 const fillable = ['year', 'class', 'students', 'marketing_target_id']
 
 /**
- * MarketingReportYearController
+ * TargetYearController
  *
  */
 
-class MarketingReportYearController {
+class TargetYearController {
   /**
    * Index
-   * Get List of MarketingReportYears
+   * Get List of TargetYears
    */
   async index({ request, response }) {
     let {
@@ -36,7 +36,7 @@ class MarketingReportYearController {
     if (!sort_mode) sort_mode = 'desc'
 
     if (search && search != '') {
-      const data = await MarketingReportYear.query()
+      const data = await TargetYear.query()
         .with('target')
         .where('year', 'like', `%${search}%`)
         .orWhere('class', 'like', `%${search}%`)
@@ -49,7 +49,7 @@ class MarketingReportYearController {
       return response.status(200).send(parsed)
     }
 
-    const redisKey = `MarketingReportYear_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}`
+    const redisKey = `TargetYear_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}`
 
     let cached = await RedisHelper.get(redisKey)
 
@@ -57,7 +57,7 @@ class MarketingReportYearController {
       return response.status(200).send(cached)
     }
 
-    const data = await MarketingReportYear.query()
+    const data = await TargetYear.query()
       .with('target')
       .where(function() {
         if (search_by && search_query) {
@@ -84,14 +84,14 @@ class MarketingReportYearController {
 
   /**
    * Store
-   * Store New MarketingReportYears
+   * Store New TargetYears
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
-    const data = await MarketingReportYear.create(body)
-    await RedisHelper.delete('MarketingReportYear_*')
-    const activity = `Add new MarketingReportYear '${data.year}'`
+    const data = await TargetYear.create(body)
+    await RedisHelper.delete('TargetYear_*')
+    const activity = `Add new TargetYear '${data.year}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
@@ -99,16 +99,16 @@ class MarketingReportYearController {
 
   /**
    * Show
-   * MarketingReportYear by id
+   * TargetYear by id
    */
   async show({ request, response }) {
     const id = request.params.id
-    let redisKey = `MarketingReportYear_${id}`
+    let redisKey = `TargetYear_${id}`
     let cached = await RedisHelper.get(redisKey)
     if (cached) {
       return response.status(200).send(cached)
     }
-    const data = await MarketingReportYear.find(id)
+    const data = await TargetYear.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
@@ -120,44 +120,44 @@ class MarketingReportYearController {
 
   /**
    * Update
-   * Update MarketingReportYear by Id
+   * Update TargetYear by Id
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
     let body = request.only(fillable)
     const id = request.params.id
-    const data = await MarketingReportYear.find(id)
+    const data = await TargetYear.find(id)
     if (!data || data.length === 0) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
     await data.merge(body)
     await data.save()
     await data.load('target')
-    const activity = `Update MarketingReportYear '${data.year}'`
+    const activity = `Update TargetYear '${data.year}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('MarketingReportYear_*')
+    await RedisHelper.delete('TargetYear_*')
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
 
   /**
    * Delete
-   * Delete MarketingReportYear by Id
+   * Delete TargetYear by Id
    * Can only be done by Super Administrator
-   * Default MarketingReportYear ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student'] cannot be deleted
+   * Default TargetYear ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student'] cannot be deleted
    */
   async destroy({ request, response, auth }) {
     const id = request.params.id
-    const data = await MarketingReportYear.find(id)
+    const data = await TargetYear.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete MarketingReportYear '${data.name}'`
+    const activity = `Delete TargetYear '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('MarketingReportYear_*')
+    await RedisHelper.delete('TargetYear_*')
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
 }
 
-module.exports = MarketingReportYearController
+module.exports = TargetYearController

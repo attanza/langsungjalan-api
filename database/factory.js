@@ -109,9 +109,9 @@ Factory.blueprint('App/Models/MarketingReport', (faker) => {
   }
 })
 
-Factory.blueprint('App/Models/MarketingReportYear', (faker) => {
+Factory.blueprint('App/Models/TargetYear', (faker) => {
   return {
-    marketing_target_id: faker.integer({ min: 1, max: 2 }),
+    marketing_target_id: faker.integer({ min: 1, max: 3 }),
     year: faker.integer({ min: 2015, max: 2020 }).toString(),
     class: faker.integer({ min: 8, max: 12 }),
     students: faker.integer({ min: 20, max: 30 }),

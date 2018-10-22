@@ -382,17 +382,17 @@ Route
      */
 
     Route
-      .resource('marketing-report-years', 'MarketingReportYearController')
+      .resource('target-years', 'TargetYearController')
       .apiOnly()
       .validator(new Map([
-        [['marketing-report-years.store'], ['StoreMarketingReportYear']],
-        [['marketing-report-years.update'], ['StoreMarketingReportYear']]
+        [['target-years.store'], ['StoreMarketingReportYear']],
+        [['target-years.update'], ['StoreMarketingReportYear']]
       ]))
       .middleware(new Map([
-        [['marketing-report-years.index'], ['can:read_marketing_report_year']],
-        [['marketing-report-years.store'], ['can:create_marketing_report_year']],
-        [['marketing-report-years.update'], ['can:update_marketing_report_year']],
-        [['marketing-report-years.destroy'], ['can:delete_marketing_report_year']]
+        [['target-years.index'], ['can:read_marketing_report_year']],
+        [['target-years.store'], ['can:create_marketing_report_year']],
+        [['target-years.update'], ['can:update_marketing_report_year']],
+        [['target-years.destroy'], ['can:delete_marketing_report_year']]
       ]))
   })
   .prefix('api/v1')

@@ -2,10 +2,10 @@
 
 const Model = use('Model')
 
-class MarketingReportYear extends Model {
+class TargetYear extends Model {
   target() {
     return this.belongsTo('App/Models/MarketingTarget')
   }
 }
 
-module.exports = MarketingReportYear
+module.exports = TargetYear

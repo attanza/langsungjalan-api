@@ -2,9 +2,9 @@
 
 const Schema = use('Schema')
 
-class MarketingReportYearSchema extends Schema {
+class TargetYearSchema extends Schema {
   up () {
-    this.create('marketing_report_years', (table) => {
+    this.create('target_years', (table) => {
       table.increments()
       table.integer('marketing_target_id').unsigned().index()
       table.string('year').notNullable()
@@ -21,9 +21,9 @@ class MarketingReportYearSchema extends Schema {
   }
 
   down () {
-    this.drop('marketing_report_years')
+    this.drop('target_years')
   }
 }
 
-module.exports = MarketingReportYearSchema
+module.exports = TargetYearSchema
 
