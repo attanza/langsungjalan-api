@@ -3,8 +3,9 @@
 const Route = use('Route')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 
-Route.get('/docs', 'DocumentController.index')
 Route.get('/', 'DocumentController.intro')
+
+Route.get('/docs', 'DocumentController.index')
 
 Route
   .group(() => {

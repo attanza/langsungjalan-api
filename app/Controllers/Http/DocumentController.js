@@ -1,8 +1,12 @@
 'use strict'
 
+const docs = require('../../../docs.json')
+
 class DocumentController {
-  async index({ view }) {
-    return view.render('docs.index')
+  async index({view}) {
+    return view.render('docs2.index', {
+      docs
+    })
   }
 
   async intro({ view }) {
