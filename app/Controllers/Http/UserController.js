@@ -50,6 +50,7 @@ class UserController {
     }
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete('User_*')
+    await RedisHelper.delete('Marketing_*')
     const activity = `Add new User '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('User_*')
@@ -100,6 +101,7 @@ class UserController {
     await data.merge(body)
     await data.save()
     let { roles } = request.post()
+    console.log('roles', roles) //eslint-disable-line
     if (roles) {
       await this.attachRoles(data, roles)
     }
@@ -107,6 +109,7 @@ class UserController {
     const activity = `Update User '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('User_*')
+    await RedisHelper.delete('Marketing_*')
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
