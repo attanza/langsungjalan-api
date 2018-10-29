@@ -3,24 +3,32 @@
 const Role = use('App/Models/Role')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
 const { ActivityTraits } = use('App/Traits')
+
 const fillable = ['name', 'slug', 'description']
 
-/**
- * RoleController
- *
- */
-
 class RoleController {
-
   /**
    * Index
-   * Get List of Roles
+   * Get List of Role
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
+    let {
+      page,
+      limit,
+      search,
+      search_by,
+      search_query,
+      between_date,
+      start_date,
+      end_date,
+      sort_by,
+      sort_mode
+    } = request.get()
 
     if (!page) page = 1
     if (!limit) limit = 10
+    if (!sort_by) sort_by = 'id'
+    if (!sort_mode) sort_mode = 'desc'
 
     if (search && search != '') {
       const data = await Role.query()
@@ -29,21 +37,33 @@ class RoleController {
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
-    } else {
-      let redisKey = `Role_${page}_${limit}`
-      let cached = await RedisHelper.get(redisKey)
-
-      if (cached != null) {
-        return response.status(200).send(cached)
-      }
-
-      const data = await Role.query().orderBy('name').paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-
-      await RedisHelper.set(redisKey, parsed)
-
-      return response.status(200).send(parsed)
     }
+
+    const redisKey = `Role_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}`
+
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached) {
+      return response.status(200).send(cached)
+    }
+
+    const data = await Role.query()
+      .where(function() {
+        if (search_by && search_query) {
+          return this.where(search_by, 'like', `%${search_query}%`)
+        }
+      })
+      .where(function() {
+        if (between_date && start_date && end_date) {
+          return this.whereBetween(between_date, [start_date, end_date])
+        }
+      })
+      .orderBy(sort_by, sort_mode)
+      .paginate(parseInt(page), parseInt(limit))
+
+    let parsed = ResponseParser.apiCollection(data.toJSON())
+    await RedisHelper.set(redisKey, parsed)
+    return response.status(200).send(parsed)
   }
 
   /**

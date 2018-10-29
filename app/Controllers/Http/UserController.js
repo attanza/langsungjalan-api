@@ -3,7 +3,7 @@
 const User = use('App/Models/User')
 const Role = use('App/Models/Role')
 const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits, ActivationTraits, UserQueryTraits } = use('App/Traits')
+const { ActivityTraits, ActivationTraits } = use('App/Traits')
 const fillable = ['name', 'email', 'password', 'phone', 'address', 'description', 'is_active']
 
 class UserController {
@@ -13,26 +13,66 @@ class UserController {
    * Get List of Users
    */
   async index({ request, response }) {
-    let { page, limit, search, role_id } = request.get()
+    let {
+      page,
+      limit,
+      search,
+      search_by,
+      search_query,
+      between_date,
+      start_date,
+      end_date,
+      sort_by,
+      sort_mode
+    } = request.get()
 
-    // Query with search
+    if (!page) page = 1
+    if (!limit) limit = 10
+    if (!sort_by) sort_by = 'id'
+    if (!sort_mode) sort_mode = 'desc'
+
     if (search && search != '') {
-      let query = new UserQueryTraits(page, limit, search, role_id)
-      let parsed = await query.qBySearch()
-      return response.status(200).send(parsed)
-
-      // Query with role id
-    } else if (role_id && parseInt(role_id) > 0) {
-      let query = new UserQueryTraits(page, limit, search, role_id)
-      let parsed = await query.qByRole()
-      return response.status(200).send(parsed)
-
-      // Query with Page and limit
-    } else {
-      let query = new UserQueryTraits(page, limit, search, role_id)
-      let parsed = await query.qDefault()
+      const data = await User.query()
+        .with('roles', builder => {
+          builder.select('id', 'name', 'slug')
+        })
+        .where('name', 'like', `%${this.search}%`)
+        .orWhere('email', 'like', `%${this.search}%`)
+        .orWhere('phone', 'like', `%${this.search}%`)
+        .orWhere('address', 'like', `%${this.search}%`)
+        .paginate(parseInt(page), parseInt(limit))
+      let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
     }
+
+    const redisKey = `User_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}`
+
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached) {
+      return response.status(200).send(cached)
+    }
+
+    const data = await User.query()
+      .with('roles', builder => {
+        builder.select('id', 'name', 'slug')
+      })
+      .where(function() {
+        if (search_by && search_query) {
+          return this.where(search_by, 'like', `%${search_query}%`)
+        }
+      })
+      .where(function() {
+        if (between_date && start_date && end_date) {
+          return this.whereBetween(between_date, [start_date, end_date])
+        }
+      })
+      .orderBy(sort_by, sort_mode)
+      .paginate(parseInt(page), parseInt(limit))
+
+    let parsed = ResponseParser.apiCollection(data.toJSON())
+    await RedisHelper.set(redisKey, parsed)
+    return response.status(200).send(parsed)
   }
 
   /**
@@ -46,8 +86,8 @@ class UserController {
     let { roles } = request.post()
     if (roles) {
       await this.attachRoles(data, roles)
-      await data.load('roles')
     }
+    await data.load('roles')
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete('User_*')
     await RedisHelper.delete('Marketing_*')
@@ -71,16 +111,11 @@ class UserController {
       return response.status(200).send(cached)
     }
 
-    const data = await User.query().with('roles').where('id', id).first()
+    const data = await User.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    if (data.role_id === 3) {
-      await data.load('marketings')
-    }
-    if (data.role_id === 4) {
-      await data.load('supervisors')
-    }
+    await data.loadMany(['roles', 'marketings', 'supervisors'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -101,7 +136,6 @@ class UserController {
     await data.merge(body)
     await data.save()
     let { roles } = request.post()
-    console.log('roles', roles) //eslint-disable-line
     if (roles) {
       await this.attachRoles(data, roles)
     }
@@ -140,17 +174,17 @@ class UserController {
   }
 
   /**
-   * Attach Roles to User
+   * Attach Users to User
    */
 
   async attachRoles(user, roles) {
     await user.roles().detach()
-    roles.forEach(async (r) => {
-      let role = await Role.find(r)
-      if (role) {
-        await user.roles().attach(role.id)
+    for (let i = 0; i < roles.length; i++) {
+      let data = await Role.find(roles[i])
+      if (data) {
+        await user.roles().attach(data.id)
       }
-    })
+    }
   }
 }
 

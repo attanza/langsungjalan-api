@@ -117,6 +117,7 @@ class StudyProgramController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await StudyProgram.create(body)
+    await data.loadMany(['university', 'studyName'])
     await RedisHelper.delete('StudyProgram_*')
     const activity = `Add new StudyProgram ID(${data.id})`
     await ActivityTraits.saveActivity(request, auth, activity)
@@ -184,7 +185,7 @@ class StudyProgramController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.studyName().dissociate()
+    await data.studyName().disasociate()
     const activity = `Delete StudyProgram ID(${data.id})`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('StudyProgram_*')

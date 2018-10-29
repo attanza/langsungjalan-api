@@ -89,12 +89,12 @@ class SchedulleController {
         }
       })
       .where(function() {
-        if (marketing_id) {
+        if (marketing_id && marketing_id != '') {
           return this.where('marketing_id', parseInt(marketing_id))
         }
       })
       .where(function() {
-        if (marketing_target_id) {
+        if (marketing_target_id && marketing_target_id != '') {
           return this.where(
             'marketing_target_id',
             parseInt(marketing_target_id)

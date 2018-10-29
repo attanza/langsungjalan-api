@@ -8,6 +8,7 @@ const randomstring = require('randomstring')
 const now = moment().format('YYYY-MM-DD HH:mm:ss')
 const roles = ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student']
 const changeCase = require('change-case')
+const {RedisHelper} = use('App/Helpers')
 
 class UserSeeder {
   async run() {
@@ -18,6 +19,7 @@ class UserSeeder {
     await Database.table('activities').truncate()
     await Database.table('marketing_supervisor').truncate()
     await Database.table('role_user').truncate()
+    await RedisHelper.clear()
 
     await User.truncate()
     for (let i = 0; i < roles.length; i++) {
