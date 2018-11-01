@@ -48,19 +48,21 @@ class StudyProgramController {
       const data = await StudyProgram.query()
         .with('university')
         .with('studyName')
-        .with('years', (builder) => {
-          builder.orderBy('year')
-        })
         .where('address', 'like', `%${search}%`)
         .orWhere('email', 'like', `%${search}%`)
         .orWhere('phone', 'like', `%${search}%`)
         .orWhere('contact_person', 'like', `%${search}%`)
-        .orWhere('description', 'like', `%${search}%`)
         .orWhereHas('university', (builder) => {
           builder.where('name', 'like', `%${search}%`)
         })
         .orWhereHas('studyName', (builder) => {
           builder.where('name', 'like', `%${search}%`)
+        })
+        .where(function() {
+          if (university_id && university_id != '') {
+            console.log('university_id', university_id) //eslint-disable-line
+            this.where('university_id', parseInt(university_id))
+          }
         })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
@@ -87,12 +89,12 @@ class StudyProgramController {
         }
       })
       .where(function() {
-        if (university_id) {
+        if (university_id && university_id != '') {
           return this.where('university_id', parseInt(university_id))
         }
       })
       .where(function() {
-        if (study_name_id) {
+        if (study_name_id && study_name_id != '') {
           return this.where('study_name_id', parseInt(study_name_id))
         }
       })
@@ -143,7 +145,7 @@ class StudyProgramController {
     await data.loadMany({
       university: null,
       studyName: null,
-      years: builder => builder.orderBy('year')
+      // years: builder => builder.orderBy('year')
     })
 
     let parsed = ResponseParser.apiItem(data.toJSON())

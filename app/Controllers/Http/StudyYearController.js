@@ -23,39 +23,75 @@ class StudyYearController {
    * Get List of StudyYears
    */
   async index({ request, response }) {
-    let { page, limit, search, study_program_id } = request.get()
+    let {
+      page,
+      limit,
+      search,
+      search_by,
+      search_query,
+      between_date,
+      start_date,
+      end_date,
+      sort_by,
+      sort_mode,
+      study_program_id
+    } = request.get()
 
     if (!page) page = 1
     if (!limit) limit = 10
-    if (!study_program_id) study_program_id = ''
-
+    if (!sort_by) sort_by = 'id'
+    if (!sort_mode) sort_mode = 'desc'
 
     if (search && search != '') {
       const data = await StudyYear.query()
-        .where('study_program_id', 'like', `%${study_program_id}%`)
         .where('year', 'like', `%${search}%`)
         .orWhere('class_per_year', 'like', `%${search}%`)
         .orWhere('students_per_class', 'like', `%${search}%`)
+        .orWhereHas('studyPrograms', (builder) => {
+          builder.whereHas('studyName', builder2 => {
+            builder2.where('name', 'like', `%${search}%`)
+          })
+        })
+        .where(function() {
+          if(study_program_id && study_program_id != '') {
+            this.where('study_program_id', study_program_id)
+          }
+        })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
-    } else {
-      let redisKey = `StudyYear_${page}_${limit}_${study_program_id}`
-      let cached = await RedisHelper.get(redisKey)
-
-      if (cached != null) {
-        return response.status(200).send(cached)
-      }
-
-      const data = await StudyYear.query()
-        .where('study_program_id', 'like', `%${study_program_id}%`)
-        .orderBy('year').paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-
-      await RedisHelper.set(redisKey, parsed)
-
-      return response.status(200).send(parsed)
     }
+
+    const redisKey = `StudyYear_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${study_program_id}`
+
+    let cached = await RedisHelper.get(redisKey)
+
+    if (cached) {
+      return response.status(200).send(cached)
+    }
+
+    const data = await StudyYear.query()
+      .where(function() {
+        if (search_by && search_query) {
+          return this.where(search_by, 'like', `%${search_query}%`)
+        }
+      })
+      .where(function() {
+        if (between_date && start_date && end_date) {
+          return this.whereBetween(between_date, [start_date, end_date])
+        }
+      })
+      .where(function() {
+        if(study_program_id && study_program_id != '') {
+          this.where('study_program_id', study_program_id)
+        }
+      })
+      .orderBy(sort_by, sort_mode)
+      .paginate(parseInt(page), parseInt(limit))
+
+    let parsed = ResponseParser.apiCollection(data.toJSON())
+    await RedisHelper.set(redisKey, parsed)
+    return response.status(200).send(parsed)
   }
 
   /**

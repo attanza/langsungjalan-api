@@ -79,10 +79,20 @@ class SchedulleController {
     }
 
     const data = await Schedulle.query()
-      .with('target')
-      .with('action')
-      .with('report')
-      .with('marketing')
+      // .with('target', builder => {
+      //   builder.select('id', 'code')
+      // })
+      .with('target.study.studyName')
+      .with('target.study.university')
+      .with('action', builder => {
+        builder.select('id', 'name')
+      })
+      .with('report', builder => {
+        builder.select('id', 'code')
+      })
+      .with('marketing', builder => {
+        builder.select('id', 'name')
+      })
       .where(function() {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
@@ -157,7 +167,7 @@ class SchedulleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['marketing', 'target', 'action'])
+    await data.loadMany(['marketing', 'target.study.studyName', 'target.study.university', 'action'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)

@@ -7,8 +7,7 @@ const Helpers = use('Helpers')
 const User = use('App/Models/User')
 
 class ProfileController {
-
-  async me({response, auth}) {
+  async me({ response, auth }) {
     const data = await auth.getUser()
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
@@ -27,7 +26,13 @@ class ProfileController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    let body = request.only(['name', 'email', 'phone', 'address', 'description'])
+    let body = request.only([
+      'name',
+      'email',
+      'phone',
+      'address',
+      'description'
+    ])
     await data.merge(body)
     await data.save()
     await data.load('roles')
@@ -48,7 +53,7 @@ class ProfileController {
 
   async changePassword({ request, response, auth }) {
     const { id } = request.params
-    if(id != auth.user.id) {
+    if (id != auth.user.id) {
       return response.status(403).send(ResponseParser.forbiddenResponse())
     }
 
@@ -87,14 +92,18 @@ class ProfileController {
     })
 
     if (!photo) {
-      return response.status(400).send(ResponseParser.errorResponse('Photo is not an image file'))
+      return response
+        .status(400)
+        .send(ResponseParser.errorResponse('Photo is not an image file'))
     }
     const name = `${new Date().getTime()}.${photo.subtype}`
 
     await photo.move(Helpers.publicPath('img/users'), { name })
 
     if (!photo.moved()) {
-      return response.status(400).send(ResponseParser.errorResponse('Photo failed to upload'))
+      return response
+        .status(400)
+        .send(ResponseParser.errorResponse('Photo failed to upload'))
     }
     await data.merge({ photo: `/img/users/${name}` })
     await data.save()
@@ -108,3 +117,47 @@ class ProfileController {
 }
 
 module.exports = ProfileController
+
+var Veritrans = (function() {
+  var n,
+    t = function() {}
+  function e(n) {
+    var t = n.origin || n.originalEvent.origin
+    n.data &&
+      n.data.status_code &&
+      n.data.status_message &&
+      t &&
+      t.match(/https?:\/\/[\w\.]+(veritrans|midtrans)\./) &&
+      Veritrans.c(n.data)
+  }
+  return (
+    window.addEventListener
+      ? window.addEventListener('message', e, !1)
+      : window.attachEvent('onmessage', e),
+    {
+      url: 'https://api.veritrans.co.id/v2/token',
+      client_key: '',
+      version: '2.1.2-SNAPSHOT',
+      c: function(n) {
+        t(n)
+      },
+      token: function(e, a) {
+        var r, i;
+        (t = a),
+        ((n = e()).callback = 'Veritrans.c'),
+        (n.client_key = Veritrans.client_key),
+        (r =
+            Veritrans.url +
+            (function(n) {
+              var t = '?',
+                e = encodeURIComponent
+              for (var a in n)
+                n.hasOwnProperty(a) && (t += e(a) + '=' + e(n[a]) + '&')
+              return t
+            })(n)),
+        ((i = document.createElement('script')).src = r),
+        document.getElementsByTagName('head')[0].appendChild(i)
+      }
+    }
+  )
+})()
