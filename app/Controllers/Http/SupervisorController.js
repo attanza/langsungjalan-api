@@ -153,7 +153,7 @@ class SupervisorController {
     }
     // Check Marketings
     let filteredMarketings = []
-    marketings.forEach(async(m) => {
+    marketings.forEach(async (m) => {
       let marketing = await User.query().whereHas('roles', builder => {
         builder.where('role_id', 4)
       })
@@ -169,8 +169,8 @@ class SupervisorController {
     await RedisHelper.delete('User_*')
     await RedisHelper.delete('Supervisor_*')
     await RedisHelper.delete('Marketing_*')
-    const data = await User.query().whereIn('id', filteredMarketings)
-    return response.status(200).send(ResponseParser.successResponse(data, 'Marketing attached'))
+    // const data = await User.query().whereIn('id', filteredMarketings)
+    return response.status(200).send(ResponseParser.successResponse(null, 'Marketing attached'))
   }
 
   async detachMarketing({ request, response, auth }) {
@@ -189,7 +189,7 @@ class SupervisorController {
     return response.status(200).send(ResponseParser.successResponse(supervisor, 'Marketing detached'))
   }
 
-  async searchMarketing({request, response}) {
+  async searchMarketing({ request, response }) {
     let { page, limit, search } = request.get()
 
     if (!page) page = 1
@@ -215,7 +215,7 @@ module.exports = SupervisorController
 async function getSupervisorRoleId() {
   let redisKey = 'SupervisorId'
   let cached = await RedisHelper.get(redisKey)
-  if(cached) {
+  if (cached) {
     return cached
   }
   let supervisorRole = await Role.findBy('slug', 'supervisor')

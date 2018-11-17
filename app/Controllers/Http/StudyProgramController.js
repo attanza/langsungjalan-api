@@ -44,7 +44,7 @@ class StudyProgramController {
     if (!sort_by) sort_by = 'id'
     if (!sort_mode) sort_mode = 'desc'
 
-    if(search && search != '') {
+    if (search && search != '') {
       const data = await StudyProgram.query()
         .with('university')
         .with('studyName')
@@ -58,7 +58,7 @@ class StudyProgramController {
         .orWhereHas('studyName', (builder) => {
           builder.where('name', 'like', `%${search}%`)
         })
-        .where(function() {
+        .where(function () {
           if (university_id && university_id != '') {
             console.log('university_id', university_id) //eslint-disable-line
             this.where('university_id', parseInt(university_id))
@@ -83,22 +83,22 @@ class StudyProgramController {
       .with('years', builder => {
         builder.orderBy('year')
       })
-      .where(function() {
+      .where(function () {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
         }
       })
-      .where(function() {
+      .where(function () {
         if (university_id && university_id != '') {
           return this.where('university_id', parseInt(university_id))
         }
       })
-      .where(function() {
+      .where(function () {
         if (study_name_id && study_name_id != '') {
           return this.where('study_name_id', parseInt(study_name_id))
         }
       })
-      .where(function() {
+      .where(function () {
         if (between_date && start_date && end_date) {
           return this.whereBetween(between_date, [start_date, end_date])
         }
@@ -187,7 +187,6 @@ class StudyProgramController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.studyName().disasociate()
     const activity = `Delete StudyProgram ID(${data.id})`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete('StudyProgram_*')
