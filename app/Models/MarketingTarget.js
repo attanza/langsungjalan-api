@@ -9,6 +9,10 @@ class MarketingTarget extends Model {
   contacts() {
     return this.hasMany('App/Models/ContactPerson')
   }
+
+  schedulles() {
+    return this.hasMany('App/Models/Schedulle')
+  }
 }
 
 module.exports = MarketingTarget

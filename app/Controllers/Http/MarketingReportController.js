@@ -40,7 +40,8 @@ class MarketingReportController {
       end_date,
       sort_by,
       sort_mode,
-      schedulle_id
+      schedulle_id,
+      marketing_target_id
     } = request.get()
 
     if (!page) page = 1
@@ -48,33 +49,7 @@ class MarketingReportController {
     if (!sort_by) sort_by = 'id'
     if (!sort_mode) sort_mode = 'desc'
 
-    if(search && search != '') {
-      const data = await MarketingReport.query()
-        .with('schedulle.marketing')
-        .where('method', 'like', `%${search}%`)
-        .orWhere('code', 'like', `%${search}%`)
-        .orWhereHas('schedulle', (builder) => {
-          builder.where('code', 'like', `%${search}%`)
-        })
-        .orWhereHas('schedulle', builder => {
-          builder.whereHas('marketing', builder2 => {
-            builder2.where('name', 'like', `%${search}%`)
-          })
-        })
-        .where(function() {
-          if (schedulle_id) {
-            return this.where(
-              'schedulle_id',
-              parseInt(schedulle_id)
-            )
-          }
-        })
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
-    }
-
-    const redisKey = `MarketingReport_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${schedulle_id}`
+    const redisKey = `MarketingReport_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${schedulle_id}${marketing_target_id}`
 
     let cached = await RedisHelper.get(redisKey)
 
@@ -85,17 +60,34 @@ class MarketingReportController {
     const data = await MarketingReport.query()
       .with('schedulle.marketing')
       .where(function() {
+        if(search && search != '') {
+          this.where('method', 'like', `%${search}%`)
+          this.orWhere('code', 'like', `%${search}%`)
+          this.orWhereHas('schedulle', (builder) => {
+            builder.where('code', 'like', `%${search}%`)
+          })
+          this.orWhereHas('schedulle', builder => {
+            builder.whereHas('marketing', builder2 => {
+              builder2.where('name', 'like', `%${search}%`)
+            })
+          })
+        }
+
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
         }
-      })
-      .where(function() {
+
         if (between_date && start_date && end_date) {
           return this.whereBetween(between_date, [start_date, end_date])
         }
-      })
-      .where(function() {
-        if (schedulle_id) {
+
+        if(marketing_target_id && marketing_target_id != '') {
+          return this.whereHas('schedulle', builder => {
+            builder.where('marketing_target_id', marketing_target_id)
+          })
+        }
+
+        if (schedulle_id && schedulle_id != '') {
           return this.where(
             'schedulle_id',
             parseInt(schedulle_id)
@@ -106,7 +98,9 @@ class MarketingReportController {
       .paginate(parseInt(page), parseInt(limit))
 
     let parsed = ResponseParser.apiCollection(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
+    if(!search || search == '') {
+      await RedisHelper.set(redisKey, parsed)
+    }
     return response.status(200).send(parsed)
   }
 
