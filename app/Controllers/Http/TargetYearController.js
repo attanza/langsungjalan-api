@@ -1,9 +1,16 @@
 'use strict'
 
 const TargetYear = use('App/Models/TargetYear')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
-const fillable = ['year', 'class', 'students', 'marketing_target_id']
+const {
+  RedisHelper,
+  ResponseParser
+} = use('App/Helpers')
+const {
+  ActivityTraits
+} = use('App/Traits')
+const fillable = ['year', 'class', 'students', 'marketing_target_id', 'count_attendence',
+  'people_dp', 'count_dp', 'count_add', 'count_cancel', 'count_packages'
+]
 
 /**
  * TargetYearController
@@ -15,7 +22,10 @@ class TargetYearController {
    * Index
    * Get List of TargetYears
    */
-  async index({ request, response }) {
+  async index({
+    request,
+    response
+  }) {
     let {
       page,
       limit,
@@ -42,7 +52,7 @@ class TargetYearController {
         .orWhere('class', 'like', `%${search}%`)
         .orWhere('students', 'like', `%${search}%`)
         .orWhereHas('target', builder => {
-          builder.where('code', 'like', `%${search}%` )
+          builder.where('code', 'like', `%${search}%`)
         })
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
@@ -59,17 +69,17 @@ class TargetYearController {
 
     const data = await TargetYear.query()
       .with('target')
-      .where(function() {
+      .where(function () {
         if (search_by && search_query) {
           return this.where(search_by, 'like', `%${search_query}%`)
         }
       })
-      .where(function() {
+      .where(function () {
         if (marketing_target_id) {
           return this.where('marketing_target_id', parseInt(marketing_target_id))
         }
       })
-      .where(function() {
+      .where(function () {
         if (between_date && start_date && end_date) {
           return this.whereBetween(between_date, [start_date, end_date])
         }
@@ -87,7 +97,11 @@ class TargetYearController {
    * Store New TargetYears
    * Can only be done by Super Administrator
    */
-  async store({ request, response, auth }) {
+  async store({
+    request,
+    response,
+    auth
+  }) {
     let body = request.only(fillable)
     const data = await TargetYear.create(body)
     await RedisHelper.delete('TargetYear_*')
@@ -101,7 +115,10 @@ class TargetYearController {
    * Show
    * TargetYear by id
    */
-  async show({ request, response }) {
+  async show({
+    request,
+    response
+  }) {
     const id = request.params.id
     let redisKey = `TargetYear_${id}`
     let cached = await RedisHelper.get(redisKey)
@@ -123,7 +140,11 @@ class TargetYearController {
    * Update TargetYear by Id
    * Can only be done by Super Administrator
    */
-  async update({ request, response, auth }) {
+  async update({
+    request,
+    response,
+    auth
+  }) {
     let body = request.only(fillable)
     const id = request.params.id
     const data = await TargetYear.find(id)
@@ -146,7 +167,11 @@ class TargetYearController {
    * Can only be done by Super Administrator
    * Default TargetYear ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student'] cannot be deleted
    */
-  async destroy({ request, response, auth }) {
+  async destroy({
+    request,
+    response,
+    auth
+  }) {
     const id = request.params.id
     const data = await TargetYear.find(id)
     if (!data) {
