@@ -568,7 +568,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/dashboard-data",
 							"host": [
@@ -597,7 +600,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/dashboard-data",
 									"host": [
@@ -872,12 +878,22 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/roles",
+							"raw": "{{baseUrl}}/roles?sort_by=name&sort_mode=asc",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"roles"
+							],
+							"query": [
+								{
+									"key": "sort_by",
+									"value": "name"
+								},
+								{
+									"key": "sort_mode",
+									"value": "asc"
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -2910,13 +2926,11 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
 										"disabled": false
 									},
 									{
 										"key": "Content-Type",
 										"value": "application/json",
-										"type": "text",
 										"disabled": false
 									}
 								],
@@ -2949,20 +2963,14 @@
 							"_postman_previewlanguage": "json",
 							"header": [
 								{
-									"key": "Cache-Control",
-									"value": "proxy-revalidate",
-									"name": "Cache-Control",
-									"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
-								},
-								{
 									"key": "Connection",
-									"value": "Keep-Alive",
+									"value": "keep-alive",
 									"name": "Connection",
 									"description": "Options that are desired for the connection"
 								},
 								{
 									"key": "Content-Length",
-									"value": "1463",
+									"value": "1240",
 									"name": "Content-Length",
 									"description": "The length of the response body in octets (8-bit bytes)"
 								},
@@ -2974,25 +2982,19 @@
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 13 Sep 2018 04:34:41 GMT",
+									"value": "Mon, 29 Oct 2018 07:23:43 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
 								{
-									"key": "Server",
-									"value": "nginx/1.10.3 (Ubuntu)",
-									"name": "Server",
-									"description": "A name for the server"
-								},
-								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=f39595205bbc2f48ee181a61ac37e785qgReDffCHJCrwFCWoVpBSkwZ4jscEn6SBFjanSNJO6WESzpibdY6fm0vQeGg0k4q%2BYZUhZreGMe%2F0nq4u62qj6UuWAJah5KYFng9SlHfLUXEEvS2E3u8ZIHZLCc3%2BKbg; Path=/; HttpOnly",
+									"value": "adonis-session=da7df33a75c436abadbd19d40022a0ccVdis8sv9ppzWcWdLpIvDSA99eVcA2u2l1gLSaLbCvkQwwHEb08wndE6JGursOIqtUkZ4nUDfzHQCqxl6gj1HnVi1aribfOu1RZ5PiWyMe0RMnRnG9HB2pfOGNiYvXu3p; Path=/; HttpOnly",
 									"name": "Set-Cookie",
 									"description": "an HTTP cookie"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session-values=8b681f859607582cd08dfc36e4765df0VlACvg%2BHzKNwYevW6y9z8TjBoUnKxM3wf37Cyj%2FkzdMKUgRTF4pLHiZBLmOT%2F84ukBLnFtm6K5p%2FrtXoF1F9Qg%3D%3D; Path=/; HttpOnly",
+									"value": "adonis-session-values=8b53b9aa6f429145388c3882a488e233%2BZkpG4px%2FL24FEc6l9l7GzW4dbyLPPk54AadV6Se1ImSe8EZJJ%2BBmI8FZvGxgppTM7OjKd6J%2BWyTM2UP8%2BohmQ%3D%3D; Path=/; HttpOnly",
 									"name": "Set-Cookie",
 									"description": "an HTTP cookie"
 								}
@@ -3001,23 +3003,32 @@
 								{
 									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
 									"httpOnly": true,
-									"domain": "13.251.123.94",
+									"domain": "localhost",
 									"path": "/",
 									"secure": false,
-									"value": "f39595205bbc2f48ee181a61ac37e785qgReDffCHJCrwFCWoVpBSkwZ4jscEn6SBFjanSNJO6WESzpibdY6fm0vQeGg0k4q%2BYZUhZreGMe%2F0nq4u62qj6UuWAJah5KYFng9SlHfLUXEEvS2E3u8ZIHZLCc3%2BKbg",
+									"value": "da7df33a75c436abadbd19d40022a0ccVdis8sv9ppzWcWdLpIvDSA99eVcA2u2l1gLSaLbCvkQwwHEb08wndE6JGursOIqtUkZ4nUDfzHQCqxl6gj1HnVi1aribfOu1RZ5PiWyMe0RMnRnG9HB2pfOGNiYvXu3p",
 									"key": "adonis-session"
 								},
 								{
 									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
 									"httpOnly": true,
-									"domain": "13.251.123.94",
+									"domain": "localhost",
 									"path": "/",
 									"secure": false,
-									"value": "8b681f859607582cd08dfc36e4765df0VlACvg%2BHzKNwYevW6y9z8TjBoUnKxM3wf37Cyj%2FkzdMKUgRTF4pLHiZBLmOT%2F84ukBLnFtm6K5p%2FrtXoF1F9Qg%3D%3D",
+									"value": "8b53b9aa6f429145388c3882a488e233%2BZkpG4px%2FL24FEc6l9l7GzW4dbyLPPk54AadV6Se1ImSe8EZJJ%2BBmI8FZvGxgppTM7OjKd6J%2BWyTM2UP8%2BohmQ%3D%3D",
 									"key": "adonis-session-values"
+								},
+								{
+									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
+									"httpOnly": true,
+									"domain": "localhost",
+									"path": "/",
+									"secure": true,
+									"value": "1tidcBexFekpCJNs12yTQL9XXchNA6AdLFXlem5PBG3ErSnmqwCiKXEJQARWvbjw3Yw15BNAXOnCkOiecW8AhAfc5QtHLzKP309hfGLFyMS0La7GyxjYNExrLw8wvcbg",
+									"key": "fg_token"
 								}
 							],
-							"body": "{\"meta\":{\"status\":200,\"message\":\"Data retrieval successfully\",\"total\":10,\"perPage\":3,\"page\":1,\"lastPage\":4},\"data\":[{\"id\":2,\"uid\":\"ea53cb6c-7ba8-445a-882a-72e4e031137c\",\"name\":\"Administrator\",\"email\":\"administrator@langsungjalan.com\",\"phone\":\"123456789\",\"description\":null,\"photo\":\"\",\"address\":null,\"is_active\":1,\"created_at\":\"2018-09-13 10:21:24\",\"updated_at\":\"2018-09-13 10:21:24\",\"roles\":[{\"id\":2,\"slug\":\"administrator\",\"name\":\"Administrator\",\"description\":null,\"created_at\":\"2018-09-13 10:21:24\",\"updated_at\":\"2018-09-13 10:21:24\",\"pivot\":{\"role_id\":2,\"user_id\":2}}]},{\"id\":8,\"uid\":\"6b319d79-eda8-460f-8b6c-e9094b6c62a4\",\"name\":\"Dylan Carter\",\"email\":\"bieldem@cilu.gb\",\"phone\":\"(213) 259-7592\",\"description\":null,\"photo\":\"\",\"address\":\"1512 Guume Plaza\",\"is_active\":0,\"created_at\":\"2018-09-13 10:21:25\",\"updated_at\":\"2018-09-13 10:21:25\",\"roles\":[{\"id\":4,\"slug\":\"marketing\",\"name\":\"Marketing\",\"description\":null,\"created_at\":\"2018-09-13 10:21:24\",\"updated_at\":\"2018-09-13 10:21:24\",\"pivot\":{\"role_id\":4,\"user_id\":8}}]},{\"id\":4,\"uid\":\"4ac02282-c6a8-4de7-8d0c-67035d2aa7e7\",\"name\":\"Marketing\",\"email\":\"marketing@langsungjalan.com\",\"phone\":\"123456789\",\"description\":null,\"photo\":\"\",\"address\":null,\"is_active\":1,\"created_at\":\"2018-09-13 10:21:24\",\"updated_at\":\"2018-09-13 10:21:24\",\"roles\":[{\"id\":4,\"slug\":\"marketing\",\"name\":\"Marketing\",\"description\":null,\"created_at\":\"2018-09-13 10:21:24\",\"updated_at\":\"2018-09-13 10:21:24\",\"pivot\":{\"role_id\":4,\"user_id\":4}}]}]}"
+							"body": "{\"meta\":{\"status\":200,\"message\":\"Data retrieval successfully\",\"total\":10,\"perPage\":3,\"page\":1,\"lastPage\":4},\"data\":[{\"id\":10,\"uid\":\"699753e7-2f9d-4088-9961-8fc20c889322\",\"name\":\"Harriett McKinney\",\"email\":\"fa@bej.fi\",\"phone\":\"(603) 259-4672\",\"description\":null,\"photo\":\"\",\"address\":\"1902 Gihles Lane\",\"lang\":\"id\",\"is_active\":1,\"created_at\":\"2018-10-28 20:10:15\",\"updated_at\":\"2018-10-28 20:10:15\",\"roles\":[{\"id\":4,\"name\":\"Marketing\",\"slug\":\"marketing\",\"pivot\":{\"role_id\":4,\"user_id\":10}}]},{\"id\":9,\"uid\":\"e180638e-3caf-4fdc-8332-7412776db891\",\"name\":\"Marguerite Oliver\",\"email\":\"ib@ketse.tf\",\"phone\":\"(743) 381-7464\",\"description\":null,\"photo\":\"\",\"address\":\"124 Hapu View\",\"lang\":\"id\",\"is_active\":1,\"created_at\":\"2018-10-28 20:10:15\",\"updated_at\":\"2018-10-28 20:10:15\",\"roles\":[{\"id\":4,\"name\":\"Marketing\",\"slug\":\"marketing\",\"pivot\":{\"role_id\":4,\"user_id\":9}}]},{\"id\":8,\"uid\":\"2b292590-c084-4759-b4ef-11717b28f3a3\",\"name\":\"Peter Soto\",\"email\":\"rihusudi@wuzokafop.tf\",\"phone\":\"(455) 508-8197\",\"description\":null,\"photo\":\"\",\"address\":\"1896 Rauga Street\",\"lang\":\"id\",\"is_active\":1,\"created_at\":\"2018-10-28 20:10:15\",\"updated_at\":\"2018-10-28 20:10:15\",\"roles\":[{\"id\":4,\"name\":\"Marketing\",\"slug\":\"marketing\",\"pivot\":{\"role_id\":4,\"user_id\":8}}]}]}"
 						}
 					]
 				},
@@ -3087,13 +3098,11 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
 										"disabled": false
 									},
 									{
 										"key": "Content-Type",
 										"value": "application/json",
-										"type": "text",
 										"disabled": false
 									}
 								],
@@ -3123,7 +3132,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "297",
+									"value": "648",
 									"name": "Content-Length",
 									"description": "The length of the response body in octets (8-bit bytes)"
 								},
@@ -3135,19 +3144,19 @@
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 13 Sep 2018 04:41:37 GMT",
+									"value": "Mon, 29 Oct 2018 07:23:46 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=31d3f28e305d74fda2f750c82b9fc95caPzium8Pfil4v7OqAnimCvvXo5ZoymHJvFqTMOtINMX2Ki9bPJadN20IMr9XMiLqNOPvoERUFRxhf5CF5f9aIwVsp3fYqADIUDe7E%2BnwIxW6bGi1aU20SlB2u1NRqVv1; Path=/; HttpOnly",
+									"value": "adonis-session=97d7ae5a7855b6ca40ebf1b9f097d222fbk%2FxjAijflWknAA4E2nRdQYlGNRg%2BVqXPkl%2BKHInYlJKeZLBw5BZKcA77mR1b48Ge2%2FZ50LbZ1ZCUPiSvle6%2FYmTtO0KgpHrFDn5FTZAmUDaXWBIvYRilu%2BNP2rfDXp; Path=/; HttpOnly",
 									"name": "Set-Cookie",
 									"description": "an HTTP cookie"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session-values=c155f6a5649da5c64fcca9c2fd1ef3efyKYQmQtHhr62KwIQdIOEzoaWptLCMc3g4hLDEc87JczDLerrfYi3v1D5lZW%2FjHO4BVCac5JKl2zeT96rF%2FeYPw%3D%3D; Path=/; HttpOnly",
+									"value": "adonis-session-values=25e8e7365468a3bc34ffcc26bba5e4a2aYQAPCtUBLS6YckKPTX4Z4vFtdiqqz0LXq%2FLjz6bs0njbutm1kKZ4gqm4BUSgWL03YXbfBfCTHDcjZG87fithA%3D%3D; Path=/; HttpOnly",
 									"name": "Set-Cookie",
 									"description": "an HTTP cookie"
 								}
@@ -3159,7 +3168,7 @@
 									"domain": "localhost",
 									"path": "/",
 									"secure": false,
-									"value": "31d3f28e305d74fda2f750c82b9fc95caPzium8Pfil4v7OqAnimCvvXo5ZoymHJvFqTMOtINMX2Ki9bPJadN20IMr9XMiLqNOPvoERUFRxhf5CF5f9aIwVsp3fYqADIUDe7E%2BnwIxW6bGi1aU20SlB2u1NRqVv1",
+									"value": "97d7ae5a7855b6ca40ebf1b9f097d222fbk%2FxjAijflWknAA4E2nRdQYlGNRg%2BVqXPkl%2BKHInYlJKeZLBw5BZKcA77mR1b48Ge2%2FZ50LbZ1ZCUPiSvle6%2FYmTtO0KgpHrFDn5FTZAmUDaXWBIvYRilu%2BNP2rfDXp",
 									"key": "adonis-session"
 								},
 								{
@@ -3168,11 +3177,20 @@
 									"domain": "localhost",
 									"path": "/",
 									"secure": false,
-									"value": "c155f6a5649da5c64fcca9c2fd1ef3efyKYQmQtHhr62KwIQdIOEzoaWptLCMc3g4hLDEc87JczDLerrfYi3v1D5lZW%2FjHO4BVCac5JKl2zeT96rF%2FeYPw%3D%3D",
+									"value": "25e8e7365468a3bc34ffcc26bba5e4a2aYQAPCtUBLS6YckKPTX4Z4vFtdiqqz0LXq%2FLjz6bs0njbutm1kKZ4gqm4BUSgWL03YXbfBfCTHDcjZG87fithA%3D%3D",
 									"key": "adonis-session-values"
+								},
+								{
+									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
+									"httpOnly": true,
+									"domain": "localhost",
+									"path": "/",
+									"secure": true,
+									"value": "1tidcBexFekpCJNs12yTQL9XXchNA6AdLFXlem5PBG3ErSnmqwCiKXEJQARWvbjw3Yw15BNAXOnCkOiecW8AhAfc5QtHLzKP309hfGLFyMS0La7GyxjYNExrLw8wvcbg",
+									"key": "fg_token"
 								}
 							],
-							"body": "{\"meta\":{\"status\":201,\"message\":\"Created successfully\"},\"data\":{\"name\":\"Dani Lesmiadi\",\"email\":\"danilesmiadi@gmail.com\",\"phone\":\"08122443582\",\"address\":\"Bandung\",\"uid\":\"404f34a8-b9aa-40b6-b863-711cc0ad9f1a\",\"created_at\":\"2018-09-13 11:41:37\",\"updated_at\":\"2018-09-13 11:41:37\",\"id\":11,\"roles\":[]}}"
+							"body": "{\"meta\":{\"status\":201,\"message\":\"Created successfully\"},\"data\":{\"name\":\"Dani Lesmiadi\",\"email\":\"danilesmiadi@gmail.com\",\"phone\":\"08122443582\",\"address\":\"Bandung\",\"uid\":\"87087a4d-f7b7-440c-b5be-676da6136d46\",\"created_at\":\"2018-10-29 14:23:46\",\"updated_at\":\"2018-10-29 14:23:46\",\"id\":14,\"roles\":[{\"id\":2,\"slug\":\"administrator\",\"name\":\"Administrator\",\"description\":null,\"created_at\":\"2018-10-28 20:10:12\",\"updated_at\":\"2018-10-28 20:10:12\",\"pivot\":{\"role_id\":2,\"user_id\":14}},{\"id\":3,\"slug\":\"supervisor\",\"name\":\"Supervisor\",\"description\":null,\"created_at\":\"2018-10-28 20:10:12\",\"updated_at\":\"2018-10-28 20:10:12\",\"pivot\":{\"role_id\":3,\"user_id\":14}}]}}"
 						}
 					]
 				},
@@ -3274,7 +3292,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "699",
+									"value": "744",
 									"name": "Content-Length",
 									"description": "The length of the response body in octets (8-bit bytes)"
 								},
@@ -3286,19 +3304,19 @@
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 13 Sep 2018 04:44:15 GMT",
+									"value": "Mon, 29 Oct 2018 07:26:07 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=37df211fc25e9d693138f3cad8172799oe7i8zcOkbA3t96Sh5fm5NJgUdA7laLOuFuEMxY9d3Mxr5qf7PfCEd1TWjLJKf6eiDPSL3bwRgy5iDrhLAlZNWOG5c9gxzitgloni62crQpDjRfZ4LdadmXmGr8BUYS1; Path=/; HttpOnly",
+									"value": "adonis-session=6d92191412ea197dd1973402fa66c9a15PRYCDSAFU88gyHJV9CUoHwNISNdncn7GAMwHkm3pIdu2C76hoa4gnOo4pWl4lNepGJYIECm7kqeaqNJd8Soi%2BNi5r%2F88kAl8jDluIFmYiH5zSGXsbYHb%2BTpM5l0J3UW; Path=/; HttpOnly",
 									"name": "Set-Cookie",
 									"description": "an HTTP cookie"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session-values=3a5d66bc7fcb73347e42847cdfb287628kznppbBb9FTbdjTzrjgB6WrqnfuMH12450yOEacMo5xR4dCGzP%2BGjwl1VijACoqZr8VvSXzCr1qmNPBdDj2%2FQ%3D%3D; Path=/; HttpOnly",
+									"value": "adonis-session-values=b6317bd23bc2a9bbd7f12915c30bf7d4M19cKLFlzzghIntLdT7%2BDsmmiTiHXLXGWSEFXy%2FWoYWqrS1jXqNF6p7ijJrReC4r%2BA5AXx0m%2BtdCTwdPRm%2Fk2Q%3D%3D; Path=/; HttpOnly",
 									"name": "Set-Cookie",
 									"description": "an HTTP cookie"
 								}
@@ -3310,7 +3328,7 @@
 									"domain": "localhost",
 									"path": "/",
 									"secure": false,
-									"value": "37df211fc25e9d693138f3cad8172799oe7i8zcOkbA3t96Sh5fm5NJgUdA7laLOuFuEMxY9d3Mxr5qf7PfCEd1TWjLJKf6eiDPSL3bwRgy5iDrhLAlZNWOG5c9gxzitgloni62crQpDjRfZ4LdadmXmGr8BUYS1",
+									"value": "6d92191412ea197dd1973402fa66c9a15PRYCDSAFU88gyHJV9CUoHwNISNdncn7GAMwHkm3pIdu2C76hoa4gnOo4pWl4lNepGJYIECm7kqeaqNJd8Soi%2BNi5r%2F88kAl8jDluIFmYiH5zSGXsbYHb%2BTpM5l0J3UW",
 									"key": "adonis-session"
 								},
 								{
@@ -3319,11 +3337,20 @@
 									"domain": "localhost",
 									"path": "/",
 									"secure": false,
-									"value": "3a5d66bc7fcb73347e42847cdfb287628kznppbBb9FTbdjTzrjgB6WrqnfuMH12450yOEacMo5xR4dCGzP%2BGjwl1VijACoqZr8VvSXzCr1qmNPBdDj2%2FQ%3D%3D",
+									"value": "b6317bd23bc2a9bbd7f12915c30bf7d4M19cKLFlzzghIntLdT7%2BDsmmiTiHXLXGWSEFXy%2FWoYWqrS1jXqNF6p7ijJrReC4r%2BA5AXx0m%2BtdCTwdPRm%2Fk2Q%3D%3D",
 									"key": "adonis-session-values"
+								},
+								{
+									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
+									"httpOnly": true,
+									"domain": "localhost",
+									"path": "/",
+									"secure": true,
+									"value": "1tidcBexFekpCJNs12yTQL9XXchNA6AdLFXlem5PBG3ErSnmqwCiKXEJQARWvbjw3Yw15BNAXOnCkOiecW8AhAfc5QtHLzKP309hfGLFyMS0La7GyxjYNExrLw8wvcbg",
+									"key": "fg_token"
 								}
 							],
-							"body": "{\"meta\":{\"status\":200,\"message\":\"Data retrieval successfully\"},\"data\":{\"id\":11,\"uid\":\"404f34a8-b9aa-40b6-b863-711cc0ad9f1a\",\"name\":\"Dani Lesmiadi\",\"email\":\"danilesmiadi@gmail.com\",\"phone\":\"08122443582\",\"description\":null,\"photo\":\"\",\"address\":\"Bandung\",\"is_active\":0,\"created_at\":\"2018-09-13 11:41:37\",\"updated_at\":\"2018-09-13 11:41:37\",\"roles\":[{\"id\":2,\"slug\":\"administrator\",\"name\":\"Administrator\",\"description\":null,\"created_at\":\"2018-09-12 21:54:10\",\"updated_at\":\"2018-09-12 21:54:10\",\"pivot\":{\"role_id\":2,\"user_id\":11}},{\"id\":3,\"slug\":\"supervisor\",\"name\":\"Supervisor\",\"description\":null,\"created_at\":\"2018-09-12 21:54:10\",\"updated_at\":\"2018-09-12 21:54:10\",\"pivot\":{\"role_id\":3,\"user_id\":11}}]}}"
+							"body": "{\"meta\":{\"status\":200,\"message\":\"Data retrieval successfully\"},\"data\":{\"id\":14,\"uid\":\"87087a4d-f7b7-440c-b5be-676da6136d46\",\"name\":\"Dani Lesmiadi\",\"email\":\"danilesmiadi@gmail.com\",\"phone\":\"08122443582\",\"description\":null,\"photo\":\"\",\"address\":\"Bandung\",\"lang\":\"id\",\"is_active\":0,\"created_at\":\"2018-10-29 14:23:46\",\"updated_at\":\"2018-10-29 14:23:46\",\"roles\":[{\"id\":2,\"slug\":\"administrator\",\"name\":\"Administrator\",\"description\":null,\"created_at\":\"2018-10-28 20:10:12\",\"updated_at\":\"2018-10-28 20:10:12\",\"pivot\":{\"role_id\":2,\"user_id\":14}},{\"id\":3,\"slug\":\"supervisor\",\"name\":\"Supervisor\",\"description\":null,\"created_at\":\"2018-10-28 20:10:12\",\"updated_at\":\"2018-10-28 20:10:12\",\"pivot\":{\"role_id\":3,\"user_id\":14}}],\"marketings\":[],\"supervisors\":[]}}"
 						}
 					]
 				},
@@ -3390,13 +3417,11 @@
 									{
 										"key": "Accept",
 										"value": "application/json",
-										"type": "text",
 										"disabled": false
 									},
 									{
 										"key": "Content-Type",
 										"value": "application/json",
-										"type": "text",
 										"disabled": false
 									}
 								],
@@ -3427,7 +3452,7 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "341",
+									"value": "543",
 									"name": "Content-Length",
 									"description": "The length of the response body in octets (8-bit bytes)"
 								},
@@ -3439,19 +3464,19 @@
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 13 Sep 2018 04:45:05 GMT",
+									"value": "Mon, 29 Oct 2018 07:26:15 GMT",
 									"name": "Date",
 									"description": "The date and time that the message was sent"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=34efff77e0d5dac4bfc179822f0d41afP6DJonLIYrKNXogLJO7hXF9W3aOlDJqsuJ%2BZY4I2Au8HREQgSBR%2B5XS02gaj1oxK2vOW41wt7EdYDcLpsyrzDQcJrGmFSJq5uRyxfXN65u6kgp0WOIF8GXPcsqhEG84T; Path=/; HttpOnly",
+									"value": "adonis-session=7109facd8dd60772f8798bbbde7c2ff6Fe9oPNMWM%2Bng1z0GNwQUfyiI88wjXEDUsoEJ%2BHoF5YflvZmpE5nZJoFQRDFkwAjH0dbvgnc%2FHaS1xdk1vcanJzuCiHdcyZumsBTA%2F%2BLrcTGdL9iNRUBQRinuvh5F%2BSH2; Path=/; HttpOnly",
 									"name": "Set-Cookie",
 									"description": "an HTTP cookie"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session-values=ca637d350739a911da98ab2cbbbcf87394o3PIOH2pd0k6DU7GlpcU8mgsEu98gSfKpGYdNCB8FqJnD4s2JNeeRAU3OplXRd0oSVkYk2ygNKYLjkEH44UA%3D%3D; Path=/; HttpOnly",
+									"value": "adonis-session-values=96a60fbf2dac83c5d1a9325d78422c11oPohUgptwFB%2F2JtLnb%2BpIRrQ0hvX9cStW1eE3Ks39GblDy5vo9N30Ppmz81B7NhEMOf%2FbOMrv52cN1%2BLo%2FufmQ%3D%3D; Path=/; HttpOnly",
 									"name": "Set-Cookie",
 									"description": "an HTTP cookie"
 								}
@@ -3463,7 +3488,7 @@
 									"domain": "localhost",
 									"path": "/",
 									"secure": false,
-									"value": "34efff77e0d5dac4bfc179822f0d41afP6DJonLIYrKNXogLJO7hXF9W3aOlDJqsuJ%2BZY4I2Au8HREQgSBR%2B5XS02gaj1oxK2vOW41wt7EdYDcLpsyrzDQcJrGmFSJq5uRyxfXN65u6kgp0WOIF8GXPcsqhEG84T",
+									"value": "7109facd8dd60772f8798bbbde7c2ff6Fe9oPNMWM%2Bng1z0GNwQUfyiI88wjXEDUsoEJ%2BHoF5YflvZmpE5nZJoFQRDFkwAjH0dbvgnc%2FHaS1xdk1vcanJzuCiHdcyZumsBTA%2F%2BLrcTGdL9iNRUBQRinuvh5F%2BSH2",
 									"key": "adonis-session"
 								},
 								{
@@ -3472,11 +3497,20 @@
 									"domain": "localhost",
 									"path": "/",
 									"secure": false,
-									"value": "ca637d350739a911da98ab2cbbbcf87394o3PIOH2pd0k6DU7GlpcU8mgsEu98gSfKpGYdNCB8FqJnD4s2JNeeRAU3OplXRd0oSVkYk2ygNKYLjkEH44UA%3D%3D",
+									"value": "96a60fbf2dac83c5d1a9325d78422c11oPohUgptwFB%2F2JtLnb%2BpIRrQ0hvX9cStW1eE3Ks39GblDy5vo9N30Ppmz81B7NhEMOf%2FbOMrv52cN1%2BLo%2FufmQ%3D%3D",
 									"key": "adonis-session-values"
+								},
+								{
+									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
+									"httpOnly": true,
+									"domain": "localhost",
+									"path": "/",
+									"secure": true,
+									"value": "1tidcBexFekpCJNs12yTQL9XXchNA6AdLFXlem5PBG3ErSnmqwCiKXEJQARWvbjw3Yw15BNAXOnCkOiecW8AhAfc5QtHLzKP309hfGLFyMS0La7GyxjYNExrLw8wvcbg",
+									"key": "fg_token"
 								}
 							],
-							"body": "{\"meta\":{\"status\":200,\"message\":\"Updated successfully\"},\"data\":{\"id\":11,\"uid\":\"404f34a8-b9aa-40b6-b863-711cc0ad9f1a\",\"name\":\"Dani Lesmiadi\",\"email\":\"danilesmiadi@gmail.com\",\"phone\":\"08122443582\",\"description\":null,\"photo\":\"\",\"address\":\"Bandung\",\"is_active\":0,\"created_at\":\"2018-09-13 11:41:37\",\"updated_at\":\"2018-09-13 11:45:05\",\"roles\":[]}}"
+							"body": "{\"meta\":{\"status\":200,\"message\":\"Updated successfully\"},\"data\":{\"id\":14,\"uid\":\"87087a4d-f7b7-440c-b5be-676da6136d46\",\"name\":\"Dani Lesmiadi\",\"email\":\"danilesmiadi@gmail.com\",\"phone\":\"08122443582\",\"description\":null,\"photo\":\"\",\"address\":\"Bandung\",\"lang\":\"id\",\"is_active\":0,\"created_at\":\"2018-10-29 14:23:46\",\"updated_at\":\"2018-10-29 14:26:15\",\"roles\":[{\"id\":1,\"slug\":\"super-administrator\",\"name\":\"Super Administrator\",\"description\":null,\"created_at\":\"2018-10-28 20:10:12\",\"updated_at\":\"2018-10-28 20:10:12\",\"pivot\":{\"role_id\":1,\"user_id\":14}}]}}"
 						}
 					]
 				},
@@ -5156,7 +5190,7 @@
 					]
 				},
 				{
-					"name": "Show Marketing by Id",
+					"name": "Show Supervisor by Id",
 					"event": [
 						{
 							"listen": "test",
@@ -5309,7 +5343,7 @@
 					]
 				},
 				{
-					"name": "Update Marketing by Id",
+					"name": "Update Supervisor by Id",
 					"event": [
 						{
 							"listen": "test",
@@ -5818,7 +5852,7 @@
 					]
 				},
 				{
-					"name": "Delete Marketing by Id",
+					"name": "Delete Supervisor by Id",
 					"event": [
 						{
 							"listen": "test",
@@ -7194,12 +7228,12 @@
 							"listen": "test",
 							"script": {
 								"id": "84a23015-dd39-4fd5-b0fd-e71f1a8257bc",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -7230,13 +7264,19 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/marketing-targets/{{resourceId}}",
+							"raw": "{{baseUrl}}/marketing-targets/2?report=true",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"marketing-targets",
-								"{{resourceId}}"
+								"2"
+							],
+							"query": [
+								{
+									"key": "report",
+									"value": "true"
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -8843,7 +8883,6 @@
 							"listen": "test",
 							"script": {
 								"id": "dc3e780c-79fe-4ef9-9048-ffbd1e70362c",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 201\", function () {",
 									"    pm.response.to.have.status(201);",
@@ -8852,7 +8891,8 @@
 									"let resp = pm.response.json();",
 									"",
 									"pm.environment.set(\"resourceId\", resp.data.id);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -8882,27 +8922,63 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "marketing_target_id",
+									"value": "1",
+									"description": "required|string|max:50",
+									"type": "text"
+								},
+								{
 									"key": "year",
-									"value": "2008",
+									"value": "2016",
 									"description": "required|string|max:50",
 									"type": "text"
 								},
 								{
 									"key": "class",
-									"value": "8",
-									"description": "required|string|max:50",
+									"value": "4",
+									"description": "integer (Jumlah Kelas)",
 									"type": "text"
 								},
 								{
 									"key": "students",
-									"value": "25",
-									"description": "required|string|max:30|unique",
+									"value": "20",
+									"description": "integer (Rata-rata siswa / kelas)",
 									"type": "text"
 								},
 								{
-									"key": "marketing_target_id",
-									"value": "1",
-									"description": "required|email|max:30|unique",
+									"key": "count_attendence",
+									"value": "50",
+									"description": "integer (Jumlah Hadir)",
+									"type": "text"
+								},
+								{
+									"key": "people_dp",
+									"value": "40",
+									"description": "integer (Jumlah Orang DP)",
+									"type": "text"
+								},
+								{
+									"key": "count_dp",
+									"value": "1000000",
+									"description": "integer (Total DP Diterima)",
+									"type": "text"
+								},
+								{
+									"key": "count_add",
+									"value": "10",
+									"description": "integer (Jumlah Tambah)",
+									"type": "text"
+								},
+								{
+									"key": "count_cancel",
+									"value": "3",
+									"description": "integer (Jumlah Batal)",
+									"type": "text"
+								},
+								{
+									"key": "count_packages",
+									"value": "47",
+									"description": "integer (Jumlah Bagi Paket)",
 									"type": "text"
 								}
 							]
@@ -9215,12 +9291,12 @@
 							"listen": "test",
 							"script": {
 								"id": "bbcfdacf-6a8f-47fc-bc9e-32aa041f5373",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -9250,25 +9326,63 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "marketing_target_id",
+									"value": "1",
+									"description": "required|string|max:50",
+									"type": "text"
+								},
+								{
 									"key": "year",
-									"value": "2010",
-									"description": "required|string|max:50|unique",
+									"value": "2016",
+									"description": "required|string|max:50",
 									"type": "text"
 								},
 								{
 									"key": "class",
-									"value": "8",
-									"description": "required|string|max:50|unique",
+									"value": "4",
+									"description": "integer (Jumlah Kelas)",
 									"type": "text"
 								},
 								{
 									"key": "students",
-									"value": "25",
+									"value": "20",
+									"description": "integer (Rata-rata siswa / kelas)",
 									"type": "text"
 								},
 								{
-									"key": "marketing_target_id",
-									"value": "1",
+									"key": "count_attendence",
+									"value": "50",
+									"description": "integer (Jumlah Hadir)",
+									"type": "text"
+								},
+								{
+									"key": "people_dp",
+									"value": "40",
+									"description": "integer (Jumlah Orang DP)",
+									"type": "text"
+								},
+								{
+									"key": "count_dp",
+									"value": "1000000",
+									"description": "integer (Total DP Diterima)",
+									"type": "text"
+								},
+								{
+									"key": "count_add",
+									"value": "10",
+									"description": "integer (Jumlah Tambah)",
+									"type": "text"
+								},
+								{
+									"key": "count_cancel",
+									"value": "3",
+									"description": "integer (Jumlah Batal)",
+									"type": "text"
+								},
+								{
+									"key": "count_packages",
+									"value": "47",
+									"description": "integer (Jumlah Bagi Paket)",
 									"type": "text"
 								}
 							]
@@ -9618,10 +9732,10 @@
 							"listen": "test",
 							"script": {
 								"id": "e0e94b4a-8728-47cf-a63d-6a161f97c6d3",
-								"type": "text/javascript",
 								"exec": [
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -9659,7 +9773,8 @@
 								{
 									"key": "file",
 									"description": "file|max:5mb",
-									"type": "file"
+									"type": "file",
+									"src": ""
 								}
 							]
 						},
@@ -9704,9 +9819,7 @@
 											"key": "file",
 											"description": "file|max:5mb",
 											"type": "file",
-											"src": {
-												"0": {}
-											}
+											"src": null
 										}
 									]
 								},
@@ -9835,12 +9948,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/attachments",
+							"raw": "{{baseUrl}}/attachments?marketing_target_id=1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"attachments"
+							],
+							"query": [
+								{
+									"key": "marketing_target_id",
+									"value": "1"
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -10536,7 +10655,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/schedulles?sort_by=id&sort_mode=desc",
+							"raw": "{{baseUrl}}/schedulles?sort_by=id&sort_mode=desc&marketing_target_id=1",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -10551,6 +10670,10 @@
 								{
 									"key": "sort_mode",
 									"value": "desc"
+								},
+								{
+									"key": "marketing_target_id",
+									"value": "1"
 								}
 							]
 						},
@@ -11351,12 +11474,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11387,12 +11510,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/marketing-reports",
+							"raw": "{{baseUrl}}/marketing-reports?marketing_target_id=1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"marketing-reports"
+							],
+							"query": [
+								{
+									"key": "marketing_target_id",
+									"value": "1"
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -11509,7 +11638,6 @@
 							"listen": "test",
 							"script": {
 								"id": "dc3e780c-79fe-4ef9-9048-ffbd1e70362c",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 201\", function () {",
 									"    pm.response.to.have.status(201);",
@@ -11518,7 +11646,8 @@
 									"let resp = pm.response.json();",
 									"",
 									"pm.environment.set(\"resourceId\", resp.data.id);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11546,7 +11675,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"schedulle_id\": 1,\n  \"method\": \"Bertemu langsung\",\n  \"date\": \"2018-10-8\",\n  \"terms\": \"Dibutuhkan Surat pengantar\",\n  \"result\": \"Jadwal presentasi 3 Oktober 2018 jam 10.00\",\n  \"lat\": -6.175110,\n  \"lng\": 106.865036,\n  \"description\": \"Ketua kelas angkatan 2017 tidak ada di lokasi\"\n}\n"
+							"raw": "{\n  \"code\": \"789123879\",\n  \"schedulle_id\": 1,\n  \"method\": \"Bertemu langsung\",\n  \"date\": \"2018-10-8\",\n  \"terms\": \"Dibutuhkan Surat pengantar\",\n  \"result\": \"Jadwal presentasi 3 Oktober 2018 jam 10.00\",\n  \"note\": \"Supervisor review\",\n  \"lat\": -6.175110,\n  \"lng\": 106.865036,\n  \"description\": \"Ketua kelas angkatan 2017 tidak ada di lokasi\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/marketing-reports",
@@ -11831,12 +11960,12 @@
 							"listen": "test",
 							"script": {
 								"id": "0ac17d02-86a3-427a-9058-c4645fb3f38c",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -11864,7 +11993,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"schedulle_id\": 1,\n  \"method\": \"Bertemu langsung\",\n  \"date\": \"2018-10-12\",\n  \"terms\": \"Dibutuhkan Surat pengantar\",\n  \"result\": \"Jadwal presentasi 3 Oktober 2018 jam 10.00\",\n  \"lat\": -6.175110,\n  \"lng\": 106.865036,\n  \"description\": \"Ketua kelas angkatan 2017 tidak ada di lokasi\"\n}\n"
+							"raw": "{\n  \"code\": \"789123879\",\n  \"schedulle_id\": 1,\n  \"method\": \"Bertemu langsung\",\n  \"date\": \"2018-10-8\",\n  \"terms\": \"Dibutuhkan Surat pengantar\",\n  \"result\": \"Jadwal presentasi 3 Oktober 2018 jam 10.00\",\n  \"note\": \"Supervisor review\",\n  \"lat\": -6.175110,\n  \"lng\": 106.865036,\n  \"description\": \"Ketua kelas angkatan 2017 tidak ada di lokasi\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/marketing-reports/{{resourceId}}",
@@ -12215,7 +12344,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/me",
 							"host": [
@@ -12246,7 +12378,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/me",
 									"host": [
@@ -12364,7 +12499,8 @@
 								{
 									"key": "photo",
 									"description": "file|max:5mb",
-									"type": "file"
+									"type": "file",
+									"src": ""
 								}
 							]
 						},
@@ -12407,9 +12543,7 @@
 											"key": "photo",
 											"description": "file|max:5mb",
 											"type": "file",
-											"src": {
-												"0": {}
-											}
+											"src": null
 										}
 									]
 								},
@@ -14759,7 +14893,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/studies?university_id=1",
+							"raw": "{{baseUrl}}/studies?university_id=4&search=komu",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -14769,7 +14903,11 @@
 							"query": [
 								{
 									"key": "university_id",
-									"value": "1"
+									"value": "4"
+								},
+								{
+									"key": "search",
+									"value": "komu"
 								}
 							]
 						},
@@ -15568,12 +15706,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/study-years",
+							"raw": "{{baseUrl}}/study-years?study_program_id=1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"study-years"
+							],
+							"query": [
+								{
+									"key": "study_program_id",
+									"value": "1"
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -17401,7 +17545,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=University",
 							"host": [
@@ -17438,7 +17585,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=University",
 									"host": [
@@ -17544,7 +17694,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=Action",
 							"host": [
@@ -17581,7 +17734,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=Action",
 									"host": [
@@ -17687,7 +17843,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=Marketing",
 							"host": [
@@ -17724,7 +17883,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=Marketing",
 									"host": [
@@ -17830,7 +17992,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=MarketingAll",
 							"host": [
@@ -17867,7 +18032,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=MarketingAll",
 									"host": [
@@ -17973,7 +18141,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=Permission",
 							"host": [
@@ -17997,7 +18168,10 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=Permission",
 									"host": [
@@ -18103,7 +18277,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=Role",
 							"host": [
@@ -18140,7 +18317,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=Role",
 									"host": [
@@ -18246,7 +18426,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=StudyProgram&university_id=1",
 							"host": [
@@ -18287,7 +18470,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=StudyProgram",
 									"host": [
@@ -18393,7 +18579,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=MarketingTarget&search=8a1",
 							"host": [
@@ -18434,7 +18623,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=StudyProgram",
 									"host": [
@@ -18540,7 +18732,10 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{baseUrl}}/combo-data?model=Schedulle&search=c74c0bd7",
 							"host": [
@@ -18581,7 +18776,10 @@
 										"disabled": false
 									}
 								],
-								"body": {},
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{baseUrl}}/combo-data?model=StudyProgram",
 									"host": [
@@ -18715,9 +18913,12 @@
 								"value": "application/json"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "{{baseUrl}}/export-data?model=Contact&sort_by=id&sort_mode=asc&limit=100",
+							"raw": "{{baseUrl}}/export-data?model=Role&sort_by=name&sort_mode=asc&limit=100",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -18727,11 +18928,11 @@
 							"query": [
 								{
 									"key": "model",
-									"value": "Contact"
+									"value": "Role"
 								},
 								{
 									"key": "sort_by",
-									"value": "id"
+									"value": "name"
 								},
 								{
 									"key": "sort_mode",
