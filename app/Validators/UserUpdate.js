@@ -24,7 +24,6 @@ class UserUpdate {
 
   get sanitizationRules() {
     return {
-      email: 'normalize_email',
       role_id: 'to_int',
       name: 'escape',
       phone: 'escape',

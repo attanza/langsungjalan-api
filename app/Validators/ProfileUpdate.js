@@ -24,7 +24,6 @@ class ProfileUpdate {
 
   get sanitizationRules () {
     return {
-      email: 'normalize_email',
       name: 'escape',
       phone: 'escape',
       address: 'escape',
