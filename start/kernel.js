@@ -1,8 +1,8 @@
-'use strict'
+"use strict"
 
-const Server = use('Server')
+const Server = use("Server")
 
-const Scheduler = use('Adonis/Addons/Scheduler')
+const Scheduler = use("Adonis/Addons/Scheduler")
 Scheduler.run()
 
 /*
@@ -15,9 +15,9 @@ Scheduler.run()
 |
 */
 const globalMiddleware = [
-  'Adonis/Middleware/BodyParser',
-  'Adonis/Middleware/Session',
-  'Adonis/Acl/Init'
+  "Adonis/Middleware/BodyParser",
+  "Adonis/Middleware/Session",
+  "Adonis/Acl/Init",
 ]
 
 /*
@@ -38,13 +38,14 @@ const globalMiddleware = [
 |
 */
 const namedMiddleware = {
-  auth: 'Adonis/Middleware/Auth',
-  me: 'App/Middleware/Me',
-  super: 'App/Middleware/SuperAdmin',
-  admin: 'App/Middleware/Admin',
-  supervisor: 'App/Middleware/Supervisor',
-  is: 'Adonis/Acl/Is',
-  can: 'Adonis/Acl/Can',
+  auth: "Adonis/Middleware/Auth",
+  me: "App/Middleware/Me",
+  super: "App/Middleware/SuperAdmin",
+  admin: "App/Middleware/Admin",
+  supervisor: "App/Middleware/Supervisor",
+  is: "Adonis/Acl/Is",
+  can: "Adonis/Acl/Can",
+  client: "App/Middleware/Client",
 }
 
 /*
@@ -57,12 +58,8 @@ const namedMiddleware = {
 | control over request lifecycle.
 |
 */
-const serverMiddleware = [
-  'Adonis/Middleware/Static',
-  'Adonis/Middleware/Cors'
-]
+const serverMiddleware = ["Adonis/Middleware/Static", "Adonis/Middleware/Cors"]
 
-Server
-  .registerGlobal(globalMiddleware)
+Server.registerGlobal(globalMiddleware)
   .registerNamed(namedMiddleware)
   .use(serverMiddleware)

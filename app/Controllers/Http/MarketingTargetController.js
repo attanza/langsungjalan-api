@@ -163,6 +163,21 @@ class MarketingTargetController {
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
+
+  /**
+   * Check if code is exists
+   */
+  async checkCode({ request, response }) {
+    const { code } = request.params
+    const target = await MarketingTarget.findBy("code", code)
+    if (!target) {
+      return response
+        .status(400)
+        .send(ResponseParser.errorResponse("Kode tidak valid"))
+    }
+    await target.loadMany(["study.university", "study.studyName"])
+    return response.status(200).send(target)
+  }
 }
 
 module.exports = MarketingTargetController
