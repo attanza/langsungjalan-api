@@ -1,9 +1,9 @@
-'use strict'
+"use strict"
 
-const MarketingTarget = use('App/Models/MarketingTarget')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
-const fillable = ['code', 'study_program_id', 'description']
+const MarketingTarget = use("App/Models/MarketingTarget")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits } = use("App/Traits")
+const fillable = ["code", "study_program_id", "description"]
 
 /**
  * MarketingTargetController
@@ -11,7 +11,6 @@ const fillable = ['code', 'study_program_id', 'description']
  */
 
 class MarketingTargetController {
-
   /**
    * Index
    * Get List of MarketingTargets
@@ -33,20 +32,20 @@ class MarketingTargetController {
 
     if (!page) page = 1
     if (!limit) limit = 10
-    if (!sort_by) sort_by = 'id'
-    if (!sort_mode) sort_mode = 'desc'
+    if (!sort_by) sort_by = "id"
+    if (!sort_mode) sort_mode = "desc"
 
-    if(search && search != '') {
+    if (search && search != "") {
       const data = await MarketingTarget.query()
-        .with('study.studyName')
-        .with('study.university')
-        .where('code', 'like', `%${search}%`)
-        .orWhereHas('study', (builder) => {
-          builder.whereHas('university', builder2 => {
-            builder2.where('name', 'like', `%${search}%`)
+        .with("study.studyName")
+        .with("study.university")
+        .where("code", "like", `%${search}%`)
+        .orWhereHas("study", builder => {
+          builder.whereHas("university", builder2 => {
+            builder2.where("name", "like", `%${search}%`)
           })
-          builder.orWhereHas('studyName', builder2 => {
-            builder2.where('name', 'like', `%${search}%`)
+          builder.orWhereHas("studyName", builder2 => {
+            builder2.where("name", "like", `%${search}%`)
           })
         })
         .paginate(parseInt(page), parseInt(limit))
@@ -63,16 +62,16 @@ class MarketingTargetController {
     }
 
     const data = await MarketingTarget.query()
-      .with('study.studyName')
-      .with('study.university')
+      .with("study.studyName")
+      .with("study.university")
       .where(function() {
         if (search_by && search_query) {
-          return this.where(search_by, 'like', `%${search_query}%`)
+          return this.where(search_by, "like", `%${search_query}%`)
         }
       })
       .where(function() {
-        if (study_id) {
-          return this.where('study_id', parseInt(study_id))
+        if (study_id && study_id != "") {
+          return this.where("study_program_id", parseInt(study_id))
         }
       })
       .where(function() {
@@ -96,8 +95,8 @@ class MarketingTargetController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await MarketingTarget.create(body)
-    await data.loadMany(['study.studyName', 'study.university'])
-    await RedisHelper.delete('MarketingTarget_*')
+    await data.loadMany(["study.studyName", "study.university"])
+    await RedisHelper.delete("MarketingTarget_*")
     const activity = `Add new MarketingTarget '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -119,7 +118,7 @@ class MarketingTargetController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['study.studyName', 'study.university'])
+    await data.loadMany(["study.studyName", "study.university"])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -139,10 +138,10 @@ class MarketingTargetController {
     }
     await data.merge(body)
     await data.save()
-    await data.loadMany(['study.studyName', 'study.university'])
+    await data.loadMany(["study.studyName", "study.university"])
     const activity = `Update MarketingTarget '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('MarketingTarget_*')
+    await RedisHelper.delete("MarketingTarget_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -160,7 +159,7 @@ class MarketingTargetController {
     }
     const activity = `Delete MarketingTarget '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('MarketingTarget_*')
+    await RedisHelper.delete("MarketingTarget_*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
