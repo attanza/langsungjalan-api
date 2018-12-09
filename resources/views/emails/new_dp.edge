@@ -1,0 +1,31 @@
+@layout('emails.master')
+@section('content')
+<div class="content">
+  <p>
+      Pembayaran DP telah diterima dari :
+  </p>
+  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+      <tbody>
+          <tr>
+              <td>Kode Target: </td>
+          <td>{{target.code}}</td>
+          </tr>
+          <tr>
+              <td>Nama Mahasiswa: </td>
+          <td>{{ name }}</td>
+          </tr>
+          <tr>
+              <td>Telepon: </td>
+          <td>{{phone}}</td>
+          </tr>
+          <tr>
+              <td>Nilai DP: </td>
+          <td>{{dp}}</td>
+          </tr>
+      </tbody>
+  </table>
+  <p>
+      Terimakasih.
+  </p>
+</div>
+@endsection

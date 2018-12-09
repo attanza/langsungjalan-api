@@ -513,6 +513,7 @@ Route.group(() => {
  */
 Route.group(() => {
   Route.get("check-target-code/:code", "MarketingTargetController.checkCode")
+  Route.post("post-down-payment", "DownPaymentController.storeFromStudent")
 })
   .prefix("api/v1")
   .middleware(["client"])

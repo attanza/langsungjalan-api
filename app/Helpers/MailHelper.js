@@ -1,27 +1,42 @@
-'use strict'
+"use strict"
 
-const Mail = use('Mail')
+const Mail = use("Mail")
 
-const Env = use('Env')
+const Env = use("Env")
 
-const from = Env.get('MAIL_FROM')
+const from = Env.get("MAIL_FROM")
+
+const User = use("App/Models/User")
 
 class MailHelper {
   async getForgotPassword(user) {
-    await Mail.send('emails.forgot_password', user, (message) => {
+    await Mail.send("emails.forgot_password", user, message => {
       message
         .to(user.email)
         .from(from)
-        .subject('Forgot Password Request')
+        .subject("Forgot Password Request")
     })
   }
 
-  async sendEveryMenutes(user) {
-    await Mail.send('emails.every_menutes', user, (message) => {
+  async newDpMail(dp) {
+    let users = await User.query()
+      .whereHas("roles", builder => {
+        return builder.where("slug", "supervisor")
+      })
+      .where("is_active", 1)
+      .fetch()
+    users = users.toJSON()
+
+    let supervisor = ""
+    users.map(u => {
+      supervisor += u.email + ";"
+    })
+
+    Mail.send("emails.new_dp", dp, message => {
       message
-        .to(user.email)
+        .to(supervisor)
         .from(from)
-        .subject('Every Menutes Mail')
+        .subject("Pembayaran DP Baru")
     })
   }
 }

@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 
 /*
 |--------------------------------------------------------------------------
@@ -11,21 +11,22 @@
 |
 */
 const providers = [
-  '@adonisjs/framework/providers/AppProvider',
-  '@adonisjs/auth/providers/AuthProvider',
-  '@adonisjs/bodyparser/providers/BodyParserProvider',
-  '@adonisjs/cors/providers/CorsProvider',
-  '@adonisjs/lucid/providers/LucidProvider',
-  '@adonisjs/validator/providers/ValidatorProvider',
-  '@adonisjs/redis/providers/RedisProvider',
-  '@adonisjs/framework/providers/ViewProvider',
-  '@adonisjs/drive/providers/DriveProvider',
-  '@adonisjs/mail/providers/MailProvider',
-  '@adonisjs/session/providers/SessionProvider',
-  'adonis-acl/providers/AclProvider',
-  'adonis-scheduler/providers/SchedulerProvider',
-  '@adonisjs/drive/providers/DriveProvider',
-  'adonis-spreadsheet/providers/SpreadSheetProvider'
+  "@adonisjs/framework/providers/AppProvider",
+  "@adonisjs/auth/providers/AuthProvider",
+  "@adonisjs/bodyparser/providers/BodyParserProvider",
+  "@adonisjs/cors/providers/CorsProvider",
+  "@adonisjs/lucid/providers/LucidProvider",
+  "@adonisjs/validator/providers/ValidatorProvider",
+  "@adonisjs/redis/providers/RedisProvider",
+  "@adonisjs/framework/providers/ViewProvider",
+  "@adonisjs/drive/providers/DriveProvider",
+  "@adonisjs/mail/providers/MailProvider",
+  "@adonisjs/session/providers/SessionProvider",
+  "adonis-acl/providers/AclProvider",
+  "adonis-scheduler/providers/SchedulerProvider",
+  "@adonisjs/drive/providers/DriveProvider",
+  "adonis-spreadsheet/providers/SpreadSheetProvider",
+  "@adonisjs/websocket/providers/WsProvider",
 ]
 
 /*
@@ -38,10 +39,10 @@ const providers = [
 |
 */
 const aceProviders = [
-  '@adonisjs/lucid/providers/MigrationsProvider',
-  '@adonisjs/vow/providers/VowProvider',
-  'adonis-acl/providers/CommandsProvider',
-  'adonis-scheduler/providers/CommandsProvider'
+  "@adonisjs/lucid/providers/MigrationsProvider",
+  "@adonisjs/vow/providers/VowProvider",
+  "adonis-acl/providers/CommandsProvider",
+  "adonis-scheduler/providers/CommandsProvider",
 ]
 
 /*
@@ -57,9 +58,9 @@ const aceProviders = [
 |
 */
 const aliases = {
-  Role: 'Adonis/Acl/Role',
-  Permission: 'Adonis/Acl/Permission',
-  Scheduler: 'Adonis/Addons/Scheduler'
+  Role: "Adonis/Acl/Role",
+  Permission: "Adonis/Acl/Permission",
+  Scheduler: "Adonis/Addons/Scheduler",
 }
 
 /*
@@ -70,6 +71,6 @@ const aliases = {
 | Here you store ace commands for your package
 |
 */
-const commands = ['App/Commands/Service']
+const commands = ["App/Commands/Service"]
 
 module.exports = { providers, aceProviders, aliases, commands }

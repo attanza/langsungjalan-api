@@ -5,10 +5,8 @@ const moment = use("moment")
 const Env = use("Env")
 class Client {
   async handle({ request, response }, next) {
-    console.log("headers", request.headers())
-    const { client_key, token } = request.headers()
+    const { token } = request.headers()
     const date = request.header("x-dsi-restful")
-    console.log("date", date)
     if (!date) {
       console.log("no date") //eslint-disable-line
       return response
@@ -22,14 +20,6 @@ class Client {
         .status(401)
         .send(ResponseParser.errorResponse("Unauthorized"))
     }
-
-    // if (!client_key) {
-    //   console.log("no client_key") //eslint-disable-line
-
-    //   return response
-    //     .status(401)
-    //     .send(ResponseParser.errorResponse("Unauthorized"))
-    // }
 
     if (!token) {
       console.log("no token") //eslint-disable-line
@@ -58,13 +48,6 @@ class Client {
         .status(401)
         .send(ResponseParser.errorResponse("Unauthorized"))
     }
-
-    // if (client_key !== parsedDecrypted.client_key) {
-    //   console.log("client_key not matched") //eslint-disable-line
-    //   return response
-    //     .status(401)
-    //     .send(ResponseParser.errorResponse("Unauthorized"))
-    // }
 
     await next()
   }

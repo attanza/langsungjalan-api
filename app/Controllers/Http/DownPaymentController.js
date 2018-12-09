@@ -1,7 +1,7 @@
 "use strict"
 
 const DownPayment = use("App/Models/DownPayment")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, MailHelper } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 
 const fillable = ["marketing_target_id", "name", "phone", "dp", "is_verified"]
@@ -38,7 +38,7 @@ class DownPaymentController {
     if (search && search != "") {
       const data = await DownPayment.query()
         .with("target")
-        .where("code", "like", `%${search}%`)
+        .where("dp", "like", `%${search}%`)
         .orWhere("name", "like", `%${search}%`)
         .orWhere("phone", "like", `%${search}%`)
         .orWhereHas("target", builder => {
@@ -93,6 +93,24 @@ class DownPaymentController {
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
+  }
+
+  /**
+   * storeFromStudent
+   */
+
+  async storeFromStudent({ request, response }) {
+    try {
+      let body = request.only(fillable)
+      const data = await DownPayment.create(body)
+      await data.load("target")
+      await RedisHelper.delete("DownPayment_*")
+      MailHelper.newDpMail(data.toJSON())
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      console.log("e", e)
+    }
   }
 
   /**
