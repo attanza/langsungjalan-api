@@ -1,20 +1,20 @@
 "use strict"
 
 const { ResponseParser } = use("App/Helpers")
+const messages = require("./messages")
 
-class StoreMarketingAction {
+class StoreDownPayment {
   get rules() {
     return {
-      name: "required|max:50|unique:marketing_actions",
-      description: "max:250",
+      marketing_target_id: "required|integer",
+      name: "required|max:50",
+      phone: "required|max:50",
+      dp: "required|integer",
     }
   }
 
   get messages() {
-    return {
-      required: "{{ field }} is required",
-      max: "{{ field }} cannot more then {{ arguments:0 }} characters",
-    }
+    return messages
   }
 
   get sanitizationRules() {
@@ -31,4 +31,4 @@ class StoreMarketingAction {
   }
 }
 
-module.exports = StoreMarketingAction
+module.exports = StoreDownPayment

@@ -464,6 +464,27 @@ Route.group(() => {
         [["target-years.destroy"], ["can:delete_marketing_report_year"]],
       ])
     )
+
+  /**
+   * DownPayment
+   */
+
+  Route.resource("down-payments", "DownPaymentController")
+    .apiOnly()
+    .validator(
+      new Map([
+        [["down-payments.store"], ["StoreDownPayment"]],
+        [["down-payments.update"], ["StoreDownPayment"]],
+      ])
+    )
+    .middleware(
+      new Map([
+        [["down-payments.index"], ["can:read_down_payment"]],
+        [["down-payments.store"], ["can:create_down_payment"]],
+        [["down-payments.update"], ["can:update_down_payment"]],
+        [["down-payments.destroy"], ["can:delete_down_payment"]],
+      ])
+    )
 })
   .prefix("api/v1")
   .formats(["json"])

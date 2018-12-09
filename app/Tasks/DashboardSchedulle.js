@@ -1,30 +1,29 @@
-'use strict'
+"use strict"
 
-const Task = use('Task')
-const User = use('App/Models/User')
-const University = use('App/Models/University')
-const Product = use('App/Models/Product')
-const Dashboard = use('App/Models/Dashboard')
-const {RedisHelper} = use('App/Helpers')
+const Task = use("Task")
+const User = use("App/Models/User")
+const University = use("App/Models/University")
+const Product = use("App/Models/Product")
+const Dashboard = use("App/Models/Dashboard")
+const { RedisHelper } = use("App/Helpers")
 
 class DashboardSchedulle extends Task {
-  static get schedule () {
-    return '0 5 * * * '
+  static get schedule() {
+    return "0 0 * * * "
   }
 
-  async handle () {
-    this.info('Task DashboardSchedulle handle')
+  async handle() {
+    this.info("Task DashboardSchedulle handle")
 
     const totalMarketings = await User.query()
-      .whereHas('roles', (builder) => {
-        builder.where('slug', 'marketing')
+      .whereHas("roles", builder => {
+        builder.where("slug", "marketing")
       })
-      .where('is_active', 1)
-      .count('* as total')
+      .where("is_active", 1)
+      .count("* as total")
 
-    const totalProducts = await Product.query().count('* as total')
-    const totalUniversities = await University.query().count('* as total')
-
+    const totalProducts = await Product.query().count("* as total")
+    const totalUniversities = await University.query().count("* as total")
 
     const dashboardDetails = {
       total_marketings: totalMarketings[0].total,
@@ -33,14 +32,13 @@ class DashboardSchedulle extends Task {
     }
 
     const whereClause = {
-      id: 1
+      id: 1,
     }
 
     await Dashboard.findOrCreate(whereClause, dashboardDetails)
 
-    const redisKey = 'Dashboard_Data'
+    const redisKey = "Dashboard_Data"
     await RedisHelper.delete(redisKey)
-
   }
 }
 

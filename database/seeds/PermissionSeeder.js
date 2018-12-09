@@ -1,24 +1,39 @@
-'use strict'
+"use strict"
 
-const changeCase = require('change-case')
-const Database = use('Database')
-const Permission = use('App/Models/Permission')
+const changeCase = require("change-case")
+const Database = use("Database")
+const Permission = use("App/Models/Permission")
 const resources = [
-  'User', 'Role', 'Permission', 'University', 'Product', 'Schedulle', 'StudyName', 'StudyProgram', 'StudyYear',
-  'Marketing', 'MarketingAction', 'Supervisor', 'MarketingReport', 'MarketingReportAttachment', 'ContactPerson',
-  'MarketingReportYear', 'MarketingTarget'
+  "User",
+  "Role",
+  "Permission",
+  "University",
+  "Product",
+  "Schedulle",
+  "StudyName",
+  "StudyProgram",
+  "StudyYear",
+  "Marketing",
+  "MarketingAction",
+  "Supervisor",
+  "MarketingReport",
+  "MarketingReportAttachment",
+  "ContactPerson",
+  "MarketingReportYear",
+  "MarketingTarget",
+  "DownPayment",
 ]
-const actions = ['create', 'read', 'update', 'delete']
+const actions = ["create", "read", "update", "delete"]
 
 class PermissionSeeder {
   async run() {
-    await Database.raw('SET FOREIGN_KEY_CHECKS = 0;')
+    await Database.raw("SET FOREIGN_KEY_CHECKS = 0;")
     await Permission.truncate()
     await resources.forEach(r => {
-      actions.forEach(async (act) => {
+      actions.forEach(async act => {
         let body = {
-          name: changeCase.sentenceCase(act + ' ' + r),
-          slug: changeCase.snakeCase(act + ' ' + r)
+          name: changeCase.sentenceCase(act + " " + r),
+          slug: changeCase.snakeCase(act + " " + r),
         }
         await Permission.create(body)
       })
@@ -27,11 +42,11 @@ class PermissionSeeder {
   }
 
   async addOtherPermissions() {
-    let permissions = ['Clear Redis']
-    permissions.forEach(async (permission) => {
+    let permissions = ["Clear Redis"]
+    permissions.forEach(async permission => {
       let body = {
         name: changeCase.sentenceCase(permission),
-        slug: changeCase.snakeCase(permission)
+        slug: changeCase.snakeCase(permission),
       }
       await Permission.create(body)
     })
