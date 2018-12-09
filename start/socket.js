@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 
 /*
 |--------------------------------------------------------------------------
@@ -13,8 +13,15 @@
 |
 */
 
-const Ws = use('Ws')
+// const Ws = use('Ws')
 
-Ws.channel('chat', ({ socket }) => {
-  console.log('user joined with %s socket id', socket.id)
+// Ws.channel('chat', ({ socket }) => {
+//   console.log('user joined with %s socket id', socket.id)
+// })
+
+const Server = use("Server")
+const io = use("socket.io")(Server.getInstance())
+
+io.on("connection", function(socket) {
+  console.log(socket.id)
 })
