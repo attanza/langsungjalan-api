@@ -1,68 +1,93 @@
-'use strict'
+"use strict"
 
-const User = use('App/Models/User')
-const Role = use('App/Models/Role')
-
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits, ActivationTraits } = use('App/Traits')
-const Hash = use('Hash')
+const User = use("App/Models/User")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits, ActivationTraits } = use("App/Traits")
 
 const fillable = [
-  'name',
-  'email',
-  'phone',
-  'address',
-  'description',
-  'is_active'
+  "name",
+  "email",
+  "phone",
+  "address",
+  "description",
+  "is_active",
 ]
 
-class MarketingController {
+/**
+ * UserController
+ *
+ */
+
+class UserController {
   /**
    * Index
-   * Get List of Marketing
+   * Get List of Users
    */
   async index({ request, response }) {
-    // TODO fix search with specific condition in user model
-    let { page, limit, search, supervisor_id } = request.get()
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!search) search = ''
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+        supervisor_id,
+      } = request.get()
 
-    if(search && supervisor_id) {
-      return response
-        .status(200)
-        .send(await searchWithSupervisor(page, limit, search, supervisor_id))
-    }
-    else if (search != '') {
-      return response
-        .status(200)
-        .send(await searchMarketing(page, limit, search))
-    } else if (supervisor_id) {
-      return response
-        .status(200)
-        .send(await searchBySupervisor(page, limit, supervisor_id))
-    } else {
-      let redisKey = `Marketing_${page}_${limit}`
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "name"
+      if (!sort_mode) sort_mode = "asc"
+
+      const redisKey = `Marketing_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${supervisor_id}`
+
       let cached = await RedisHelper.get(redisKey)
 
-      if (cached != null) {
-        return response.status(200).send(cached)
+      if (cached && !search) {
+        return cached
       }
 
       const data = await User.query()
-        .whereHas('roles', async (builder) => {
-          builder.where('slug', 'marketing')
+        .where(function() {
+          if (search && search != "") {
+            this.where("name", "like", `%${search}%`)
+            this.orWhere("email", "like", `%${search}%`)
+            this.orWhere("phone", "like", `%${search}%`)
+          }
+
+          if (supervisor_id && supervisor_id != "") {
+            this.whereHas("supervisors", builder => {
+              return builder.where("supervisor_id", supervisor_id)
+            })
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
         })
-        .with('supervisors', builder => {
-          builder.select('id', 'name')
+        .whereHas("roles", builder => {
+          return builder.where("slug", "marketing")
         })
-        .orderBy('name')
-        .paginate(parseInt(page), parseInt(limit))
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
-      await RedisHelper.set(redisKey, parsed)
-
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
   }
 
@@ -78,12 +103,12 @@ class MarketingController {
     const data = await User.create(body)
     await data.roles().attach(await getMarketingRoleId())
     await ActivationTraits.createAndActivate(data)
-    await RedisHelper.delete('Marketing_*')
-    await RedisHelper.delete('User_*')
-    await RedisHelper.delete('Dashboard_Data')
+    await RedisHelper.delete("Marketing_*")
+    await RedisHelper.delete("User_*")
+    await RedisHelper.delete("Dashboard_Data")
     const activity = `Add new Marketing '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await data.load('supervisors')
+    await data.load("supervisors")
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
@@ -101,12 +126,12 @@ class MarketingController {
       return response.status(200).send(cached)
     }
     const data = await User.query()
-      .where('id', id)
+      .where("id", id)
       .first()
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.load('supervisors')
+    await data.load("supervisors")
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -128,12 +153,12 @@ class MarketingController {
 
     await data.merge(body)
     await data.save()
-    await data.load('supervisors')
+    await data.load("supervisors")
     const activity = `Update Marketing '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Marketing_*')
-    await RedisHelper.delete('User_*')
-    await RedisHelper.delete('Dashboard_Data')
+    await RedisHelper.delete("Marketing_*")
+    await RedisHelper.delete("User_*")
+    await RedisHelper.delete("Dashboard_Data")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -151,9 +176,9 @@ class MarketingController {
     }
     const activity = `Delete Marketing '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Marketing_*')
-    await RedisHelper.delete('User_*')
-    await RedisHelper.delete('Dashboard_Data')
+    await RedisHelper.delete("Marketing_*")
+    await RedisHelper.delete("User_*")
+    await RedisHelper.delete("Dashboard_Data")
     // Delete Relationship
     await data.tokens().delete()
     await data.roles().detach()
@@ -162,99 +187,17 @@ class MarketingController {
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
-
-  /**
-   * Change Password
-   */
-  async changePassword({ request, response }) {
-    const { id } = request.params
-
-    const data = await User.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    const { old_password, password } = request.post()
-    const isSame = await Hash.verify(old_password, data.password)
-    if (!isSame) {
-      return response
-        .status(400)
-        .send(ResponseParser.errorResponse('Old password incorect'))
-    }
-    const hashPassword = await Hash.make(password)
-    await data.merge({ password: hashPassword })
-    await data.save()
-    return response
-      .status(200)
-      .send(ResponseParser.successResponse(data, 'Password updated'))
-  }
-}
-
-module.exports = MarketingController
-
-async function searchMarketing(page, limit, search) {
-  const data = await User.query()
-    .with('supervisors', builder => {
-      builder.select('id', 'name')
-    })
-    .whereHas('roles', async (builder) => {
-      builder.where('slug', 'marketing')
-    })
-    .where('name', 'like', `%${search}%`)
-    .orWhere('email', 'like', `%${search}%`)
-    .orWhere('phone', 'like', `%${search}%`)
-    .orWhere('address', 'like', `%${search}%`)
-    .paginate(parseInt(page), parseInt(limit))
-  return ResponseParser.apiCollection(data.toJSON())
-}
-
-async function searchWithSupervisor(page, limit, search, supervisor_id) {
-  const data = await User.query()
-    .with('supervisors', builder => {
-      builder.select('id', 'name')
-    })
-    .whereHas('supervisors', builder => {
-      builder.where('supervisor_id', supervisor_id)
-
-    })
-    .whereHas('roles', async (builder) => {
-      builder.where('slug', 'marketing')
-    })
-    .where('name', 'like', `%${search}%`)
-    // builder.orWhere('email', 'like', `%${search}%`)
-    // builder.orWhere('phone', 'like', `%${search}%`)
-    // builder.orWhere('address', 'like', `%${search}%`)
-
-    .paginate(parseInt(page), parseInt(limit))
-  return ResponseParser.apiCollection(data.toJSON())
-}
-
-async function searchBySupervisor(page, limit, supervisor_id) {
-  const redisKey = `Marketing_Supervisor_${supervisor_id}`
-  const cached = await RedisHelper.get(redisKey)
-  if (cached) return cached
-  const data = await User.query()
-    .with('supervisors', builder => {
-      builder.select('id', 'name')
-    })
-    .whereHas('supervisors', builder => {
-      builder.where('supervisor_id', supervisor_id)
-    })
-    .whereHas('roles', async (builder) => {
-      builder.where('role_id', await getMarketingRoleId())
-    })
-    .paginate(parseInt(page), parseInt(limit))
-  const output = ResponseParser.apiCollection(data.toJSON())
-  await RedisHelper.set(redisKey, output)
-  return output
 }
 
 async function getMarketingRoleId() {
-  let redisKey = 'MerktingId'
+  let redisKey = "MerktingId"
   let cached = await RedisHelper.get(redisKey)
-  if(cached) {
+  if (cached) {
     return cached
   }
-  let marketingRole = await Role.findBy('slug', 'marketing')
+  let marketingRole = await Role.findBy("slug", "marketing")
   await RedisHelper.set(redisKey, marketingRole.id)
   return marketingRole.id
 }
+
+module.exports = UserController

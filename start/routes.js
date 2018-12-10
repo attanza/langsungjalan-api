@@ -7,6 +7,10 @@ Route.get("/", "DocumentController.intro")
 
 Route.get("/docs", "DocumentController.index")
 
+Route.get("/chats", ({ view }) => {
+  return view.render("chat")
+})
+
 Route.group(() => {
   Route.post("/login", "LoginController.login").validator("Login")
   Route.post("/refresh", "LoginController.refresh").middleware(["auth:jwt"])
