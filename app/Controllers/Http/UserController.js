@@ -1,13 +1,20 @@
-'use strict'
+"use strict"
 
-const User = use('App/Models/User')
-const Role = use('App/Models/Role')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits, ActivationTraits } = use('App/Traits')
-const fillable = ['name', 'email', 'password', 'phone', 'address', 'description', 'is_active']
+const User = use("App/Models/User")
+const Role = use("App/Models/Role")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits, ActivationTraits } = use("App/Traits")
+const fillable = [
+  "name",
+  "email",
+  "password",
+  "phone",
+  "address",
+  "description",
+  "is_active",
+]
 
 class UserController {
-
   /**
    * Index
    * Get List of Users
@@ -23,55 +30,47 @@ class UserController {
       start_date,
       end_date,
       sort_by,
-      sort_mode
+      sort_mode,
     } = request.get()
 
     if (!page) page = 1
     if (!limit) limit = 10
-    if (!sort_by) sort_by = 'id'
-    if (!sort_mode) sort_mode = 'desc'
+    if (!sort_by) sort_by = "name"
+    if (!sort_mode) sort_mode = "asc"
 
-    if (search && search != '') {
-      const data = await User.query()
-        .with('roles', builder => {
-          builder.select('id', 'name', 'slug')
-        })
-        .where('name', 'like', `%${this.search}%`)
-        .orWhere('email', 'like', `%${this.search}%`)
-        .orWhere('phone', 'like', `%${this.search}%`)
-        .orWhere('address', 'like', `%${this.search}%`)
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
-    }
-
-    const redisKey = `User_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}`
+    const redisKey = `User_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}`
 
     let cached = await RedisHelper.get(redisKey)
 
-    if (cached) {
-      return response.status(200).send(cached)
+    if (cached && !search) {
+      return cached
     }
 
     const data = await User.query()
-      .with('roles', builder => {
-        builder.select('id', 'name', 'slug')
-      })
+      .with("roles")
       .where(function() {
-        if (search_by && search_query) {
-          return this.where(search_by, 'like', `%${search_query}%`)
+        if (search && search != "") {
+          this.where("name", "like", `%${search}%`)
+          this.orWhere("email", "like", `%${search}%`)
+          this.orWhere("phone", "like", `%${search}%`)
+          this.orWhere("address", "like", `%${search}%`)
         }
-      })
-      .where(function() {
+
+        if (search_by && search_query) {
+          this.where(search_by, "like", `%${search_query}%`)
+        }
+
         if (between_date && start_date && end_date) {
-          return this.whereBetween(between_date, [start_date, end_date])
+          this.whereBetween(between_date, [start_date, end_date])
         }
       })
       .orderBy(sort_by, sort_mode)
-      .paginate(parseInt(page), parseInt(limit))
+      .paginate(page, limit)
 
     let parsed = ResponseParser.apiCollection(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
+    if (!search || search == "") {
+      await RedisHelper.set(redisKey, parsed)
+    }
     return response.status(200).send(parsed)
   }
 
@@ -87,13 +86,13 @@ class UserController {
     if (roles) {
       await this.attachRoles(data, roles)
     }
-    await data.load('roles')
+    await data.load("roles")
     await ActivationTraits.createAndActivate(data)
-    await RedisHelper.delete('User_*')
-    await RedisHelper.delete('Marketing_*')
+    await RedisHelper.delete("User_*")
+    await RedisHelper.delete("Marketing_*")
     const activity = `Add new User '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('User_*')
+    await RedisHelper.delete("User_*")
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
@@ -115,7 +114,7 @@ class UserController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['roles', 'marketings', 'supervisors'])
+    await data.loadMany(["roles", "marketings", "supervisors"])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -139,11 +138,11 @@ class UserController {
     if (roles) {
       await this.attachRoles(data, roles)
     }
-    await data.load('roles')
+    await data.load("roles")
     const activity = `Update User '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('User_*')
-    await RedisHelper.delete('Marketing_*')
+    await RedisHelper.delete("User_*")
+    await RedisHelper.delete("Marketing_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -162,7 +161,7 @@ class UserController {
 
     const activity = `Delete User '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('User_*')
+    await RedisHelper.delete("User_*")
     // Delete Relationship
     await data.tokens().delete()
     await data.supervisors().detach()
