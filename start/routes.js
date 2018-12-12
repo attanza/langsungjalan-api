@@ -7,9 +7,7 @@ Route.get("/", "DocumentController.intro")
 
 Route.get("/docs", "DocumentController.index")
 
-Route.get("/chats", ({ view }) => {
-  return view.render("chat")
-})
+Route.on("/test-email").render("emails.new_dp")
 
 Route.group(() => {
   Route.post("/login", "LoginController.login").validator("Login")
