@@ -103,7 +103,7 @@ class DownPaymentController {
     try {
       let body = request.only(fillable)
       const data = await DownPayment.create(body)
-      await data.load("target")
+      await data.loadMany(["target.study.studyName", "target.study.university"])
       await RedisHelper.delete("DownPayment_*")
       MailHelper.newDpMail(data.toJSON())
       let parsed = ResponseParser.apiCreated(data.toJSON())

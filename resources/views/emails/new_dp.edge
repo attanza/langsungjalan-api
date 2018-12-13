@@ -1,31 +1,41 @@
-@layout('emails.master')
+@layout('emails.master') 
 @section('content')
 <div class="content">
-  <p>
-      Pembayaran DP telah diterima dari :
-  </p>
-  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-      <tbody>
-          <tr>
-              <td>Kode Target: </td>
-          <td>{{target.code}}</td>
-          </tr>
-          <tr>
-              <td>Nama Mahasiswa: </td>
-          <td>{{ name }}</td>
-          </tr>
-          <tr>
-              <td>Telepon: </td>
-          <td>{{phone}}</td>
-          </tr>
-          <tr>
-              <td>Nilai DP: </td>
-          <td>{{dp}}</td>
-          </tr>
-      </tbody>
+    <p>
+        Dear Supervisor,
+    </p>
+  <p>Pembayaran DP telah diterima, dengan detail sebagai berikut :</p>
+  <table
+    class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"
+  >
+    <tbody>
+      <tr>
+        <td width="30%">Kode Target</td>
+        <td width="70%">{{ target.code }}</td>
+      </tr>
+      <tr>
+        <td>Perguruan Tinggi</td>
+        <td>{{ target.study.university.name || ""}}</td>
+      </tr>
+      <tr>
+        <td>Progaram Studi</td>
+        <td>{{ target.study.studyName.name || "" }}</td>
+      </tr>
+
+      <tr>
+        <td>Nama Mahasiswa</td>
+        <td>{{ name }}</td>
+      </tr>
+      <tr>
+        <td>Telepon</td>
+        <td>{{ phone }}</td>
+      </tr>
+      <tr>
+        <td>Nilai DP</td>
+        <td>{{ dp }}</td>
+      </tr>
+    </tbody>
   </table>
-  <p>
-      Terimakasih.
-  </p>
+  <p>Terimakasih.</p>
 </div>
 @endsection
