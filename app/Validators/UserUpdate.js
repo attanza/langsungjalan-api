@@ -8,9 +8,9 @@ class UserUpdate {
     const id = this.ctx.params.id
     return {
       name: 'required|max:50',
-      email: `unique:users,email,id,${id}`,
+      email: `required|email|unique:users,email,id,${id}`,
       phone: `required|max:30|unique:users,phone,id,${id}`,
-      roles: 'required|array'
+      roles: 'array'
     }
   }
 

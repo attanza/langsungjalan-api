@@ -59,12 +59,12 @@ class DownPaymentController {
 
     const data = await DownPayment.query()
       .with("target")
-      .where(function() {
+      .where(function () {
         if (search_by && search_query) {
           return this.where(search_by, "like", `%${search_query}%`)
         }
       })
-      .where(function() {
+      .where(function () {
         if (marketing_target_id && marketing_target_id != "") {
           return this.where(
             "marketing_target_id",
@@ -105,7 +105,7 @@ class DownPaymentController {
       const data = await DownPayment.create(body)
       await data.loadMany(["target.study.studyName", "target.study.university"])
       await RedisHelper.delete("DownPayment_*")
-      MailHelper.newDpMail(data.toJSON())
+      // MailHelper.newDpMail(data.toJSON())
       let parsed = ResponseParser.apiCreated(data.toJSON())
       return response.status(201).send(parsed)
     } catch (e) {

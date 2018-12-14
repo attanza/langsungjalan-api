@@ -4,6 +4,7 @@ const User = use("App/Models/User")
 const Role = use("App/Models/Role")
 const { RedisHelper, ResponseParser } = use("App/Helpers")
 const { ActivityTraits, ActivationTraits } = use("App/Traits")
+const Hash = use("Hash")
 const fillable = [
   "name",
   "email",
@@ -48,7 +49,7 @@ class UserController {
 
     const data = await User.query()
       .with("roles")
-      .where(function() {
+      .where(function () {
         if (search && search != "") {
           this.where("name", "like", `%${search}%`)
           this.orWhere("email", "like", `%${search}%`)
@@ -132,6 +133,10 @@ class UserController {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
     let body = request.only(fillable)
+    if (body.password) {
+      const hashPassword = await Hash.make(body.password)
+      body.password = hashPassword
+    }
     await data.merge(body)
     await data.save()
     let { roles } = request.post()
