@@ -177,11 +177,10 @@ class UserController {
    */
 
   async attachRoles(user, roles) {
-    await user.roles().detach()
     for (let i = 0; i < roles.length; i++) {
       let data = await Role.find(roles[i])
       if (data) {
-        await user.roles().attach(data.id)
+        await user.roles().sync(data.id)
       }
     }
   }
