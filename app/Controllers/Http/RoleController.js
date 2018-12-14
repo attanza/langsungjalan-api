@@ -175,8 +175,7 @@ class RoleController {
     if (!role) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await role.permissions().detach()
-    await role.permissions().attach(permissions)
+    await role.permissions().sync(permissions)
     // Redis Process
     let redisKey = `Permissions_Role_${role_id}`
     await RedisHelper.delete(redisKey)
