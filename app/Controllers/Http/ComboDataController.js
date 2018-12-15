@@ -15,71 +15,71 @@ const Schedulle = use('App/Models/Schedulle')
 
 class ComboDataController {
   async index({ request, response }) {
-    const { model, university_id, search } = request.get()
+    const { model, university_id, search, supervisor_id } = request.get()
     switch (model) {
-    case 'University':
-    {
-      const data = await this.getUniversities()
-      return response.status(200).send(data)
-    }
+      case 'University':
+        {
+          const data = await this.getUniversities()
+          return response.status(200).send(data)
+        }
 
-    case 'Marketing':
-    {
-      const data = await this.getMarketings()
-      return response.status(200).send(data)
-    }
+      case 'Marketing':
+        {
+          const data = await this.getMarketings()
+          return response.status(200).send(data)
+        }
 
-    case 'MarketingAll':
-    {
-      const data = await this.getMarketingsAll()
-      return response.status(200).send(data)
-    }
+      case 'MarketingAll':
+        {
+          const data = await this.getMarketingsAll(supervisor_id)
+          return response.status(200).send(data)
+        }
 
-    case 'Permission':
-    {
-      const data = await this.getPermissions()
-      return response.status(200).send(data)
-    }
+      case 'Permission':
+        {
+          const data = await this.getPermissions()
+          return response.status(200).send(data)
+        }
 
-    case 'Role':
-    {
-      const data = await this.getRoles()
-      return response.status(200).send(data)
-    }
+      case 'Role':
+        {
+          const data = await this.getRoles()
+          return response.status(200).send(data)
+        }
 
-    case 'StudyProgram':
-    {
-      const data = await this.getStudy(university_id)
-      return response.status(200).send(data)
-    }
+      case 'StudyProgram':
+        {
+          const data = await this.getStudy(university_id)
+          return response.status(200).send(data)
+        }
 
-    case 'StudyName':
-    {
-      const data = await this.getStudyName()
-      return response.status(200).send(data)
-    }
+      case 'StudyName':
+        {
+          const data = await this.getStudyName()
+          return response.status(200).send(data)
+        }
 
-    case 'Action':
-    {
-      const data = await this.getMarketingAction()
-      return response.status(200).send(data)
-    }
+      case 'Action':
+        {
+          const data = await this.getMarketingAction()
+          return response.status(200).send(data)
+        }
 
-    case 'MarketingTarget':
-    {
-      const data = await this.getTarget(search)
-      return response.status(200).send(data)
-    }
+      case 'MarketingTarget':
+        {
+          const data = await this.getTarget(search)
+          return response.status(200).send(data)
+        }
 
-    case 'Schedulle':
-    {
-      const data = await this.getSchedulle(search)
-      return response.status(200).send(data)
-    }
+      case 'Schedulle':
+        {
+          const data = await this.getSchedulle(search)
+          return response.status(200).send(data)
+        }
 
 
-    default:
-      return response.status(400).send({ 'message': 'Model not found' })
+      default:
+        return response.status(400).send({ 'message': 'Model not found' })
     }
   }
 
@@ -116,18 +116,25 @@ class ComboDataController {
     return parsed
   }
 
-  async getMarketingsAll() {
-    let redisKey = 'Marketing_Combo_All'
+  async getMarketingsAll(supervisor_id) {
+    let redisKey = `Marketing_Combo_All_${supervisor_id}`
     let cached = await RedisHelper.get(redisKey)
 
     if (cached != null) {
       return cached
     }
     const data = await User.query().select('id', 'name')
-      .whereHas('roles', builder => {
-        builder.where('role_id', 4)
+      .where(function () {
+        this.whereHas('roles', builder => {
+          builder.where('role_id', 4)
+        })
+        this.where('is_active', 1)
+        if (supervisor_id && supervisor_id != "") {
+          this.whereHas("supervisors", builder => {
+            return builder.where("supervisor_id", supervisor_id)
+          })
+        }
       })
-      .where('is_active', 1)
       .orderBy('name')
       .fetch()
     await RedisHelper.set(redisKey, data)
@@ -169,7 +176,7 @@ class ComboDataController {
     if (cached != null) {
       return cached
     }
-    if(university_id && university_id) {
+    if (university_id && university_id) {
       data = await StudyProgram.query()
         .select(Database.raw('study_programs.id, study_names.name, CONCAT(study_names.name, " ~ ",universities.name) AS university'))
         .where('study_programs.university_id', university_id)
@@ -216,7 +223,7 @@ class ComboDataController {
   }
 
   async getTarget(search) {
-    if(search && search != '') {
+    if (search && search != '') {
       return await MarketingTarget.query()
         .select('id', 'code')
         .where('code', 'like', `%${search}%`)
@@ -237,7 +244,7 @@ class ComboDataController {
   }
 
   async getSchedulle(search) {
-    if(search && search != '') {
+    if (search && search != '') {
       return await Schedulle.query()
         .select('id', 'code')
         .where('code', 'like', `%${search}%`)
