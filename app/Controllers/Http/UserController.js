@@ -91,9 +91,9 @@ class UserController {
     await ActivationTraits.createAndActivate(data)
     await RedisHelper.delete("User_*")
     await RedisHelper.delete("Marketing_*")
+    await RedisHelper.delete("Supervisors_*")
     const activity = `Add new User '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("User_*")
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
@@ -148,6 +148,7 @@ class UserController {
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("User_*")
     await RedisHelper.delete("Marketing_*")
+    await RedisHelper.delete("Supervisors_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -167,6 +168,8 @@ class UserController {
     const activity = `Delete User '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("User_*")
+    await RedisHelper.delete("Marketing_*")
+    await RedisHelper.delete("Supervisors_*")
     // Delete Relationship
     await data.tokens().delete()
     await data.supervisors().detach()
