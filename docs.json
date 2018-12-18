@@ -2,174 +2,10 @@
 	"info": {
 		"_postman_id": "940491b3-288d-4c54-810c-bcf6f5cd4a10",
 		"name": "Langsung Jalan API",
-		"description": "Welcome to Langsung Jalan API. This Documentation will describe how to connect to our Back End server to feed up your mobile / front-end applications along with the Request Bodies, Responses, Query Strings etc, which will be required by our Back End Server.\n\n### Base URL\n\nDocumentation:  http://13.251.123.94/docs\n\nApi Endpoint:  http://13.251.123.94/api/v1 ",
+		"description": "Welcome to Langsung Jalan API. This Documentation will describe how to connect to our Back End server to feed up your mobile / front-end applications along with the Request Bodies, Responses, Query Strings etc, which will be required by our Back End Server.\n\n### Base URL\n\nDocumentation:  http://35.196.243.243/docs\n\nApi Endpoint:  http://35.196.243.243/api/v1 ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "Redis",
-			"item": [
-				{
-					"name": "Clear",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{baseUrl}}/redis/clear",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"redis",
-								"clear"
-							]
-						},
-						"description": "In same cases, you will need to clear out the database cached, so you can have fresh Database responses."
-					},
-					"response": [
-						{
-							"name": "Clear",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{baseUrl}}/redis/clear",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"redis",
-										"clear"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "plain",
-							"header": [
-								{
-									"key": "Connection",
-									"value": "keep-alive",
-									"name": "Connection",
-									"description": "Options that are desired for the connection"
-								},
-								{
-									"key": "Content-Length",
-									"value": "25",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "text/plain; charset=utf-8",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 12 Sep 2018 16:22:03 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Set-Cookie",
-									"value": "adonis-session=92b6abd470dff547d2c9cfb611cbf9b4%2Fa9pB4cWVEd1HurAN0NmCCl3nDzFPdl4wZnIvh%2F5d3H973bISPmCEw8fXvfz4D2776UifsNj8Ghg8mjISWv6Z%2FiPSzT4RgnqS5j4qmFz26VgEyauYmNZ%2FwC%2FcBDwPAWD; Path=/; HttpOnly",
-									"name": "Set-Cookie",
-									"description": "an HTTP cookie"
-								},
-								{
-									"key": "Set-Cookie",
-									"value": "adonis-session-values=21d8cd3c7135ab1a5095c9ed2b9b8ad8ZpM%2BK%2BRubEKUmAyFWw6zDtryUH3C0PzRRY8%2B1RwNl4emDV2CZ1KM6mlKMJhF5PXzBro8Hd2ligGMlsMnAgPaQA%3D%3D; Path=/; HttpOnly",
-									"name": "Set-Cookie",
-									"description": "an HTTP cookie"
-								}
-							],
-							"cookie": [
-								{
-									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
-									"httpOnly": true,
-									"domain": "localhost",
-									"path": "/",
-									"secure": false,
-									"value": "92b6abd470dff547d2c9cfb611cbf9b4%2Fa9pB4cWVEd1HurAN0NmCCl3nDzFPdl4wZnIvh%2F5d3H973bISPmCEw8fXvfz4D2776UifsNj8Ghg8mjISWv6Z%2FiPSzT4RgnqS5j4qmFz26VgEyauYmNZ%2FwC%2FcBDwPAWD",
-									"key": "adonis-session"
-								},
-								{
-									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
-									"httpOnly": true,
-									"domain": "localhost",
-									"path": "/",
-									"secure": false,
-									"value": "21d8cd3c7135ab1a5095c9ed2b9b8ad8ZpM%2BK%2BRubEKUmAyFWw6zDtryUH3C0PzRRY8%2B1RwNl4emDV2CZ1KM6mlKMJhF5PXzBro8Hd2ligGMlsMnAgPaQA%3D%3D",
-									"key": "adonis-session-values"
-								}
-							],
-							"body": "Redis succesfully cleared"
-						}
-					]
-				}
-			],
-			"description": "In order to enhance performance, LangsungJalan Back end API equiped with an in-memory dataset called [Redis](https://redis.io/topics/introduction).\nEvery data retreival from our main Database will be cached inside Redis and will be expired within 1 hour.",
-			"auth": {
-				"type": "bearer",
-				"bearer": [
-					{
-						"key": "token",
-						"value": "{{token}}",
-						"type": "string"
-					}
-				]
-			},
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "e78eaca3-496f-48be-a616-79f10de83b11",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "07678114-f8a9-452e-bcaa-75fd3e907a6a",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
 		{
 			"name": "Auth",
 			"item": [
@@ -519,6 +355,170 @@
 					"listen": "test",
 					"script": {
 						"id": "633d4736-e5df-4fec-bae9-5cc4ccfe75a9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Redis",
+			"item": [
+				{
+					"name": "Clear",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/redis/clear",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"redis",
+								"clear"
+							]
+						},
+						"description": "In same cases, you will need to clear out the database cached, so you can have fresh Database responses."
+					},
+					"response": [
+						{
+							"name": "Clear",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/redis/clear",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"redis",
+										"clear"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": "Options that are desired for the connection"
+								},
+								{
+									"key": "Content-Length",
+									"value": "25",
+									"name": "Content-Length",
+									"description": "The length of the response body in octets (8-bit bytes)"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/plain; charset=utf-8",
+									"name": "Content-Type",
+									"description": "The mime type of this content"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 12 Sep 2018 16:22:03 GMT",
+									"name": "Date",
+									"description": "The date and time that the message was sent"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=92b6abd470dff547d2c9cfb611cbf9b4%2Fa9pB4cWVEd1HurAN0NmCCl3nDzFPdl4wZnIvh%2F5d3H973bISPmCEw8fXvfz4D2776UifsNj8Ghg8mjISWv6Z%2FiPSzT4RgnqS5j4qmFz26VgEyauYmNZ%2FwC%2FcBDwPAWD; Path=/; HttpOnly",
+									"name": "Set-Cookie",
+									"description": "an HTTP cookie"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=21d8cd3c7135ab1a5095c9ed2b9b8ad8ZpM%2BK%2BRubEKUmAyFWw6zDtryUH3C0PzRRY8%2B1RwNl4emDV2CZ1KM6mlKMJhF5PXzBro8Hd2ligGMlsMnAgPaQA%3D%3D; Path=/; HttpOnly",
+									"name": "Set-Cookie",
+									"description": "an HTTP cookie"
+								}
+							],
+							"cookie": [
+								{
+									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
+									"httpOnly": true,
+									"domain": "localhost",
+									"path": "/",
+									"secure": false,
+									"value": "92b6abd470dff547d2c9cfb611cbf9b4%2Fa9pB4cWVEd1HurAN0NmCCl3nDzFPdl4wZnIvh%2F5d3H973bISPmCEw8fXvfz4D2776UifsNj8Ghg8mjISWv6Z%2FiPSzT4RgnqS5j4qmFz26VgEyauYmNZ%2FwC%2FcBDwPAWD",
+									"key": "adonis-session"
+								},
+								{
+									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
+									"httpOnly": true,
+									"domain": "localhost",
+									"path": "/",
+									"secure": false,
+									"value": "21d8cd3c7135ab1a5095c9ed2b9b8ad8ZpM%2BK%2BRubEKUmAyFWw6zDtryUH3C0PzRRY8%2B1RwNl4emDV2CZ1KM6mlKMJhF5PXzBro8Hd2ligGMlsMnAgPaQA%3D%3D",
+									"key": "adonis-session-values"
+								}
+							],
+							"body": "Redis succesfully cleared"
+						}
+					]
+				}
+			],
+			"description": "In order to enhance performance, LangsungJalan Back end API equiped with an in-memory dataset called [Redis](https://redis.io/topics/introduction).\nEvery data retreival from our main Database will be cached inside Redis and will be expired within 1 hour.",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e78eaca3-496f-48be-a616-79f10de83b11",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "07678114-f8a9-452e-bcaa-75fd3e907a6a",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -2861,12 +2861,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2897,7 +2897,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/users?page=1&limit=3",
+							"raw": "{{baseUrl}}/users?search=Desta",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -2907,11 +2907,17 @@
 							"query": [
 								{
 									"key": "page",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								},
 								{
 									"key": "limit",
-									"value": "3"
+									"value": "3",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "Desta"
 								}
 							]
 						},
@@ -3899,7 +3905,6 @@
 							"listen": "test",
 							"script": {
 								"id": "294c3543-8d67-48ae-b581-d4beafa46e0d",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -3908,7 +3913,8 @@
 									"let resp = pm.response.json();",
 									"",
 									"pm.environment.set(\"marketingId\", resp.data[0].id);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3945,6 +3951,18 @@
 							],
 							"path": [
 								"marketings"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Bobby",
+									"disabled": true
+								},
+								{
+									"key": "supervisor_id",
+									"value": "11",
+									"disabled": true
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -6902,12 +6920,16 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
-									"});"
-								]
+									"});",
+									"",
+									"let resp = pm.response.json();",
+									"",
+									"pm.environment.set(\"targetCode\", resp.data[0].code);"
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -6938,7 +6960,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/marketing-targets?search=bakr",
+							"raw": "{{baseUrl}}/marketing-targets?",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -6947,8 +6969,9 @@
 							],
 							"query": [
 								{
-									"key": "search",
-									"value": "bakr"
+									"key": "study_id",
+									"value": "1",
+									"disabled": true
 								}
 							]
 						},
@@ -7066,7 +7089,6 @@
 							"listen": "test",
 							"script": {
 								"id": "dc3e780c-79fe-4ef9-9048-ffbd1e70362c",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 201\", function () {",
 									"    pm.response.to.have.status(201);",
@@ -7075,7 +7097,8 @@
 									"let resp = pm.response.json();",
 									"",
 									"pm.environment.set(\"resourceId\", resp.data.id);"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -7103,7 +7126,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"study_program_id\": 1,\n\t\"code\": \"12345678\"\n}\n"
+							"raw": "{\n\t\"study_program_id\": 2,\n\t\"code\": \"234567876\"\n}\n"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/marketing-targets",
@@ -7384,6 +7407,227 @@
 								}
 							],
 							"body": "{\"meta\":{\"status\":200,\"message\":\"Data retrieval successfully\"},\"data\":{\"id\":1,\"code\":\"12345678\",\"study_program_id\":1,\"created_at\":\"2018-10-16 15:19:07\",\"updated_at\":\"2018-10-16 15:19:07\",\"study\":{\"id\":1,\"university_id\":1,\"study_name_id\":1,\"address\":\"Jl.H.R Rasuna Said Kav C-22, Kuningan Jakarta\",\"email\":\"info_manajemen@bakrie.ac.id\",\"phone\":\"(021) 526 1449\",\"contact_person\":\"Bakrie\",\"description\":\"\",\"lat\":-6.221632,\"lng\":106.832962,\"created_at\":\"2018-10-16 15:15:31\",\"updated_at\":\"2018-10-16 15:15:31\",\"studyName\":{\"id\":1,\"name\":\"Manajemen\",\"description\":null,\"created_at\":\"2018-10-16 15:15:31\",\"updated_at\":\"2018-10-16 15:15:31\"},\"university\":{\"id\":1,\"name\":\"Universitas Bakrie\",\"address\":\"Jl.H.R Rasuna Said Kav C-22, Kuningan Jakarta\",\"email\":\"info@bakrie.ac.id\",\"phone\":\"(021) 526 1448\",\"contact_person\":\"Bakrie\",\"description\":\"\",\"province\":\"DKI Jakarta\",\"city\":\"Kuningan Jakarta\",\"lat\":-6.221632,\"lng\":106.832962,\"created_at\":\"2018-10-16 15:15:31\",\"updated_at\":\"2018-10-16 15:15:31\"}}}}"
+						}
+					]
+				},
+				{
+					"name": "Create Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "47477324-db65-4bd0-8acb-3b13fa2891b6",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"let resp = pm.response.json();",
+									"pm.environment.set(\"client_token\", resp.data.encrypted);",
+									"pm.environment.set(\"date\", resp.data.date);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/make-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"make-token"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/make-token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"make-token"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=96a61c5e540d003feb713031701458fbyRuPp%2Bhr11CE5lKZiD58LuGVQqPKR8xZALb1KfKC1X6vfS08r3VIz7E6aXQmf2%2FR6KEqISmopujikJr3zxulGF8OkFFKAV5R8ULW79eHPworm04L7IIMOMOieFzZ3yDW; Path=/; HttpOnly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=28bf6d59aadb90d597eef9eb2f439cee28gllvY%2B9nUkvfwobBh4DdC3FFSAoIbn%2FYpm0xFeEEpIzbV%2F929WwEhE%2FQT%2FE6jsQ5kW445APwiD%2FmkGzQ4RvQ%3D%3D; Path=/; HttpOnly"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "237"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Dec 2018 13:55:06 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Token\"\n    },\n    \"data\": {\n        \"encrypted\": \"Ugkz/pZZLFRF3LaBDyjqdny9g4qdOVkrQMZT+ksdt8IyNQxjJEKehy594DUEcbFFtLIiz48uFWKvhJrMQ04y29FonXbkPM95fKgr2kcj25C25Ayqibj/LDdpLkRWyBievBLkSDGzOBbSX4jReFOiHcQ=\",\n        \"date\": \"1545141306\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Check Marketing Target Code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "84a23015-dd39-4fd5-b0fd-e71f1a8257bc",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "token",
+								"value": "{{client_token}}",
+								"type": "text"
+							},
+							{
+								"key": "x-dsi-restful",
+								"value": "{{date}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/check-target-code/{{targetCode}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"check-target-code",
+								"{{targetCode}}"
+							]
+						},
+						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
+					},
+					"response": [
+						{
+							"name": "Check Marketing Target Code",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "token",
+										"value": "{{client_token}}",
+										"type": "text"
+									},
+									{
+										"key": "x-dsi-restful",
+										"value": "{{date}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/check-target-code/{{targetCode}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"check-target-code",
+										"{{targetCode}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=47a097aaeffe3bc03daccd8f03c14b45vEiRQ68aLzpEORy9fehGODJzx0AwdmJJcEvGj6a9Snm1e8QdSyDpfKUB7XbAF1BWrfgYTYIROUtzOKAFuPzIHY%2FEEJX3MJE%2FrSwEh7DwGChbREBSmtUQEJ36wMSbVYz0; Path=/; HttpOnly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=0be685915405f2a977e997b12fb0d773yV6OCvhrwa3gRE5i02iK7PKaBcDOiSvzYu5cA4HuVFp2Xto1HDjPmttLy5QpovqsnRBH5R6N5Rs1uglOI8QtXw%3D%3D; Path=/; HttpOnly"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "992"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Dec 2018 13:55:15 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 7,\n    \"code\": \"1545141023\",\n    \"study_program_id\": 6,\n    \"description\": \"\",\n    \"created_at\": \"2018-12-18 20:50:37\",\n    \"updated_at\": \"2018-12-18 20:50:37\",\n    \"study\": {\n        \"id\": 6,\n        \"university_id\": 5,\n        \"study_name_id\": 2,\n        \"address\": \"781 Tithiw Ridge\",\n        \"email\": \"tihedkob@gmail.com\",\n        \"phone\": \"021 7502355\",\n        \"contact_person\": \"Francis Buchanan\",\n        \"description\": null,\n        \"lat\": -6.17511,\n        \"lng\": 106.865036,\n        \"created_at\": \"2018-12-18 20:33:40\",\n        \"updated_at\": \"2018-12-18 20:33:40\",\n        \"university\": {\n            \"id\": 5,\n            \"name\": \"Adam Hayes Adam\",\n            \"address\": \"781 Tithiw Ridge\",\n            \"email\": \"tihedkob@gmail.com\",\n            \"phone\": \"021 7502355\",\n            \"contact_person\": \"Francis Buchanan\",\n            \"description\": \"Mika voopca hudimzo ninu tolez iroru jibwiroh da zojetemow fennatpac sunwiwvu wi utehko jejvu pigfufnoh vohadiro gi.\",\n            \"province\": \"YT\",\n            \"city\": \"Lolkoig\",\n            \"lat\": -6.17511,\n            \"lng\": 106.865036,\n            \"created_at\": \"2018-12-18 20:32:53\",\n            \"updated_at\": \"2018-12-18 20:32:53\"\n        },\n        \"studyName\": {\n            \"id\": 2,\n            \"name\": \"Ilmu Komunikasi\",\n            \"description\": null,\n            \"created_at\": \"2018-12-18 14:00:59\",\n            \"updated_at\": \"2018-12-18 14:00:59\"\n        }\n    }\n}"
 						}
 					]
 				},
@@ -8965,9 +9209,10 @@
 								},
 								{
 									"key": "count_add",
-									"value": "10",
+									"value": "",
 									"description": "integer (Jumlah Tambah)",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "count_cancel",
@@ -12464,10 +12709,10 @@
 							"listen": "test",
 							"script": {
 								"id": "039f2cd9-ee18-49c6-b121-12b519cea1b5",
-								"type": "text/javascript",
 								"exec": [
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -13954,6 +14199,746 @@
 								}
 							],
 							"body": "{\"meta\":{\"status\":200,\"message\":\"Deleted successfully\"}}"
+						}
+					]
+				}
+			],
+			"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9d98de7d-01f2-44cb-8be3-0676208dfd15",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d4f430e4-19bf-4081-b67b-f894e950d0d5",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "DownPaymants",
+			"item": [
+				{
+					"name": "Get DownPaymant List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/down-payments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"down-payments"
+							]
+						},
+						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
+					},
+					"response": [
+						{
+							"name": "Get DownPaymant List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/down-payments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"down-payments"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=7712d84d2228709f26d2e8e78d966a72GhBrWo0zhxnHLemG5kejolM55ofPlf9z0VFG8xyP6qE0LNA6R49%2Bnxbd6Atj2uEH1h02EWDifYsewboqkt5eRPCu7JUulnerLchwfZcCElS6t7nC%2BBKMYx7iW2vIR28z; Path=/; HttpOnly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=a3961690ce77793cca31550cc8545dad2vNdqq1YBRHhF%2FcWPY5%2BlgE%2BGHQWRPWQ47mlOa56fM26Se%2Bu%2BEv8Q%2FLSU4fUzhbPz9FKou1tBlhx7O6lbjs%2FYQ%3D%3D; Path=/; HttpOnly"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "456"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 09 Dec 2018 11:53:00 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Data retrieval successfully\",\n        \"total\": 1,\n        \"perPage\": 10,\n        \"page\": 1,\n        \"lastPage\": 1\n    },\n    \"data\": [\n        {\n            \"id\": 1,\n            \"marketing_target_id\": 1,\n            \"name\": \"Dani\",\n            \"phone\": \"08234567890\",\n            \"dp\": 100000,\n            \"is_verified\": 0,\n            \"created_at\": \"2018-12-09 18:52:20\",\n            \"updated_at\": \"2018-12-09 18:52:20\",\n            \"target\": {\n                \"id\": 1,\n                \"code\": \"6e90cffb\",\n                \"study_program_id\": 3,\n                \"description\": \"Ibomofbe zuov deuk gokofhun.\",\n                \"created_at\": \"2018-12-09 18:50:58\",\n                \"updated_at\": \"2018-12-09 18:50:58\"\n            }\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Store New DownPaymant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "dc3e780c-79fe-4ef9-9048-ffbd1e70362c",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"let resp = pm.response.json();",
+									"",
+									"pm.environment.set(\"resourceId\", resp.data.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Dani",
+									"description": "required|string",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "08234567890",
+									"description": "required|string",
+									"type": "text"
+								},
+								{
+									"key": "dp",
+									"value": "100000",
+									"description": "required|integer",
+									"type": "text"
+								},
+								{
+									"key": "marketing_target_id",
+									"value": "1",
+									"description": "required|integer",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/down-payments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"down-payments"
+							]
+						},
+						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
+					},
+					"response": [
+						{
+							"name": "Store New DownPaymant",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Dani",
+											"description": "required|string",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "08234567890",
+											"description": "required|string",
+											"type": "text"
+										},
+										{
+											"key": "dp",
+											"value": "100000",
+											"description": "required|integer",
+											"type": "text"
+										},
+										{
+											"key": "marketing_target_id",
+											"value": "1",
+											"description": "required|integer",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/down-payments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"down-payments"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=0094fa6922560089dc4966a2ffd4b3e4GffBxnNlL%2FkRD7tKG%2BUtea%2FGJbW8nlwgN7zkoIBDcdUXXtp5609bRlVB2Yu1YpQ2N9mYWa5TnBKz%2Ba26arUaOpiFI1WQyZacxX1nUmknruc3luuLTP0sU%2BDs9irBcRpo; Path=/; HttpOnly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=e10f0c18915a9cc3970e30afe06a63b2MAnFE1RwFNGBDAAsQMW2GFc6sU%2BpfYkdUqlyEq4VufDcSSTsCDRZbj0JNd27gSyCfP9u5k054TUkjoFSjDIoqw%3D%3D; Path=/; HttpOnly"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "390"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 09 Dec 2018 11:53:26 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"meta\": {\n        \"status\": 201,\n        \"message\": \"Created successfully\"\n    },\n    \"data\": {\n        \"marketing_target_id\": \"1\",\n        \"name\": \"Dani\",\n        \"phone\": \"08234567890\",\n        \"dp\": \"100000\",\n        \"created_at\": \"2018-12-09 18:53:26\",\n        \"updated_at\": \"2018-12-09 18:53:26\",\n        \"id\": 2,\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"6e90cffb\",\n            \"study_program_id\": 3,\n            \"description\": \"Ibomofbe zuov deuk gokofhun.\",\n            \"created_at\": \"2018-12-09 18:50:58\",\n            \"updated_at\": \"2018-12-09 18:50:58\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Show DownPaymant by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "84a23015-dd39-4fd5-b0fd-e71f1a8257bc",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/down-payments/{{resourceId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"down-payments",
+								"{{resourceId}}"
+							]
+						},
+						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
+					},
+					"response": [
+						{
+							"name": "Show DownPaymant by Id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/down-payments/{{resourceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"down-payments",
+										"{{resourceId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=ee3ee32b9ba35c1f0c923802deaeec570fMjZi84ZJuSp9uuD3faauh%2B2xMbMIRLyE%2BHEAIkDzbBKt1Iet2%2Folox9DqZJnqj7FGn7ky9UT%2FJiBlMrIVnHOrCSXrlgrK27pM%2BYGEt2JrYGnBvDW8WGM9TmLct4Yeh; Path=/; HttpOnly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=cd693e9f21304f95c149ce07a48d1ba8tZZlzJusgsh5zPEfmU3DsFI0cDjULP6OLAQ0Spt6WbST%2BjEhKZgobqoJyptDqC2SUK%2BwXbqfdKxLBW%2FVodewhQ%3D%3D; Path=/; HttpOnly"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "409"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 09 Dec 2018 11:53:42 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Data retrieval successfully\"\n    },\n    \"data\": {\n        \"id\": 2,\n        \"marketing_target_id\": 1,\n        \"name\": \"Dani\",\n        \"phone\": \"08234567890\",\n        \"dp\": 100000,\n        \"is_verified\": 0,\n        \"created_at\": \"2018-12-09 18:53:26\",\n        \"updated_at\": \"2018-12-09 18:53:26\",\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"6e90cffb\",\n            \"study_program_id\": 3,\n            \"description\": \"Ibomofbe zuov deuk gokofhun.\",\n            \"created_at\": \"2018-12-09 18:50:58\",\n            \"updated_at\": \"2018-12-09 18:50:58\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update DownPaymant by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bbcfdacf-6a8f-47fc-bc9e-32aa041f5373",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Dani",
+									"description": "required|string|unique",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "08234567890",
+									"description": "required|string|max:50|unique",
+									"type": "text"
+								},
+								{
+									"key": "dp",
+									"value": "100000",
+									"description": "required|string|max:20",
+									"type": "text"
+								},
+								{
+									"key": "marketing_target_id",
+									"value": "1",
+									"description": "required|integer",
+									"type": "text"
+								},
+								{
+									"key": "is_verified",
+									"value": "1",
+									"description": "string",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/down-payments/{{resourceId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"down-payments",
+								"{{resourceId}}"
+							]
+						},
+						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
+					},
+					"response": [
+						{
+							"name": "Update DownPaymant by Id",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Dani",
+											"description": "required|string|unique",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "08234567890",
+											"description": "required|string|max:50|unique",
+											"type": "text"
+										},
+										{
+											"key": "dp",
+											"value": "100000",
+											"description": "required|string|max:20",
+											"type": "text"
+										},
+										{
+											"key": "marketing_target_id",
+											"value": "1",
+											"description": "required|integer",
+											"type": "text"
+										},
+										{
+											"key": "is_verified",
+											"value": "1",
+											"description": "string",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/down-payments/{{resourceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"down-payments",
+										"{{resourceId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=84ef612f79d4a6ac5115bf796c1a67556cx7%2BXd%2FP3ijmsn4M9P4iedMtJi3s6FpViXrlm5Dw7PkncARzulx80AzPHtgtrvHKZIVD5zQQF88uQJDim541yW%2FS%2FQL1%2BgdTbEWEyexRlIzcTueM%2FOJYIpkaQjIgSPe; Path=/; HttpOnly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=fbf61f2174e1c8e9013ab0fcdb4c325bO12KNN9oO4ntP07PHnW9tNYS4A6I0rGGvk6Or%2FG37hMF6uIVlZW02DV0r0OR0wRv0DpMbqsuyopgzLZ8lKw96Q%3D%3D; Path=/; HttpOnly"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "408"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 09 Dec 2018 11:55:39 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Updated successfully\"\n    },\n    \"data\": {\n        \"id\": 2,\n        \"marketing_target_id\": \"1\",\n        \"name\": \"Dani\",\n        \"phone\": \"08234567890\",\n        \"dp\": \"100000\",\n        \"is_verified\": \"1\",\n        \"created_at\": \"2018-12-09 18:53:26\",\n        \"updated_at\": \"2018-12-09 18:55:39\",\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"6e90cffb\",\n            \"study_program_id\": 3,\n            \"description\": \"Ibomofbe zuov deuk gokofhun.\",\n            \"created_at\": \"2018-12-09 18:50:58\",\n            \"updated_at\": \"2018-12-09 18:50:58\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete DownPaymant by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6f096ee5-33c2-47f5-a352-80dde16dfe42",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/down-payments/{{resourceId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"down-payments",
+								"{{resourceId}}"
+							]
+						},
+						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
+					},
+					"response": [
+						{
+							"name": "Delete DownPaymant by Id",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/down-payments/{{resourceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"down-payments",
+										"{{resourceId}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=53ac60b8e2e3fd3f98346269d5f31b8bITUgO8foxWZ2rjAq2a9XRr2YR%2Be0y2Fu3KFHbSgJS3GeAsjT9vZ3mpj%2FlamQqRYmt8gmuvGBXz7FlAg%2BAHpmeIdDPRbi28f3%2Ff1fqu51dQLYJkqZUjpsNT1fHYCKGLyg; Path=/; HttpOnly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=367c960b76f92456a1be19fdbff0d180XIfFUoRoASnetQnQ%2BECJbbo5bRy0bP927U30jxB37mrW1ssjTX723nS6dPqf5gHggbT37go0UqXb%2BHinL64kQA%3D%3D; Path=/; HttpOnly"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "56"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 09 Dec 2018 11:56:03 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Deleted successfully\"\n    }\n}"
 						}
 					]
 				}
@@ -17997,7 +18982,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/combo-data?model=MarketingAll",
+							"raw": "{{baseUrl}}/combo-data?model=MarketingAll&supervisor_id=1",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -18008,6 +18993,10 @@
 								{
 									"key": "model",
 									"value": "MarketingAll"
+								},
+								{
+									"key": "supervisor_id",
+									"value": "1"
 								}
 							]
 						},
