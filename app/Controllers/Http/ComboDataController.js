@@ -114,17 +114,18 @@ class ComboDataController {
     let redisKey = `Marketing_Combo_All_${supervisor_id}`
     let cached = await RedisHelper.get(redisKey)
 
-    // if (cached != null) {
-    //   return cached
-    // }
-
-    const user = await User.find(supervisor_id)
-    const roles = await user.getRoles()
-    if (
-      InArray(roles, "super-administrator") ||
-      InArray(roles, "administrator")
-    ) {
-      supervisor_id = null
+    if (cached != null) {
+      return cached
+    }
+    if (supervisor_id && supervisor_id != "") {
+      const user = await User.find(supervisor_id)
+      const roles = await user.getRoles()
+      if (
+        InArray(roles, "super-administrator") ||
+        InArray(roles, "administrator")
+      ) {
+        supervisor_id = null
+      }
     }
     const data = await User.query()
       .select("id", "name")
@@ -141,7 +142,7 @@ class ComboDataController {
       })
       .orderBy("name")
       .fetch()
-    // await RedisHelper.set(redisKey, data)
+    await RedisHelper.set(redisKey, data)
     let parsed = data.toJSON()
     return parsed
   }
@@ -179,7 +180,7 @@ class ComboDataController {
   }
 
   async getStudy(university_id) {
-    let redisKey = `tudyProgram_Combo_${university_id}`
+    let redisKey = `StudyProgram_Combo_${university_id}`
     let cached = await RedisHelper.get(redisKey)
     let data
 

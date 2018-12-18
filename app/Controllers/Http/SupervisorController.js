@@ -1,13 +1,20 @@
-'use strict'
+"use strict"
 
-const User = use('App/Models/User')
-const Role = use('App/Models/Role')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits, ActivationTraits } = use('App/Traits')
-const fillable = ['name', 'email', 'password', 'phone', 'address', 'description', 'is_active']
+const User = use("App/Models/User")
+const Role = use("App/Models/Role")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits, ActivationTraits } = use("App/Traits")
+const fillable = [
+  "name",
+  "email",
+  "password",
+  "phone",
+  "address",
+  "description",
+  "is_active",
+]
 
 class SupervisorController {
-
   /**
    * Index
    * Get List of Supervisors
@@ -17,15 +24,15 @@ class SupervisorController {
 
     if (!page) page = 1
     if (!limit) limit = 10
-    if (search && search != '') {
+    if (search && search != "") {
       const data = await User.query()
-        .whereHas('roles', builder => {
-          builder.where('slug', 'supervisor')
+        .whereHas("roles", builder => {
+          builder.where("slug", "supervisor")
         })
-        .where('name', 'like', `%${search}%`)
-        .orWhere('email', 'like', `%${search}%`)
-        .orWhere('phone', 'like', `%${search}%`)
-        .orWhere('address', 'like', `%${search}%`)
+        .where("name", "like", `%${search}%`)
+        .orWhere("email", "like", `%${search}%`)
+        .orWhere("phone", "like", `%${search}%`)
+        .orWhere("address", "like", `%${search}%`)
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
@@ -38,10 +45,10 @@ class SupervisorController {
       }
 
       const data = await User.query()
-        .whereHas('roles', builder => {
-          builder.where('slug', 'supervisor')
+        .whereHas("roles", builder => {
+          builder.where("slug", "supervisor")
         })
-        .orderBy('name')
+        .orderBy("name")
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
@@ -61,8 +68,8 @@ class SupervisorController {
     const data = await User.create(body)
     await data.roles().attach(await getSupervisorRoleId())
     await ActivationTraits.createAndActivate(data)
-    await RedisHelper.delete('Supervisor_*')
-    await RedisHelper.delete('User_*')
+    await RedisHelper.delete("Supervisor_*")
+    await RedisHelper.delete("User_*")
     const activity = `Add new Supervisor '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -81,7 +88,9 @@ class SupervisorController {
     if (cached) {
       return response.status(200).send(cached)
     }
-    const data = await User.query().where('id', id).first()
+    const data = await User.query()
+      .where("id", id)
+      .first()
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
@@ -108,11 +117,10 @@ class SupervisorController {
     await data.save()
     const activity = `Update Supervisor '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Supervisor_*')
-    await RedisHelper.delete('User_*')
+    await RedisHelper.delete("Supervisor_*")
+    await RedisHelper.delete("User_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
-
   }
 
   /**
@@ -129,8 +137,9 @@ class SupervisorController {
 
     const activity = `Delete Supervisor '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Supervisor_*')
-    await RedisHelper.delete('User_*')
+    await RedisHelper.delete("Supervisor_*")
+    await RedisHelper.delete("Marketing_*")
+    await RedisHelper.delete("User_*")
     // Delete Relationship
     await data.tokens().delete()
     await data.marketings().detach()
@@ -145,7 +154,10 @@ class SupervisorController {
    */
 
   async attachMarketing({ request, response, auth }) {
-    const { supervisor_id, marketings } = request.only(['supervisor_id', 'marketings'])
+    const { supervisor_id, marketings } = request.only([
+      "supervisor_id",
+      "marketings",
+    ])
     // Check if Supervisor exist
     const supervisor = await User.find(supervisor_id)
     if (!supervisor) {
@@ -153,40 +165,52 @@ class SupervisorController {
     }
     // Check Marketings
     let filteredMarketings = []
-    marketings.forEach(async (m) => {
-      let marketing = await User.query().whereHas('roles', builder => {
-        builder.where('role_id', 4)
-      })
-        .where('id', m)
+    marketings.forEach(async m => {
+      let marketing = await User.query()
+        .whereHas("roles", builder => {
+          builder.where("role_id", 4)
+        })
+        .where("id", m)
         .first()
       if (marketing) {
         filteredMarketings.push(marketing.id)
       }
     })
-    await supervisor.marketings().attach(filteredMarketings)
-    const activity = 'Attaching Marktings to Supervisor'
+    await supervisor.marketings().sync(filteredMarketings)
+    const activity = "Attaching Marktings to Supervisor"
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('User_*')
-    await RedisHelper.delete('Supervisor_*')
-    await RedisHelper.delete('Marketing_*')
+    await RedisHelper.delete("User_*")
+    await RedisHelper.delete("Supervisor_*")
+    await RedisHelper.delete("Marketing_*")
     // const data = await User.query().whereIn('id', filteredMarketings)
-    return response.status(200).send(ResponseParser.successResponse(null, 'Marketing attached'))
+    return response
+      .status(200)
+      .send(ResponseParser.successResponse(null, "Marketing attached"))
   }
 
   async detachMarketing({ request, response, auth }) {
-    const { supervisor_id, marketings } = request.only(['supervisor_id', 'marketings'])
-    const supervisor = await User.find(supervisor_id)
-    if (!supervisor) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      const { supervisor_id, marketings } = request.only([
+        "supervisor_id",
+        "marketings",
+      ])
+      const supervisor = await User.find(supervisor_id)
+      if (!supervisor) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await supervisor.marketings().detach(marketings)
+      await supervisor.load("marketings")
+      const activity = "Detach Marketings from Supervisor"
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("User_*")
+      await RedisHelper.delete("Supervisor_*")
+      await RedisHelper.delete("Marketing_*")
+      return response
+        .status(200)
+        .send(ResponseParser.successResponse(supervisor, "Marketing detached"))
+    } catch (e) {
+      console.log("e", e)
     }
-    await supervisor.marketings().detach(marketings)
-    await supervisor.load('marketings')
-    const activity = 'Detach Marktings from Supervisor'
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('User_*')
-    await RedisHelper.delete('Supervisor_*')
-    await RedisHelper.delete('Marketing_*')
-    return response.status(200).send(ResponseParser.successResponse(supervisor, 'Marketing detached'))
   }
 
   async searchMarketing({ request, response }) {
@@ -194,15 +218,15 @@ class SupervisorController {
 
     if (!page) page = 1
     if (!limit) limit = 10
-    if (search && search != '') {
+    if (search && search != "") {
       const data = await User.query()
-        .whereHas('roles', builder => {
-          builder.where('role_id', 3)
+        .whereHas("roles", builder => {
+          builder.where("role_id", 3)
         })
-        .where('name', 'like', `%${search}%`)
-        .orWhere('email', 'like', `%${search}%`)
-        .orWhere('phone', 'like', `%${search}%`)
-        .orWhere('address', 'like', `%${search}%`)
+        .where("name", "like", `%${search}%`)
+        .orWhere("email", "like", `%${search}%`)
+        .orWhere("phone", "like", `%${search}%`)
+        .orWhere("address", "like", `%${search}%`)
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
@@ -213,12 +237,12 @@ class SupervisorController {
 module.exports = SupervisorController
 
 async function getSupervisorRoleId() {
-  let redisKey = 'SupervisorId'
+  let redisKey = "SupervisorId"
   let cached = await RedisHelper.get(redisKey)
   if (cached) {
     return cached
   }
-  let supervisorRole = await Role.findBy('slug', 'supervisor')
+  let supervisorRole = await Role.findBy("slug", "supervisor")
   await RedisHelper.set(redisKey, supervisorRole.id)
   return supervisorRole.id
 }

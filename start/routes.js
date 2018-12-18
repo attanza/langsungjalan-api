@@ -1,18 +1,11 @@
 "use strict"
 
 const Route = use("Route")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
-
+const { RedisHelper, ResponseParser, AesUtil } = use("App/Helpers")
+const Env = use("Env")
 Route.get("/", "DocumentController.intro")
 
 Route.get("/docs", "DocumentController.index")
-
-Route.get("/test-email", async ({ view }) => {
-  const DP = use("App/Models/DownPayment")
-  const dp = await DP.first()
-  await dp.loadMany(["target.study.studyName", "target.study.university"])
-  return view.render("emails.new_dp", { dp: dp.toJSON() })
-})
 
 Route.group(() => {
   Route.post("/login", "LoginController.login").validator("Login")
@@ -40,6 +33,24 @@ Route.group(() => {
       .status(200)
       .send(ResponseParser.successResponse("Redis Clear"))
   }).middleware(["can:clear_redis"])
+
+  Route.post("make-token", async ({ request, response }) => {
+    const date = Math.floor(Date.now() / 1000).toString()
+    const CLIENT_TOKEN = Env.get("CLIENT_TOKEN")
+    const body = {
+      date,
+    }
+    const encrypted = AesUtil.encrypt(JSON.stringify(body), date + CLIENT_TOKEN)
+    return response.status(200).send(
+      ResponseParser.successResponse(
+        {
+          encrypted,
+          date,
+        },
+        "Token"
+      )
+    )
+  })
 
   /**
    * Dashboard

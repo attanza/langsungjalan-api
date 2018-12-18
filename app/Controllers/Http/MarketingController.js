@@ -1,6 +1,7 @@
 "use strict"
 
 const User = use("App/Models/User")
+const Role = use("App/Models/Role")
 const { RedisHelper, ResponseParser } = use("App/Helpers")
 const { ActivityTraits, ActivationTraits } = use("App/Traits")
 

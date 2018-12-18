@@ -1,10 +1,10 @@
-'use strict'
+"use strict"
 
-const Role = use('App/Models/Role')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
+const Role = use("App/Models/Role")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits } = use("App/Traits")
 
-const fillable = ['name', 'slug', 'description']
+const fillable = ["name", "slug", "description"]
 
 class RoleController {
   /**
@@ -22,18 +22,18 @@ class RoleController {
       start_date,
       end_date,
       sort_by,
-      sort_mode
+      sort_mode,
     } = request.get()
 
     if (!page) page = 1
     if (!limit) limit = 10
-    if (!sort_by) sort_by = 'id'
-    if (!sort_mode) sort_mode = 'desc'
+    if (!sort_by) sort_by = "name"
+    if (!sort_mode) sort_mode = "asc"
 
-    if (search && search != '') {
+    if (search && search != "") {
       const data = await Role.query()
-        .where('name', 'like', `%${search}%`)
-        .orWhere('slug', 'like', `%${search}%`)
+        .where("name", "like", `%${search}%`)
+        .orWhere("slug", "like", `%${search}%`)
         .paginate(parseInt(page), parseInt(limit))
       let parsed = ResponseParser.apiCollection(data.toJSON())
       return response.status(200).send(parsed)
@@ -50,7 +50,7 @@ class RoleController {
     const data = await Role.query()
       .where(function() {
         if (search_by && search_query) {
-          return this.where(search_by, 'like', `%${search_query}%`)
+          return this.where(search_by, "like", `%${search_query}%`)
         }
       })
       .where(function() {
@@ -74,7 +74,7 @@ class RoleController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await Role.create(body)
-    await RedisHelper.delete('Role_*')
+    await RedisHelper.delete("Role_*")
     const activity = `Add new Role '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -117,7 +117,7 @@ class RoleController {
     await data.save()
     const activity = `Update Role '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Role_*')
+    await RedisHelper.delete("Role_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -136,11 +136,13 @@ class RoleController {
     }
 
     if (id < 5) {
-      return response.status(400).send(ResponseParser.errorResponse('Default Role cannot be deleted'))
+      return response
+        .status(400)
+        .send(ResponseParser.errorResponse("Default Role cannot be deleted"))
     }
     const activity = `Delete Role '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Role_*')
+    await RedisHelper.delete("Role_*")
     await data.permissions().detach()
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
@@ -183,7 +185,6 @@ class RoleController {
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
-
   }
 }
 
