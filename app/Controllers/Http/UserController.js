@@ -49,7 +49,7 @@ class UserController {
 
     const data = await User.query()
       .with("roles")
-      .where(function () {
+      .where(function() {
         if (search && search != "") {
           this.where("name", "like", `%${search}%`)
           this.orWhere("email", "like", `%${search}%`)
@@ -185,12 +185,12 @@ class UserController {
    */
 
   async attachRoles(user, roles) {
+    let confirmedRoles = []
     for (let i = 0; i < roles.length; i++) {
       let data = await Role.find(roles[i])
-      if (data) {
-        await user.roles().sync(data.id)
-      }
+      if (data) confirmedRoles.push(data.id)
     }
+    await user.roles().sync(confirmedRoles)
   }
 }
 

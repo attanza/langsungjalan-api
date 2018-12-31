@@ -16,75 +16,76 @@ class MarketingTargetController {
    * Get List of MarketingTargets
    */
   async index({ request, response }) {
-    let {
-      page,
-      limit,
-      search,
-      search_by,
-      search_query,
-      between_date,
-      start_date,
-      end_date,
-      sort_by,
-      sort_mode,
-      study_id,
-    } = request.get()
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+        study_id,
+      } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!sort_by) sort_by = "id"
-    if (!sort_mode) sort_mode = "desc"
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "created_at"
+      if (!sort_mode) sort_mode = "desc"
 
-    if (search && search != "") {
+      const redisKey = `MarketingTarget_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${study_id}`
+
+      let cached = await RedisHelper.get(redisKey)
+
+      if (cached && !search) {
+        return cached
+      }
+
       const data = await MarketingTarget.query()
         .with("study.studyName")
         .with("study.university")
-        .where("code", "like", `%${search}%`)
-        .orWhereHas("study", builder => {
-          builder.whereHas("university", builder2 => {
-            builder2.where("name", "like", `%${search}%`)
-          })
-          builder.orWhereHas("studyName", builder2 => {
-            builder2.where("name", "like", `%${search}%`)
-          })
+        .where(function() {
+          if (search && search != "") {
+            this.where("code", "like", `%${search}%`)
+            this.orWhereHas("study", builder => {
+              builder.whereHas("university", builder2 => {
+                builder2.where("name", "like", `%${search}%`)
+              })
+            })
+            this.orWhereHas("study", builder => {
+              builder.orWhereHas("studyName", builder2 => {
+                builder2.where("name", "like", `%${search}%`)
+              })
+            })
+          }
+
+          if (study_id && study_id != "") {
+            return this.where("study_program_id", parseInt(study_id))
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
         })
-        .paginate(parseInt(page), parseInt(limit))
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
+
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
-
-    const redisKey = `MarketingTarget_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${study_id}`
-
-    let cached = await RedisHelper.get(redisKey)
-
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-
-    const data = await MarketingTarget.query()
-      .with("study.studyName")
-      .with("study.university")
-      .where(function() {
-        if (search_by && search_query) {
-          return this.where(search_by, "like", `%${search_query}%`)
-        }
-      })
-      .where(function() {
-        if (study_id && study_id != "") {
-          return this.where("study_program_id", parseInt(study_id))
-        }
-      })
-      .where(function() {
-        if (between_date && start_date && end_date) {
-          return this.whereBetween(between_date, [start_date, end_date])
-        }
-      })
-      .orderBy(sort_by, sort_mode)
-      .paginate(parseInt(page), parseInt(limit))
-
-    let parsed = ResponseParser.apiCollection(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**

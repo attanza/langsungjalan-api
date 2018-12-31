@@ -154,38 +154,39 @@ class SupervisorController {
    */
 
   async attachMarketing({ request, response, auth }) {
-    const { supervisor_id, marketings } = request.only([
-      "supervisor_id",
-      "marketings",
-    ])
-    // Check if Supervisor exist
-    const supervisor = await User.find(supervisor_id)
-    if (!supervisor) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    // Check Marketings
-    let filteredMarketings = []
-    marketings.forEach(async m => {
-      let marketing = await User.query()
-        .whereHas("roles", builder => {
-          builder.where("role_id", 4)
-        })
-        .where("id", m)
-        .first()
-      if (marketing) {
-        filteredMarketings.push(marketing.id)
+    try {
+      const { supervisor_id, marketings } = request.only([
+        "supervisor_id",
+        "marketings",
+      ])
+      // Check if Supervisor exist
+      const supervisor = await User.find(supervisor_id)
+      if (!supervisor) {
+        return response.status(400).send(ResponseParser.apiNotFound())
       }
-    })
-    await supervisor.marketings().sync(filteredMarketings)
-    const activity = "Attaching Marktings to Supervisor"
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("User_*")
-    await RedisHelper.delete("Supervisor_*")
-    await RedisHelper.delete("Marketing_*")
-    // const data = await User.query().whereIn('id', filteredMarketings)
-    return response
-      .status(200)
-      .send(ResponseParser.successResponse(null, "Marketing attached"))
+      // Check Marketings
+      let filteredMarketings = []
+      for (let i = 0; i < marketings.length; i++) {
+        let marketing = await User.query()
+          .whereHas("roles", builder => {
+            builder.where("role_id", 4)
+          })
+          .where("id", marketings[i])
+          .first()
+        if (marketing) filteredMarketings.push(marketing.id)
+      }
+      await supervisor.marketings().sync(filteredMarketings)
+      const activity = "Attaching Marktings to Supervisor"
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("User_*")
+      await RedisHelper.delete("Supervisor_*")
+      await RedisHelper.delete("Marketing_*")
+      return response
+        .status(200)
+        .send(ResponseParser.successResponse(null, "Marketing attached"))
+    } catch (e) {
+      console.log("e", e)
+    }
   }
 
   async detachMarketing({ request, response, auth }) {

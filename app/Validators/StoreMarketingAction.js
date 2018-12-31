@@ -1,6 +1,7 @@
 "use strict"
 
 const { ResponseParser } = use("App/Helpers")
+const messages = require("./messages")
 
 class StoreMarketingAction {
   get rules() {
@@ -11,10 +12,7 @@ class StoreMarketingAction {
   }
 
   get messages() {
-    return {
-      required: "{{ field }} is required",
-      max: "{{ field }} cannot more then {{ arguments:0 }} characters",
-    }
+    return messages
   }
 
   get sanitizationRules() {
