@@ -2,7 +2,7 @@
 
 const DownPayment = use("App/Models/DownPayment")
 const { RedisHelper, ResponseParser, MailHelper } = use("App/Helpers")
-const { DownPaymentTraits } = use("App/Traits")
+const { ActivityTraits } = use("App/Traits")
 
 const fillable = ["marketing_target_id", "name", "phone", "dp", "is_verified"]
 
@@ -87,8 +87,8 @@ class DownPaymentController {
     const data = await DownPayment.create(body)
     await data.load("target")
     await RedisHelper.delete("DownPayment_*")
-    const DownPayment = `Add new DownPayment '${data.name}'`
-    await DownPaymentTraits.saveDownPayment(request, auth, DownPayment)
+    const activity = `Add new DownPayment '${data.id}'`
+    await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
@@ -146,8 +146,9 @@ class DownPaymentController {
     }
     await data.merge(body)
     await data.save()
-    const DownPayment = `Update DownPayment '${data.name}'`
-    await DownPaymentTraits.saveDownPayment(request, auth, DownPayment)
+    const activity = `Update DownPayment '${data.id}'`
+    await ActivityTraits.saveActivity(request, auth, activity)
+
     await RedisHelper.delete("DownPayment_*")
     await data.load("target")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
@@ -164,8 +165,9 @@ class DownPaymentController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const DownPayment = `Delete DownPayment '${data.name}'`
-    await DownPaymentTraits.saveDownPayment(request, auth, DownPayment)
+    const activity = `Delete DownPayment '${data.id}'`
+    await ActivityTraits.saveActivity(request, auth, activity)
+
     await RedisHelper.delete("DownPayment*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())

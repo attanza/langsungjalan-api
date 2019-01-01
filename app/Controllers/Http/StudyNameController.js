@@ -44,7 +44,6 @@ class StudyNameController {
       }
 
       const data = await StudyName.query()
-        .with("target")
         .where(function() {
           if (search && search != "") {
             this.where("name", "like", `%${search}%`)
