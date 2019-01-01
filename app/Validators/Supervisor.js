@@ -1,39 +1,36 @@
-'use strict'
+"use strict"
 
-const { ResponseParser } = use('App/Helpers')
-
+const { ResponseParser } = use("App/Helpers")
+const messages = require("./messages")
 
 class User {
   get rules() {
     const id = this.ctx.params.id
     return {
-      name: 'required|max:50',
+      name: "required|max:50",
       email: `unique:users,email,id,${id}`,
       phone: `required|max:30|unique:users,phone,id,${id}`,
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required',
-      email: '{{ field }} is not a valid email',
-      unique: '{{ field }} is already registered'
-    }
+    return messages
   }
 
   get sanitizationRules() {
     return {
-      email: 'normalize_email',
-      name: 'escape',
-      phone: 'escape',
-      address: 'escape',
-      description: 'escape',
-
+      email: "normalize_email",
+      name: "escape",
+      phone: "escape",
+      address: "escape",
+      description: "escape",
     }
   }
 
   async fails(errorMessages) {
-    return this.ctx.response.status(422).send(ResponseParser.apiValidationFailed(errorMessages))
+    return this.ctx.response
+      .status(422)
+      .send(ResponseParser.apiValidationFailed(errorMessages))
   }
 }
 

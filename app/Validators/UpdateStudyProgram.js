@@ -1,43 +1,41 @@
-'use strict'
+"use strict"
 
-const { ResponseParser } = use('App/Helpers')
+const { ResponseParser } = use("App/Helpers")
+const messages = require("./messages")
 
 class UpdateStudyProgram {
-  get rules () {
+  get rules() {
     const id = this.ctx.params.id
 
     return {
-      university_id: 'required|integer',
-      study_name_id: 'required|integer',
+      university_id: "required|integer",
+      study_name_id: "required|integer",
       email: `required|email|unique:study_programs,email,id,${id}`,
       phone: `required|max:30|unique:study_programs,phone,id,${id}`,
-      lat: 'number',
-      lng: 'number'
+      lat: "number",
+      lng: "number",
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required',
-      email: '{{ field }} is not a valid email',
-      unique: '{{ field }} is already registered',
-      max: '{{ field }} cannot more then {{ arguments:0 }} characters'
-    }
+    return messages
   }
 
-  get sanitizationRules () {
+  get sanitizationRules() {
     return {
-      email: 'normalize_email',
-      name: 'escape',
-      phone: 'escape',
-      contact_person: 'escape',
-      address: 'escape',
-      description: 'escape'
+      email: "normalize_email",
+      name: "escape",
+      phone: "escape",
+      contact_person: "escape",
+      address: "escape",
+      description: "escape",
     }
   }
 
   async fails(errorMessages) {
-    return this.ctx.response.status(422).send(ResponseParser.apiValidationFailed(errorMessages))
+    return this.ctx.response
+      .status(422)
+      .send(ResponseParser.apiValidationFailed(errorMessages))
   }
 }
 

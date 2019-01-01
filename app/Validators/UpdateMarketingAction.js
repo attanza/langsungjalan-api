@@ -1,6 +1,7 @@
-'use strict'
+"use strict"
 
-const { ResponseParser } = use('App/Helpers')
+const { ResponseParser } = use("App/Helpers")
+const messages = require("./messages")
 
 class UpdateMarketingAction {
   get rules() {
@@ -8,26 +9,25 @@ class UpdateMarketingAction {
 
     return {
       name: `required|max:50|unique:marketing_actions,name,id,${id}`,
-      description: 'max:250'
+      description: "max:250",
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required',
-      max: '{{ field }} cannot more then {{ arguments:0 }} characters',
-    }
+    return messages
   }
 
   get sanitizationRules() {
     return {
-      name: 'escape',
-      description: 'escape',
+      name: "escape",
+      description: "escape",
     }
   }
 
   async fails(errorMessages) {
-    return this.ctx.response.status(422).send(ResponseParser.apiValidationFailed(errorMessages))
+    return this.ctx.response
+      .status(422)
+      .send(ResponseParser.apiValidationFailed(errorMessages))
   }
 }
 

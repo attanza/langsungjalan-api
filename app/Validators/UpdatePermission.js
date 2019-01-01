@@ -1,37 +1,36 @@
-'use strict'
+"use strict"
 
-const { ResponseParser } = use('App/Helpers')
+const { ResponseParser } = use("App/Helpers")
+const messages = require("./messages")
 
 class UpdatePermission {
   get rules() {
     const id = this.ctx.params.id
 
     return {
-      name: 'required|max:50|unique:permissions,name,id,' + id,
+      name: "required|max:50|unique:permissions,name,id," + id,
       // slug: 'required|max:80|unique:permissions,slug,id,' + id,
-      description: 'max:250'
+      description: "max:250",
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required'
-    }
+    return messages
   }
 
   get sanitizationRules() {
     return {
-      name: 'escape',
-      slug: 'escape',
-      description: 'escape',
+      name: "escape",
+      slug: "escape",
+      description: "escape",
     }
   }
 
   async fails(errorMessages) {
-    return this.ctx.response.status(422).send(ResponseParser.apiValidationFailed(errorMessages))
+    return this.ctx.response
+      .status(422)
+      .send(ResponseParser.apiValidationFailed(errorMessages))
   }
-
-
 }
 
 module.exports = UpdatePermission

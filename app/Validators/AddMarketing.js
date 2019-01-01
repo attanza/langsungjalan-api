@@ -1,25 +1,24 @@
-'use strict'
+"use strict"
 
-const { ResponseParser } = use('App/Helpers')
-
+const { ResponseParser } = use("App/Helpers")
+const messages = require("./messages")
 
 class AddMarketing {
-  get rules () {
+  get rules() {
     return {
-      supervisor_id: 'required|integer',
-      marketings: 'required|array',
+      supervisor_id: "required|integer",
+      marketings: "required|array",
     }
   }
 
   get messages() {
-    return {
-      required: '{{ field }} is required',
-      array: '{{ field }} should be array of integers',
-    }
+    return messages
   }
 
   async fails(errorMessages) {
-    return this.ctx.response.status(422).send(ResponseParser.apiValidationFailed(errorMessages))
+    return this.ctx.response
+      .status(422)
+      .send(ResponseParser.apiValidationFailed(errorMessages))
   }
 }
 

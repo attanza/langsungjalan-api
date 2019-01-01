@@ -1,11 +1,14 @@
 const messages = {
-  required: '{{ field }} is required',
-  max: '{{ field }} cannot more than {{ argument.0 }} characters',
-  min: '{{ field }} cannot less than {{ argument.0 }} characters',
-  unique: '{{ field }} is existed',
-  integer: '{{ field }} should be integer value',
-  boolean: '{{ field }} should be boolean value',
-  alpha_numeric: '{{ field }} can only letters and numbers with no space'
+  required: "{{ field }} diperlukan",
+  max: "{{ field }} tidak boleh lebih dari {{ argument.0 }} karakter",
+  min: "{{ field }} tidak boleh kurang dari {{ argument.0 }} karakter",
+  unique: "{{ field }} tidak bisa digunakan",
+  integer: "{{ field }} harus berupa nilai integer",
+  boolean: "{{ field }} harus berupa nilai boolean",
+  alpha_numeric: "{{ field }} harus berupa huruf dan angka tanpa spasi",
+  string: "{{ field }} harus berupa string",
+  number: "{{ field }} harus berupa number",
+  format: "{{ field }} harus berupa format yang sudah ditentukan",
 }
 
 module.exports = messages
