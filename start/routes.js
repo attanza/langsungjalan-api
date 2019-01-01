@@ -3,6 +3,8 @@
 const Route = use("Route")
 const { RedisHelper, ResponseParser, AesUtil } = use("App/Helpers")
 const Env = use("Env")
+const User = use("App/Models/User")
+
 Route.get("/", "DocumentController.intro")
 
 Route.get("/docs", "DocumentController.index")
