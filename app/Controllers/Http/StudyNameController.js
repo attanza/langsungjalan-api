@@ -1,9 +1,9 @@
-'use strict'
+"use strict"
 
-const StudyName = use('App/Models/StudyName')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
-const fillable = ['name', 'description']
+const StudyName = use("App/Models/StudyName")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits } = use("App/Traits")
+const fillable = ["name", "description"]
 
 /**
  * StudyNameController
@@ -11,64 +11,65 @@ const fillable = ['name', 'description']
  */
 
 class StudyNameController {
-
   /**
    * Index
    * Get List of StudyNames
    */
   async index({ request, response }) {
-    let {
-      page,
-      limit,
-      search,
-      search_by,
-      search_query,
-      between_date,
-      start_date,
-      end_date,
-      sort_by,
-      sort_mode
-    } = request.get()
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+      } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!sort_by) sort_by = 'id'
-    if (!sort_mode) sort_mode = 'desc'
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
 
-    if (search && search != '') {
+      const redisKey = `StudyName_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}`
+
+      let cached = await RedisHelper.get(redisKey)
+
+      if (cached && !search) {
+        return cached
+      }
+
       const data = await StudyName.query()
-        .where('name', 'like', `%${search}%`)
-        .orWhere('description', 'like', `%${search}%`)
-        .paginate(parseInt(page), parseInt(limit))
+        .with("target")
+        .where(function() {
+          if (search && search != "") {
+            this.where("name", "like", `%${search}%`)
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
+        })
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
+
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
-
-    const redisKey = `StudyName_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}`
-
-    let cached = await RedisHelper.get(redisKey)
-
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-
-    const data = await StudyName.query()
-      .where(function() {
-        if (search_by && search_query) {
-          return this.where(search_by, 'like', `%${search_query}%`)
-        }
-      })
-      .where(function() {
-        if (between_date && start_date && end_date) {
-          return this.whereBetween(between_date, [start_date, end_date])
-        }
-      })
-      .orderBy(sort_by, sort_mode)
-      .paginate(parseInt(page), parseInt(limit))
-
-    let parsed = ResponseParser.apiCollection(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -79,7 +80,7 @@ class StudyNameController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await StudyName.create(body)
-    await RedisHelper.delete('StudyName_*')
+    await RedisHelper.delete("StudyName_*")
     const activity = `Add new StudyName '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -122,7 +123,7 @@ class StudyNameController {
     await data.save()
     const activity = `Update StudyName '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('StudyName_*')
+    await RedisHelper.delete("StudyName_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -138,10 +139,13 @@ class StudyNameController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.studyPrograms().where('study_name_id', id).delete()
+    await data
+      .studyPrograms()
+      .where("study_name_id", id)
+      .delete()
     const activity = `Delete StudyName '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('StudyName_*')
+    await RedisHelper.delete("StudyName_*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

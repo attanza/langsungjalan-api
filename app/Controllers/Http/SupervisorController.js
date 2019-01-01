@@ -20,41 +20,64 @@ class SupervisorController {
    * Get List of Supervisors
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+      } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (search && search != "") {
-      const data = await User.query()
-        .whereHas("roles", builder => {
-          builder.where("slug", "supervisor")
-        })
-        .where("name", "like", `%${search}%`)
-        .orWhere("email", "like", `%${search}%`)
-        .orWhere("phone", "like", `%${search}%`)
-        .orWhere("address", "like", `%${search}%`)
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
-    } else {
-      let redisKey = `Supervisor_${page}_${limit}`
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
+
+      const redisKey = `Supervisor_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}`
+
       let cached = await RedisHelper.get(redisKey)
 
-      if (cached != null) {
-        return response.status(200).send(cached)
+      if (cached && !search) {
+        return cached
       }
 
       const data = await User.query()
         .whereHas("roles", builder => {
           builder.where("slug", "supervisor")
         })
-        .orderBy("name")
-        .paginate(parseInt(page), parseInt(limit))
+        .where(function() {
+          if (search && search != "") {
+            this.where("name", "like", `%${search}%`)
+            this.orWhere("email", "like", `%${search}%`)
+            this.orWhere("phone", "like", `%${search}%`)
+            this.orWhere("address", "like", `%${search}%`)
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
+        })
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
-      await RedisHelper.set(redisKey, parsed)
-
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
   }
 

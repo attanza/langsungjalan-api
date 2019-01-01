@@ -1,17 +1,17 @@
-'use strict'
+"use strict"
 
-const StudyProgram = use('App/Models/StudyProgram')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
+const StudyProgram = use("App/Models/StudyProgram")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits } = use("App/Traits")
 const fillable = [
-  'university_id',
-  'study_name_id',
-  'address',
-  'email',
-  'phone',
-  'contact_person',
-  'lat',
-  'lng'
+  "university_id",
+  "study_name_id",
+  "address",
+  "email",
+  "phone",
+  "contact_person",
+  "lat",
+  "lng",
 ]
 /**
  * StudyProgramController
@@ -24,91 +24,80 @@ class StudyProgramController {
    * Get List of StudyPrograms
    */
   async index({ request, response }) {
-    let {
-      page,
-      limit,
-      search,
-      search_by,
-      search_query,
-      between_date,
-      start_date,
-      end_date,
-      sort_by,
-      sort_mode,
-      university_id,
-      study_name_id
-    } = request.get()
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+        university_id,
+        study_name_id,
+      } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!sort_by) sort_by = 'id'
-    if (!sort_mode) sort_mode = 'desc'
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
 
-    if (search && search != '') {
+      const redisKey = `StudyProgram_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${university_id}${study_name_id}`
+
+      let cached = await RedisHelper.get(redisKey)
+
+      if (cached && !search) {
+        return cached
+      }
+
       const data = await StudyProgram.query()
-        .with('university')
-        .with('studyName')
-        .where('address', 'like', `%${search}%`)
-        .orWhere('email', 'like', `%${search}%`)
-        .orWhere('phone', 'like', `%${search}%`)
-        .orWhere('contact_person', 'like', `%${search}%`)
-        .orWhereHas('university', (builder) => {
-          builder.where('name', 'like', `%${search}%`)
-        })
-        .orWhereHas('studyName', (builder) => {
-          builder.where('name', 'like', `%${search}%`)
-        })
-        .where(function () {
-          if (university_id && university_id != '') {
-            console.log('university_id', university_id) //eslint-disable-line
-            this.where('university_id', parseInt(university_id))
+        .with("university")
+        .with("studyName")
+        .where(function() {
+          if (search && search != "") {
+            this.where("address", "like", `%${search}%`)
+            this.orWhere("email", "like", `%${search}%`)
+            this.orWhere("phone", "like", `%${search}%`)
+            this.orWhere("contact_person", "like", `%${search}%`)
+            this.orWhereHas("university", builder => {
+              builder.where("name", "like", `%${search}%`)
+            })
+            this.orWhereHas("studyName", builder => {
+              builder.where("name", "like", `%${search}%`)
+            })
+          }
+
+          if (university_id && university_id != "") {
+            this.where("university_id", university_id)
+          }
+
+          if (study_name_id && study_name_id != "") {
+            this.where("study_name_id", study_name_id)
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
           }
         })
-        .paginate(parseInt(page), parseInt(limit))
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
+
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
-
-    const redisKey = `StudyProgram_${page}${limit}${search_by}${search_query}${between_date}${start_date}${end_date}${sort_by}${sort_mode}${university_id}${study_name_id}`
-
-    let cached = await RedisHelper.get(redisKey)
-
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-
-    const data = await StudyProgram.query()
-      .with('university')
-      .with('studyName')
-      .with('years', builder => {
-        builder.orderBy('year')
-      })
-      .where(function () {
-        if (search_by && search_query) {
-          return this.where(search_by, 'like', `%${search_query}%`)
-        }
-      })
-      .where(function () {
-        if (university_id && university_id != '') {
-          return this.where('university_id', parseInt(university_id))
-        }
-      })
-      .where(function () {
-        if (study_name_id && study_name_id != '') {
-          return this.where('study_name_id', parseInt(study_name_id))
-        }
-      })
-      .where(function () {
-        if (between_date && start_date && end_date) {
-          return this.whereBetween(between_date, [start_date, end_date])
-        }
-      })
-      .orderBy(sort_by, sort_mode)
-      .paginate(parseInt(page), parseInt(limit))
-
-    let parsed = ResponseParser.apiCollection(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -119,8 +108,8 @@ class StudyProgramController {
   async store({ request, response, auth }) {
     let body = request.only(fillable)
     const data = await StudyProgram.create(body)
-    await data.loadMany(['university', 'studyName'])
-    await RedisHelper.delete('StudyProgram_*')
+    await data.loadMany(["university", "studyName"])
+    await RedisHelper.delete("StudyProgram_*")
     const activity = `Add new StudyProgram ID(${data.id})`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -167,8 +156,8 @@ class StudyProgramController {
     }
     await data.merge(body)
     await data.save()
-    await RedisHelper.delete('StudyProgram_*')
-    await data.loadMany(['university', 'studyName', 'years'])
+    await RedisHelper.delete("StudyProgram_*")
+    await data.loadMany(["university", "studyName", "years"])
     const activity = `Add new StudyProgram ID(${id})`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiUpdated(data.toJSON())
@@ -189,7 +178,7 @@ class StudyProgramController {
     }
     const activity = `Delete StudyProgram ID(${data.id})`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('StudyProgram_*')
+    await RedisHelper.delete("StudyProgram_*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

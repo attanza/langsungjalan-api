@@ -1,8 +1,8 @@
-'use strict'
+"use strict"
 
-const Product = use('App/Models/Product')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
+const Product = use("App/Models/Product")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits } = use("App/Traits")
 
 /**
  * ProductController
@@ -10,43 +10,67 @@ const { ActivityTraits } = use('App/Traits')
  */
 
 class ProductController {
-
   /**
    * Index
    * Get List of Products
    */
   async index({ request, response }) {
-    let { page, limit, search } = request.get()
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+      } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
 
-    if (search && search != '') {
-      const data = await Product.query()
-        .where('code', 'like', `%${search}%`)
-        .orWhere('name', 'like', `%${search}%`)
-        .orWhere('measurement', 'like', `%${search}%`)
-        .orWhere('price', 'like', `%${search}%`)
-        .orWhere('description', 'like', `%${search}%`)
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
-    } else {
-      let redisKey = `Product_${page}_${limit}`
+      const redisKey = `Product_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}`
+
       let cached = await RedisHelper.get(redisKey)
 
-      if (cached != null) {
-        return response.status(200).send(cached)
+      if (cached && !search) {
+        return cached
       }
 
       const data = await Product.query()
-        .orderBy('name')
-        .paginate(parseInt(page), parseInt(limit))
+        .where(function() {
+          if (search && search != "") {
+            this.where("code", "like", `%${search}%`)
+            this.orWhere("name", "like", `%${search}%`)
+            this.orWhere("measurement", "like", `%${search}%`)
+            this.orWhere("price", "like", `%${search}%`)
+            this.orWhere("description", "like", `%${search}%`)
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
+        })
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
 
-      await RedisHelper.set(redisKey, parsed)
-
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
   }
 
@@ -56,16 +80,21 @@ class ProductController {
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
-    let body = request.only(['code', 'name', 'measurement', 'price', 'description'])
+    let body = request.only([
+      "code",
+      "name",
+      "measurement",
+      "price",
+      "description",
+    ])
     const data = await Product.create(body)
-    await RedisHelper.delete('Product_*')
-    await RedisHelper.delete('Dashboard_Data')
+    await RedisHelper.delete("Product_*")
+    await RedisHelper.delete("Dashboard_Data")
     const activity = `Add new Product '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
-
 
   /**
    * Show
@@ -93,7 +122,13 @@ class ProductController {
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
-    let body = request.only(['code', 'name', 'measurement', 'price', 'description'])
+    let body = request.only([
+      "code",
+      "name",
+      "measurement",
+      "price",
+      "description",
+    ])
     const id = request.params.id
     const data = await Product.find(id)
     if (!data || data.length === 0) {
@@ -103,8 +138,8 @@ class ProductController {
     await data.save()
     const activity = `Update Product '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Product_*')
-    await RedisHelper.delete('Dashboard_Data')
+    await RedisHelper.delete("Product_*")
+    await RedisHelper.delete("Dashboard_Data")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -121,8 +156,8 @@ class ProductController {
     }
     const activity = `Delete Product '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('Product_*')
-    await RedisHelper.delete('Dashboard_Data')
+    await RedisHelper.delete("Product_*")
+    await RedisHelper.delete("Dashboard_Data")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

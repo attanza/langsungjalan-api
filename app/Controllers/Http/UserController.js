@@ -21,58 +21,68 @@ class UserController {
    * Get List of Users
    */
   async index({ request, response }) {
-    let {
-      page,
-      limit,
-      search,
-      search_by,
-      search_query,
-      between_date,
-      start_date,
-      end_date,
-      sort_by,
-      sort_mode,
-    } = request.get()
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+        marketing_target_id,
+      } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!sort_by) sort_by = "name"
-    if (!sort_mode) sort_mode = "asc"
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
 
-    const redisKey = `User_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}`
+      const redisKey = `User_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}`
 
-    let cached = await RedisHelper.get(redisKey)
+      let cached = await RedisHelper.get(redisKey)
 
-    if (cached && !search) {
-      return cached
+      if (cached && !search) {
+        return cached
+      }
+
+      const data = await User.query()
+        .with("roles")
+        .where(function() {
+          if (search && search != "") {
+            this.where("name", "like", `%${search}%`)
+            this.orWhere("email", "like", `%${search}%`)
+            this.orWhere("phone", "like", `%${search}%`)
+            this.orWhere("address", "like", `%${search}%`)
+          }
+
+          if (marketing_target_id && marketing_target_id != "") {
+            this.where("marketing_target_id", marketing_target_id)
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
+        })
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
+      let parsed = ResponseParser.apiCollection(data.toJSON())
+
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
+      return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
-
-    const data = await User.query()
-      .with("roles")
-      .where(function() {
-        if (search && search != "") {
-          this.where("name", "like", `%${search}%`)
-          this.orWhere("email", "like", `%${search}%`)
-          this.orWhere("phone", "like", `%${search}%`)
-          this.orWhere("address", "like", `%${search}%`)
-        }
-
-        if (search_by && search_query) {
-          this.where(search_by, "like", `%${search_query}%`)
-        }
-
-        if (between_date && start_date && end_date) {
-          this.whereBetween(between_date, [start_date, end_date])
-        }
-      })
-      .orderBy(sort_by, sort_mode)
-      .paginate(page, limit)
-
-    let parsed = ResponseParser.apiCollection(data.toJSON())
-    if (!search || search == "") {
-      await RedisHelper.set(redisKey, parsed)
-    }
-    return response.status(200).send(parsed)
   }
 
   /**

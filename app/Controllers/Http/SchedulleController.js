@@ -19,113 +19,99 @@ class SchedulleController {
    * Get List of Schedulle
    */
   async index({ request, response }) {
-    let {
-      page,
-      limit,
-      search,
-      search_by,
-      search_query,
-      between_date,
-      start_date,
-      end_date,
-      sort_by,
-      sort_mode,
-      marketing_target_id,
-      marketing_action_id,
-      marketing_id,
-    } = request.get()
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+        marketing_target_id,
+        marketing_action_id,
+        marketing_id,
+      } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!sort_by) sort_by = "id"
-    if (!sort_mode) sort_mode = "desc"
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
 
-    if (search && search != "") {
+      const redisKey = `Schedulle_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}${marketing_action_id}${marketing_id}`
+
+      let cached = await RedisHelper.get(redisKey)
+
+      if (cached && !search) {
+        return cached
+      }
+
       const data = await Schedulle.query()
-        .with("target")
-        .with("action")
-        .with("report")
-        .with("marketing")
-        .where("code", "like", `%${search}%`)
-        .orWhere("description", "like", `%${search}%`)
-        .orWhere("date", "like", `%${search}%`)
-        .orWhereHas("action", builder => {
-          builder.where("name", "like", `%${search}%`)
+        .with("target.study.studyName")
+        .with("target.study.university")
+        .with("action", builder => {
+          builder.select("id", "name")
         })
-        .orWhereHas("target", builder => {
-          builder.where("code", "like", `%${search}%`)
+        .with("report", builder => {
+          builder.select("id", "code")
         })
-        .orWhereHas("report", builder => {
-          builder.where("code", "like", `%${search}%`)
+        .with("marketing", builder => {
+          builder.select("id", "name")
         })
-        .orWhereHas("marketing", builder => {
-          builder.where("name", "like", `%${search}%`)
+        .where(function() {
+          if (search && search != "") {
+            this.where("code", "like", `%${search}%`)
+            this.orWhere("description", "like", `%${search}%`)
+            this.orWhere("date", "like", `%${search}%`)
+            this.orWhereHas("action", builder => {
+              builder.where("name", "like", `%${search}%`)
+            })
+            this.orWhereHas("target", builder => {
+              builder.where("code", "like", `%${search}%`)
+            })
+            this.orWhereHas("report", builder => {
+              builder.where("code", "like", `%${search}%`)
+            })
+            this.orWhereHas("marketing", builder => {
+              builder.where("name", "like", `%${search}%`)
+            })
+          }
+
+          if (marketing_id && marketing_id != "") {
+            this.where("marketing_id", marketing_id)
+          }
+
+          if (marketing_target_id && marketing_target_id != "") {
+            this.where("marketing_target_id", marketing_target_id)
+          }
+
+          if (marketing_action_id && marketing_action_id != "") {
+            this.where("marketing_action_id", marketing_action_id)
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
         })
-        .paginate(parseInt(page), parseInt(limit))
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
+
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
-
-    const redisKey = `Schedulle_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_id}${marketing_target_id}${marketing_action_id}`
-
-    let cached = await RedisHelper.get(redisKey)
-
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-
-    const data = await Schedulle.query()
-      // .with('target', builder => {
-      //   builder.select('id', 'code')
-      // })
-      .with("target.study.studyName")
-      .with("target.study.university")
-      .with("action", builder => {
-        builder.select("id", "name")
-      })
-      .with("report", builder => {
-        builder.select("id", "code")
-      })
-      .with("marketing", builder => {
-        builder.select("id", "name")
-      })
-      .where(function() {
-        if (search_by && search_query) {
-          return this.where(search_by, "like", `%${search_query}%`)
-        }
-      })
-      .where(function() {
-        if (marketing_id && marketing_id != "") {
-          return this.where("marketing_id", parseInt(marketing_id))
-        }
-      })
-      .where(function() {
-        if (marketing_target_id && marketing_target_id != "") {
-          return this.where(
-            "marketing_target_id",
-            parseInt(marketing_target_id)
-          )
-        }
-      })
-      .where(function() {
-        if (marketing_action_id) {
-          return this.where(
-            "marketing_action_id",
-            parseInt(marketing_action_id)
-          )
-        }
-      })
-      .where(function() {
-        if (between_date && start_date && end_date) {
-          return this.whereBetween(between_date, [start_date, end_date])
-        }
-      })
-      .orderBy(sort_by, sort_mode)
-      .paginate(parseInt(page), parseInt(limit))
-
-    let parsed = ResponseParser.apiCollection(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**

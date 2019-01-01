@@ -1,7 +1,7 @@
-'use strict'
+"use strict"
 
-const Activity = use('App/Models/Activity')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
+const Activity = use("App/Models/Activity")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
 
 class ActivityController {
   /**
@@ -9,74 +9,72 @@ class ActivityController {
    * Get List of Activities
    */
   async index({ request, response }) {
-    let {
-      page,
-      limit,
-      search,
-      search_by,
-      search_query,
-      between_date,
-      start_date,
-      end_date,
-      sort_by,
-      sort_mode,
-      user_id
-    } = request.get()
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+        user_id,
+      } = request.get()
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!sort_by) sort_by = 'id'
-    if (!sort_mode) sort_mode = 'desc'
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
 
-    if(search && search != '') {
+      const redisKey = `Activity_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${user_id}`
+
+      let cached = await RedisHelper.get(redisKey)
+
+      if (cached && !search) {
+        return cached
+      }
+
       const data = await Activity.query()
-        .with('user', builder => {
-          builder.select('id', 'name')
+        .with("user", builder => {
+          builder.select("id", "name")
         })
-        .where('ip', 'like', `%${search}%`)
-        .orWhere('browser', 'like', `%${search}%`)
-        .orWhere('activity', 'like', `%${search}%`)
-        .orWhereHas('user', (builder) => {
-          builder.where('name', 'like', `%${search}%`)
+        .where(function() {
+          if (search && search != "") {
+            this.where("ip", "like", `%${search}%`)
+            this.orWhere("browser", "like", `%${search}%`)
+            this.orWhere("activity", "like", `%${search}%`)
+            this.orWhereHas("user", builder => {
+              builder.where("name", "like", `%${search}%`)
+            })
+          }
+
+          if (user_id && user_id != "") {
+            this.where("user_id", user_id)
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
         })
-        .paginate(parseInt(page), parseInt(limit))
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
+
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
-
-    const redisKey = `Activity_${page}${limit}${search_by}${search_query}${between_date}${start_date}${end_date}${sort_by}${sort_mode}${user_id}`
-
-    let cached = await RedisHelper.get(redisKey)
-
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-
-    const data = await Activity.query()
-      .with('user', builder => {
-        builder.select('id', 'name')
-      })
-      .where(function() {
-        if (search_by && search_query) {
-          return this.where(search_by, 'like', `%${search_query}%`)
-        }
-      })
-      .where(function() {
-        if (user_id) {
-          return this.where('user_id', parseInt(user_id))
-        }
-      })
-      .where(function() {
-        if (between_date && start_date && end_date) {
-          return this.whereBetween(between_date, [start_date, end_date])
-        }
-      })
-      .orderBy(sort_by, sort_mode)
-      .paginate(parseInt(page), parseInt(limit))
-
-    let parsed = ResponseParser.apiCollection(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 }
 

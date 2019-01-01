@@ -2,7 +2,7 @@
 
 const DownPayment = use("App/Models/DownPayment")
 const { RedisHelper, ResponseParser, MailHelper } = use("App/Helpers")
-const { ActivityTraits } = use("App/Traits")
+const { DownPaymentTraits } = use("App/Traits")
 
 const fillable = ["marketing_target_id", "name", "phone", "dp", "is_verified"]
 
@@ -12,72 +12,70 @@ class DownPaymentController {
    * Get List of DownPayment
    */
   async index({ request, response }) {
-    // const data = await DownPaymentQueryTrait(request)
-    // let parsed = ResponseParser.apiCollection(data)
-    // return response.status(200).send(parsed)
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+        marketing_target_id,
+      } = request.get()
 
-    let {
-      page,
-      limit,
-      search,
-      search_by,
-      search_query,
-      between_date,
-      start_date,
-      end_date,
-      sort_by,
-      sort_mode,
-      marketing_target_id,
-    } = request.get()
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!sort_by) sort_by = "created_at"
-    if (!sort_mode) sort_mode = "desc"
+      const redisKey = `DownPayment_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}`
 
-    if (search && search != "") {
+      let cached = await RedisHelper.get(redisKey)
+
+      if (cached && !search) {
+        return cached
+      }
+
       const data = await DownPayment.query()
         .with("target")
-        .where("dp", "like", `%${search}%`)
-        .orWhere("name", "like", `%${search}%`)
-        .orWhere("phone", "like", `%${search}%`)
-        .orWhereHas("target", builder => {
-          builder.where("code", "like", `%${search}%`)
+        .where(function() {
+          if (search && search != "") {
+            this.where("dp", "like", `%${search}%`)
+            this.orWhere("name", "like", `%${search}%`)
+            this.orWhere("phone", "like", `%${search}%`)
+            this.orWhereHas("target", builder => {
+              builder.where("code", "like", `%${search}%`)
+            })
+          }
+
+          if (marketing_target_id && marketing_target_id != "") {
+            this.where("marketing_target_id", marketing_target_id)
+          }
+
+          if (search_by && search_query) {
+            this.where(search_by, search_query)
+          }
+
+          if (between_date && start_date && end_date) {
+            this.whereBetween(between_date, [start_date, end_date])
+          }
         })
-        .paginate(parseInt(page), parseInt(limit))
+        .orderBy(sort_by, sort_mode)
+        .paginate(page, limit)
+
       let parsed = ResponseParser.apiCollection(data.toJSON())
+
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
       return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
-
-    const redisKey = `DownPayment_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${marketing_target_id}}`
-
-    let cached = await RedisHelper.get(redisKey)
-
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-
-    const data = await DownPayment.query()
-      .with("target")
-      .where(function () {
-        if (search_by && search_query) {
-          return this.where(search_by, "like", `%${search_query}%`)
-        }
-      })
-      .where(function () {
-        if (marketing_target_id && marketing_target_id != "") {
-          return this.where(
-            "marketing_target_id",
-            parseInt(marketing_target_id)
-          )
-        }
-      })
-      .orderBy(sort_by, sort_mode)
-      .paginate(parseInt(page), parseInt(limit))
-
-    let parsed = ResponseParser.apiCollection(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -89,8 +87,8 @@ class DownPaymentController {
     const data = await DownPayment.create(body)
     await data.load("target")
     await RedisHelper.delete("DownPayment_*")
-    const activity = `Add new DownPayment '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
+    const DownPayment = `Add new DownPayment '${data.name}'`
+    await DownPaymentTraits.saveDownPayment(request, auth, DownPayment)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
   }
@@ -148,8 +146,8 @@ class DownPaymentController {
     }
     await data.merge(body)
     await data.save()
-    const activity = `Update DownPayment '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
+    const DownPayment = `Update DownPayment '${data.name}'`
+    await DownPaymentTraits.saveDownPayment(request, auth, DownPayment)
     await RedisHelper.delete("DownPayment_*")
     await data.load("target")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
@@ -166,8 +164,8 @@ class DownPaymentController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete DownPayment '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
+    const DownPayment = `Delete DownPayment '${data.name}'`
+    await DownPaymentTraits.saveDownPayment(request, auth, DownPayment)
     await RedisHelper.delete("DownPayment*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
