@@ -27,6 +27,7 @@ const providers = [
   "@adonisjs/drive/providers/DriveProvider",
   "adonis-spreadsheet/providers/SpreadSheetProvider",
   "@adonisjs/websocket/providers/WsProvider",
+  "@adonisjs/lucid-slugify/providers/SlugifyProvider",
 ]
 
 /*

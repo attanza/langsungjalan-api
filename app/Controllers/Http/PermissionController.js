@@ -3,7 +3,6 @@
 const Permission = use("App/Models/Permission")
 const { RedisHelper, ResponseParser } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
-const changeCase = require("change-case")
 const fillable = ["name", "description"]
 
 /**
@@ -45,7 +44,7 @@ class PermissionController {
       }
 
       const data = await Permission.query()
-        .where(function() {
+        .where(function () {
           if (search && search != "") {
             this.where("name", "like", `%${search}%`)
           }
@@ -78,7 +77,6 @@ class PermissionController {
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
-    body.slug = changeCase.snakeCase(body.name)
     const data = await Permission.create(body)
     await RedisHelper.delete("Permission_*")
     const activity = `Add new Permission '${data.name}'`

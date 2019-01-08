@@ -80,10 +80,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["users.index"], ["can:read_user"]],
-        [["users.store"], ["can:create_user"]],
-        [["users.update"], ["can:update_user"]],
-        [["users.destroy"], ["can:delete_user"]],
+        [["users.index"], ["can:read-user"]],
+        [["users.store"], ["can:create-user"]],
+        [["users.update"], ["can:update-user"]],
+        [["users.destroy"], ["can:delete-user"]],
       ])
     )
 
@@ -93,24 +93,27 @@ Route.group(() => {
   Route.resource("roles", "RoleController")
     .apiOnly()
     .validator(
-      new Map([[["roles.store"], ["Role"]], [["roles.update"], ["Role"]]])
+      new Map([
+        [["roles.store"], ["StoreRole"]],
+        [["roles.update"], ["UpdateRole"]],
+      ])
     )
     .middleware(
       new Map([
-        [["roles.index"], ["can:read_role"]],
-        [["roles.store"], ["can:create_role"]],
-        [["roles.update"], ["can:update_role"]],
-        [["roles.destroy"], ["can:delete_role"]],
+        [["roles.index"], ["can:read-role"]],
+        [["roles.store"], ["can:create-role"]],
+        [["roles.update"], ["can:update-role"]],
+        [["roles.destroy"], ["can:delete-role"]],
       ])
     )
 
   Route.get(
     "/role/:id/permissions",
     "RoleController.getPermissions"
-  ).middleware("can:read_role")
+  ).middleware("can:read-role")
   Route.put("/role/permissions", "RoleController.attachPermissions")
     .validator("AttachPermissions")
-    .middleware("can:create_role")
+    .middleware("can:create-role")
 
   /**
    * Roles
@@ -125,10 +128,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["permissions.index"], ["can:read_permission"]],
-        [["permissions.store"], ["can:create_permission"]],
-        [["permissions.update"], ["can:update_permission"]],
-        [["permissions.destroy"], ["can:delete_permission"]],
+        [["permissions.index"], ["can:read-permission"]],
+        [["permissions.store"], ["can:create-permission"]],
+        [["permissions.update"], ["can:update-permission"]],
+        [["permissions.destroy"], ["can:delete-permission"]],
       ])
     )
 
@@ -152,10 +155,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["supervisors.index"], ["can:read_supervisor"]],
-        [["supervisors.store"], ["can:create_supervisor"]],
-        [["supervisors.update"], ["can:update_supervisor"]],
-        [["supervisors.destroy"], ["can:delete_supervisor"]],
+        [["supervisors.index"], ["can:read-supervisor"]],
+        [["supervisors.store"], ["can:create-supervisor"]],
+        [["supervisors.update"], ["can:update-supervisor"]],
+        [["supervisors.destroy"], ["can:delete-supervisor"]],
       ])
     )
 
@@ -164,14 +167,14 @@ Route.group(() => {
     "SupervisorController.attachMarketing"
   )
     .validator("AddMarketing")
-    .middleware("can:create_supervisor")
+    .middleware("can:create-supervisor")
 
   Route.put(
     "supervisor/detach-marketing",
     "SupervisorController.detachMarketing"
   )
     .validator("AddMarketing")
-    .middleware("can:read_supervisor")
+    .middleware("can:read-supervisor")
 
   Route.get(
     "supervisor/search-marketing",
@@ -193,10 +196,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["marketings.index"], ["can:read_marketing"]],
-        [["marketings.store"], ["can:create_marketing"]],
-        [["marketings.update"], ["can:update_marketing"]],
-        [["marketings.destroy"], ["can:delete_marketing"]],
+        [["marketings.index"], ["can:read-marketing"]],
+        [["marketings.store"], ["can:create-marketing"]],
+        [["marketings.update"], ["can:update-marketing"]],
+        [["marketings.destroy"], ["can:delete-marketing"]],
       ])
     )
 
@@ -205,7 +208,7 @@ Route.group(() => {
     "MarketingController.changePassword"
   )
     .validator("ChangePassword")
-    .middleware("can:update_marketing")
+    .middleware("can:update-marketing")
 
   /**
    * Marketing Actions
@@ -222,10 +225,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["marketing-actions.index"], ["can:read_marketing_action"]],
-        [["marketing-actions.store"], ["can:create_marketing_action"]],
-        [["marketing-actions.update"], ["can:update_marketing_action"]],
-        [["marketing-actions.destroy"], ["can:delete_marketing_action"]],
+        [["marketing-actions.index"], ["can:read-marketing-action"]],
+        [["marketing-actions.store"], ["can:create-marketing-action"]],
+        [["marketing-actions.update"], ["can:update-marketing-action"]],
+        [["marketing-actions.destroy"], ["can:delete-marketing-action"]],
       ])
     )
 
@@ -244,10 +247,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["marketing-targets.index"], ["can:read_marketing_target"]],
-        [["marketing-targets.store"], ["can:create_marketing_target"]],
-        [["marketing-targets.update"], ["can:update_marketing_target"]],
-        [["marketing-targets.destroy"], ["can:delete_marketing_target"]],
+        [["marketing-targets.index"], ["can:read-marketing-target"]],
+        [["marketing-targets.store"], ["can:create-marketing-target"]],
+        [["marketing-targets.update"], ["can:update-marketing-target"]],
+        [["marketing-targets.destroy"], ["can:delete-marketing-target"]],
       ])
     )
 
@@ -266,10 +269,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["marketing-reports.index"], ["can:read_marketing_report"]],
-        [["marketing-reports.store"], ["can:create_marketing_report"]],
-        [["marketing-reports.update"], ["can:update_marketing_report"]],
-        [["marketing-reports.destroy"], ["can:delete_marketing_report"]],
+        [["marketing-reports.index"], ["can:read-marketing-report"]],
+        [["marketing-reports.store"], ["can:create-marketing-report"]],
+        [["marketing-reports.update"], ["can:update-marketing-report"]],
+        [["marketing-reports.destroy"], ["can:delete-marketing-report"]],
       ])
     )
 
@@ -288,10 +291,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["attachments.index"], ["can:read_marketing_report_attachment"]],
-        [["attachments.store"], ["can:create_marketing_report_attachment"]],
-        [["attachments.update"], ["can:update_marketing_report_attachment"]],
-        [["attachments.destroy"], ["can:delete_marketing_report_attachment"]],
+        [["attachments.index"], ["can:read-marketing-report-attachment"]],
+        [["attachments.store"], ["can:create-marketing-report-attachment"]],
+        [["attachments.update"], ["can:update-marketing-report-attachment"]],
+        [["attachments.destroy"], ["can:delete-marketing-report-attachment"]],
       ])
     )
 
@@ -310,10 +313,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["universities.index"], ["can:read_university"]],
-        [["universities.store"], ["can:create_university"]],
-        [["universities.update"], ["can:update_university"]],
-        [["universities.destroy"], ["can:delete_university"]],
+        [["universities.index"], ["can:read-university"]],
+        [["universities.store"], ["can:create-university"]],
+        [["universities.update"], ["can:update-university"]],
+        [["universities.destroy"], ["can:delete-university"]],
       ])
     )
 
@@ -330,10 +333,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["study-names.index"], ["can:read_study_name"]],
-        [["study-names.store"], ["can:create_study_name"]],
-        [["study-names.update"], ["can:update_study_name"]],
-        [["study-names.destroy"], ["can:delete_study_name"]],
+        [["study-names.index"], ["can:read-study-name"]],
+        [["study-names.store"], ["can:create-study-name"]],
+        [["study-names.update"], ["can:update-study-name"]],
+        [["study-names.destroy"], ["can:delete-study-name"]],
       ])
     )
 
@@ -349,10 +352,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["study-years.index"], ["can:read_study_year"]],
-        [["study-years.store"], ["can:create_study_year"]],
-        [["study-years.update"], ["can:update_study_year"]],
-        [["study-years.destroy"], ["can:delete_study_year"]],
+        [["study-years.index"], ["can:read-study-year"]],
+        [["study-years.store"], ["can:create-study-year"]],
+        [["study-years.update"], ["can:update-study-year"]],
+        [["study-years.destroy"], ["can:delete-study-year"]],
       ])
     )
 
@@ -371,10 +374,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["studies.index"], ["can:read_study_program"]],
-        [["studies.store"], ["can:create_study_program"]],
-        [["studies.update"], ["can:update_study_program"]],
-        [["studies.destroy"], ["can:delete_study_program"]],
+        [["studies.index"], ["can:read-study-program"]],
+        [["studies.store"], ["can:create-study-program"]],
+        [["studies.update"], ["can:update-study-program"]],
+        [["studies.destroy"], ["can:delete-study-program"]],
       ])
     )
 
@@ -393,10 +396,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["schedulles.index"], ["can:read_schedulle"]],
-        [["schedulles.store"], ["can:create_schedulle"]],
-        [["schedulles.update"], ["can:update_schedulle"]],
-        [["schedulles.destroy"], ["can:delete_schedulle"]],
+        [["schedulles.index"], ["can:read-schedulle"]],
+        [["schedulles.store"], ["can:create-schedulle"]],
+        [["schedulles.update"], ["can:update-schedulle"]],
+        [["schedulles.destroy"], ["can:delete-schedulle"]],
       ])
     )
 
@@ -413,10 +416,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["products.index"], ["can:read_product"]],
-        [["products.store"], ["can:create_product"]],
-        [["products.update"], ["can:update_product"]],
-        [["products.destroy"], ["can:delete_product"]],
+        [["products.index"], ["can:read-product"]],
+        [["products.store"], ["can:create-product"]],
+        [["products.update"], ["can:update-product"]],
+        [["products.destroy"], ["can:delete-product"]],
       ])
     )
 
@@ -438,10 +441,10 @@ Route.group(() => {
   Route.get(
     "/role/:id/permissions",
     "RoleController.getPermissions"
-  ).middleware("can:read_role")
+  ).middleware("can:read-role")
   Route.put("/role/permissions", "RoleController.attachPermissions")
     .validator("AttachPermissions")
-    .middleware("can:create_role")
+    .middleware("can:create-role")
 
   /**
    * Marketing Target Contact Person
@@ -457,10 +460,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["contacts.index"], ["can:read_contact_person"]],
-        [["contacts.store"], ["can:create_contact_person"]],
-        [["contacts.update"], ["can:update_contact_person"]],
-        [["contacts.destroy"], ["can:delete_contact_person"]],
+        [["contacts.index"], ["can:read-contact-person"]],
+        [["contacts.store"], ["can:create-contact-person"]],
+        [["contacts.update"], ["can:update-contact-person"]],
+        [["contacts.destroy"], ["can:delete-contact-person"]],
       ])
     )
 
@@ -478,10 +481,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["target-years.index"], ["can:read_marketing_report_year"]],
-        [["target-years.store"], ["can:create_marketing_report_year"]],
-        [["target-years.update"], ["can:update_marketing_report_year"]],
-        [["target-years.destroy"], ["can:delete_marketing_report_year"]],
+        [["target-years.index"], ["can:read-marketing-report-year"]],
+        [["target-years.store"], ["can:create-marketing-report-year"]],
+        [["target-years.update"], ["can:update-marketing-report-year"]],
+        [["target-years.destroy"], ["can:delete-marketing-report-year"]],
       ])
     )
 
@@ -499,10 +502,10 @@ Route.group(() => {
     )
     .middleware(
       new Map([
-        [["down-payments.index"], ["can:read_down_payment"]],
-        [["down-payments.store"], ["can:create_down_payment"]],
-        [["down-payments.update"], ["can:update_down_payment"]],
-        [["down-payments.destroy"], ["can:delete_down_payment"]],
+        [["down-payments.index"], ["can:read-down-payment"]],
+        [["down-payments.store"], ["can:create-down-payment"]],
+        [["down-payments.update"], ["can:update-down-payment"]],
+        [["down-payments.destroy"], ["can:delete-down-payment"]],
       ])
     )
 })

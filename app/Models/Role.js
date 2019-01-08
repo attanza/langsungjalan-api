@@ -1,17 +1,26 @@
-'use strict'
+"use strict"
 
-const Model = use('Model')
+const Model = use("Model")
 
 class Role extends Model {
+  static boot() {
+    super.boot()
 
-  static get traits () {
-    return [
-      '@provider:Adonis/Acl/HasPermission'
-    ]
+    this.addTrait("@provider:Lucid/Slugify", {
+      fields: {
+        slug: "name",
+      },
+      strategy: "dbIncrement",
+      disableUpdates: true,
+    })
+  }
+
+  static get traits() {
+    return ["@provider:Adonis/Acl/HasPermission"]
   }
 
   static get hidden() {
-    return ['created_at', 'updated_at']
+    return ["created_at", "updated_at"]
   }
 
   // permissions() {

@@ -129,7 +129,7 @@ class ComboDataController {
     }
     const data = await User.query()
       .select("id", "name")
-      .where(function() {
+      .where(function () {
         this.whereHas("roles", builder => {
           builder.where("role_id", 4)
         })
@@ -268,7 +268,8 @@ class ComboDataController {
       return await MarketingTarget.query()
         .select("id", "code")
         .where("code", "like", `%${search}%`)
-        .orderBy("code")
+        .orderBy("id", "desc")
+        .limit(100)
         .fetch()
     }
 
@@ -280,7 +281,8 @@ class ComboDataController {
     }
     const data = await MarketingTarget.query()
       .select("id", "code")
-      .orderBy("code")
+      .orderBy("id", "desc")
+      .limit(100)
       .fetch()
     await RedisHelper.set(redisKey, data)
     let parsed = data.toJSON()
@@ -292,7 +294,8 @@ class ComboDataController {
       return await Schedulle.query()
         .select("id", "code")
         .where("code", "like", `%${search}%`)
-        .orderBy("code")
+        .orderBy("id", "desc")
+        .limit(100)
         .fetch()
     }
 
@@ -304,7 +307,8 @@ class ComboDataController {
     }
     const data = await Schedulle.query()
       .select("id", "code")
-      .orderBy("code")
+      .orderBy("id", "desc")
+      .limit(100)
       .fetch()
     await RedisHelper.set(redisKey, data)
     let parsed = data.toJSON()

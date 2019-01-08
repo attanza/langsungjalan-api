@@ -4,7 +4,7 @@ const Role = use("App/Models/Role")
 const { RedisHelper, ResponseParser } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 
-const fillable = ["name", "slug", "description"]
+const fillable = ["name", "description"]
 
 class RoleController {
   /**

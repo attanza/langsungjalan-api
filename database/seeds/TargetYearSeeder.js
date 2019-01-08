@@ -1,14 +1,14 @@
 'use strict'
 
-const Factory = use('Factory')
+// const Factory = use('Factory')
 const TargetYear = use('App/Models/TargetYear')
 
 class TargetYearSeeder {
-  async run () {
+  async run() {
     await TargetYear.truncate()
-    await Factory
-      .model('App/Models/TargetYear')
-      .createMany(3)
+    // await Factory
+    //   .model('App/Models/TargetYear')
+    //   .createMany(3)
   }
 }
 

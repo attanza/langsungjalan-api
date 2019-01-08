@@ -3,13 +3,10 @@
 const { ResponseParser } = use("App/Helpers")
 const messages = require("./messages")
 
-class Role {
+class StoreRole {
   get rules() {
-    const id = this.ctx.params.id
-
     return {
-      name: `required|max:50|unique:roles,name,id,${id}`,
-      slug: "required|max:50",
+      name: "required|max:50|unique:roles",
     }
   }
 
@@ -24,4 +21,4 @@ class Role {
   }
 }
 
-module.exports = Role
+module.exports = StoreRole

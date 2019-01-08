@@ -8,8 +8,8 @@ class StoreStudyProgram {
     return {
       university_id: "required|integer",
       study_name_id: "required|integer",
-      email: "required|email|unique:study_programs",
-      phone: "required|max:30|unique:study_programs",
+      email: "required|email",
+      phone: "required|max:30",
       description: "max:250",
       lat: "number",
       lng: "number",
