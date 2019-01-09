@@ -61,7 +61,7 @@ class SchedulleController {
         .with("marketing", builder => {
           builder.select("id", "name")
         })
-        .where(function() {
+        .where(function () {
           if (search && search != "") {
             this.where("code", "like", `%${search}%`)
             this.orWhere("description", "like", `%${search}%`)
@@ -191,15 +191,12 @@ class SchedulleController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    let dataJson = data.toJSON()
-    if (dataJson.report) {
-      return response
-        .status(400)
-        .send(
-          ResponseParser.errorResponse(
-            "This Schedulle has report, cannot be deleted"
-          )
-        )
+    // Check Relationship
+    await data.load("report")
+    let dataJSON = data.toJSON()
+
+    if (dataJSON.schedulle && dataJSON.schedulle.length > 0) {
+      return response.status(400).send(ResponseParser.errorResponse("This Schedulle cannot be deleted since it has Reports attached"))
     }
     const activity = `Delete Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)

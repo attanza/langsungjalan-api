@@ -59,8 +59,8 @@ class MarketingReportController {
 
     const data = await MarketingReport.query()
       .with('schedulle.marketing')
-      .where(function() {
-        if(search && search != '') {
+      .where(function () {
+        if (search && search != '') {
           this.where('method', 'like', `%${search}%`)
           this.orWhere('code', 'like', `%${search}%`)
           this.orWhereHas('schedulle', (builder) => {
@@ -81,7 +81,7 @@ class MarketingReportController {
           return this.whereBetween(between_date, [start_date, end_date])
         }
 
-        if(marketing_target_id && marketing_target_id != '') {
+        if (marketing_target_id && marketing_target_id != '') {
           return this.whereHas('schedulle', builder => {
             builder.where('marketing_target_id', marketing_target_id)
           })
@@ -98,7 +98,7 @@ class MarketingReportController {
       .paginate(parseInt(page), parseInt(limit))
 
     let parsed = ResponseParser.apiCollection(data.toJSON())
-    if(!search || search == '') {
+    if (!search || search == '') {
       await RedisHelper.set(redisKey, parsed)
     }
     return response.status(200).send(parsed)
@@ -141,7 +141,7 @@ class MarketingReportController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['schedulle.marketing','schedulle.action', 'schedulle.target.study.studyName', 'schedulle.target.study.university'])
+    await data.loadMany(['schedulle.marketing', 'schedulle.action', 'schedulle.target.study.studyName', 'schedulle.target.study.university'])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)

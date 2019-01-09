@@ -51,7 +51,7 @@ class UserController {
 
       const data = await User.query()
         .with("roles")
-        .where(function() {
+        .where(function () {
           if (search && search != "") {
             this.where("name", "like", `%${search}%`)
             this.orWhere("email", "like", `%${search}%`)
@@ -185,6 +185,7 @@ class UserController {
     await data.supervisors().detach()
     await data.marketings().detach()
     await data.roles().detach()
+    await data.activities().delete()
     // Delete Data
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())

@@ -137,6 +137,9 @@ class PermissionController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+
+    await data.roles().detach()
+
     const activity = `Delete Permission '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("Permission_*")

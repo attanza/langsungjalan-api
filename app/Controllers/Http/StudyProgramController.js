@@ -56,7 +56,7 @@ class StudyProgramController {
       const data = await StudyProgram.query()
         .with("university")
         .with("studyName")
-        .where(function() {
+        .where(function () {
           if (search && search != "") {
             this.where("address", "like", `%${search}%`)
             this.orWhere("email", "like", `%${search}%`)
@@ -175,6 +175,14 @@ class StudyProgramController {
     const data = await StudyProgram.find(id)
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    await data.loadMany(["targets", "years"])
+    const dataJSON = data.toJSON()
+    if (dataJSON.targets && dataJSON.targets.length > 0) {
+      return response.status(400).send(ResponseParser.errorResponse("Target cannot be deleted since it has Marketing Targets attached"))
+    }
+    if (dataJSON.years && dataJSON.years.length > 0) {
+      return response.status(400).send(ResponseParser.errorResponse("Target cannot be deleted since it has Years attached"))
     }
     const activity = `Delete StudyProgram ID(${data.id})`
     await ActivityTraits.saveActivity(request, auth, activity)

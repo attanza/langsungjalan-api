@@ -13,6 +13,10 @@ class MarketingTarget extends Model {
   schedulles() {
     return this.hasMany("App/Models/Schedulle")
   }
+
+  downpayments() {
+    return this.hasMany('App/Models/DownPayment')
+  }
 }
 
 module.exports = MarketingTarget

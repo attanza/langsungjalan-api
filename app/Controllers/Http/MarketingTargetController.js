@@ -47,7 +47,7 @@ class MarketingTargetController {
       const data = await MarketingTarget.query()
         .with("study.studyName")
         .with("study.university")
-        .where(function() {
+        .where(function () {
           if (search && search != "") {
             this.where("code", "like", `%${search}%`)
             this.orWhereHas("study", builder => {
@@ -158,6 +158,20 @@ class MarketingTargetController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+    await data.loadMany(["contacts", "schedulles", "downpayments"])
+    const dataJSON = data.toJSON()
+    if (dataJSON.contacts && dataJSON.contacts.length > 0) {
+      return response.status(400).send(ResponseParser.errorResponse("This Marketing Target cannot be deleted since it has Contacts attached"))
+    }
+
+    if (dataJSON.schedulles && dataJSON.schedulles.length > 0) {
+      return response.status(400).send(ResponseParser.errorResponse("This Marketing Target cannot be deleted since it has Schedulles attached"))
+    }
+
+    if (dataJSON.downpayments && dataJSON.downpayments.length > 0) {
+      return response.status(400).send(ResponseParser.errorResponse("This Marketing Target cannot be deleted since it has Downpayments attached"))
+    }
+
     const activity = `Delete MarketingTarget '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("MarketingTarget_*")

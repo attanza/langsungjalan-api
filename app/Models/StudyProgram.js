@@ -14,6 +14,10 @@ class StudyProgram extends Model {
   years() {
     return this.hasMany('App/Models/StudyYear')
   }
+
+  targets() {
+    return this.hasMany('App/Models/MarketingTarget')
+  }
 }
 
 module.exports = StudyProgram

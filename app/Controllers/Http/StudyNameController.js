@@ -44,7 +44,7 @@ class StudyNameController {
       }
 
       const data = await StudyName.query()
-        .where(function() {
+        .where(function () {
           if (search && search != "") {
             this.where("name", "like", `%${search}%`)
           }
@@ -138,10 +138,13 @@ class StudyNameController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data
-      .studyPrograms()
-      .where("study_name_id", id)
-      .delete()
+
+    await data.load("studyPrograms")
+    const dataJSON = data.toJSON()
+    if (dataJSON.studyPrograms && dataJSON.studyPrograms.length > 0) {
+      return response.status(400).send(ResponseParser.errorResponse("This Study Name cannot be deleted since it has Study Programs attached"))
+    }
+
     const activity = `Delete StudyName '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("StudyName_*")

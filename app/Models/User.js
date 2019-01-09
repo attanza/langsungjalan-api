@@ -14,7 +14,7 @@ class User extends Model {
     return ['password', 'verification_token']
   }
 
-  static get traits () {
+  static get traits() {
     return [
       '@provider:Adonis/Acl/HasRole',
       '@provider:Adonis/Acl/HasPermission'
@@ -42,13 +42,17 @@ class User extends Model {
       .belongsToMany('App/Models/User', 'supervisor_id', 'marketing_id', 'id')
       .pivotTable('marketing_supervisor')
   }
+
+  activities() {
+    return this.hasMany('App/Models/Activity')
+  }
 }
 
 module.exports = User
 
 function getBaseUrl() {
   let environment = Env.get('NODE_ENV')
-  if(environment === 'production') {
+  if (environment === 'production') {
     return Env.get('PRODUCTION_APP_URL')
   } else {
     return Env.get('APP_URL')
