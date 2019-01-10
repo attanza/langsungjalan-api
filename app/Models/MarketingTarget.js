@@ -7,7 +7,7 @@ class MarketingTarget extends Model {
     return this.belongsTo("App/Models/StudyProgram")
   }
   contacts() {
-    return this.hasMany("App/Models/ContactPerson")
+    return this.hasMany("App/Models/MarketingTargetContact")
   }
 
   schedulles() {
@@ -15,7 +15,7 @@ class MarketingTarget extends Model {
   }
 
   downpayments() {
-    return this.hasMany('App/Models/DownPayment')
+    return this.hasMany("App/Models/DownPayment")
   }
 }
 
