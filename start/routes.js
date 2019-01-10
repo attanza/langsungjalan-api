@@ -34,7 +34,7 @@ Route.group(() => {
     return response
       .status(200)
       .send(ResponseParser.successResponse("Redis Clear"))
-  }).middleware(["can:clear_redis"])
+  }).middleware(["can:clear-redis"])
 
   Route.post("make-token", async ({ request, response }) => {
     const date = Math.floor(Date.now() / 1000).toString()

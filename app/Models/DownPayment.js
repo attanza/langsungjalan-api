@@ -4,6 +4,9 @@
 const Model = use("Model")
 
 class DownPayment extends Model {
+  static get dates() {
+    return super.dates.concat(["verified_at"])
+  }
   target() {
     return this.belongsTo("App/Models/MarketingTarget")
   }
