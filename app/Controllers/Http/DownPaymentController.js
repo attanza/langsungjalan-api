@@ -1,10 +1,11 @@
 "use strict"
 
 const DownPayment = use("App/Models/DownPayment")
-const { RedisHelper, ResponseParser, MailHelper } = use("App/Helpers")
+const { RedisHelper, ResponseParser, InArray } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
+const randomstring = require("randomstring")
 
-const fillable = ["marketing_target_id", "name", "phone", "dp", "is_verified"]
+const fillable = ["marketing_target_id", "name", "phone", "dp"]
 
 class DownPaymentController {
   /**
@@ -42,6 +43,9 @@ class DownPaymentController {
 
       const data = await DownPayment.query()
         .with("target")
+        .with("verifier", builder => {
+          builder.select("id", "name")
+        })
         .where(function() {
           if (search && search != "") {
             this.where("dp", "like", `%${search}%`)
@@ -84,6 +88,7 @@ class DownPaymentController {
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
+    body.transaction_no = this.generateTransactionNo(body.name)
     const data = await DownPayment.create(body)
     await data.load("target")
     await RedisHelper.delete("DownPayment_*")
@@ -100,10 +105,10 @@ class DownPaymentController {
   async storeFromStudent({ request, response }) {
     try {
       let body = request.only(fillable)
+      body.transaction_no = this.generateTransactionNo(body.name)
       const data = await DownPayment.create(body)
       await data.loadMany(["target.study.studyName", "target.study.university"])
       await RedisHelper.delete("DownPayment_*")
-      // MailHelper.newDpMail(data.toJSON())
       let parsed = ResponseParser.apiCreated(data.toJSON())
       return response.status(201).send(parsed)
     } catch (e) {
@@ -140,9 +145,18 @@ class DownPaymentController {
   async update({ request, response, auth }) {
     let body = request.only(fillable)
     const id = request.params.id
+
     const data = await DownPayment.find(id)
     if (!data || data.length === 0) {
       return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    const { is_verified } = request.post()
+    if (is_verified && !data.verified_at) {
+      const user = await auth.getUser()
+      body.verified_by = user.id
+      body.verified_at = new Date()
+      // TODO: Send SMS
+      console.log("todo send sms")
     }
     await data.merge(body)
     await data.save()
@@ -171,6 +185,19 @@ class DownPaymentController {
     await RedisHelper.delete("DownPayment*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
+  }
+
+  generateTransactionNo(name) {
+    name = name.trim()
+    return (
+      name.split(" ")[0] +
+      "-" +
+      randomstring.generate({
+        length: 6,
+        charset: "alphanumeric",
+        capitalization: "lowercase",
+      })
+    )
   }
 }
 

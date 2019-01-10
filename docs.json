@@ -2006,12 +2006,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -2042,12 +2042,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/permissions",
+							"raw": "{{baseUrl}}/permissions?search=redis",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"permissions"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "redis"
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -2897,7 +2903,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/users?search=Desta",
+							"raw": "{{baseUrl}}/users?",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -2917,7 +2923,8 @@
 								},
 								{
 									"key": "search",
-									"value": "Desta"
+									"value": "Desta",
+									"disabled": true
 								}
 							]
 						},
@@ -3695,12 +3702,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -3731,12 +3738,23 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/activities",
+							"raw": "{{baseUrl}}/activities?search=admin",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"activities"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "admin"
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -4846,12 +4864,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5570,12 +5588,12 @@
 							"listen": "test",
 							"script": {
 								"id": "5b1fba70-ccae-403f-b094-8b300b3a2275",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -5603,7 +5621,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"supervisor_id\": {{resourceId}},\n\t\"marketings\": [{{marketingId}}]\n}"
+							"raw": "{\n\t\"supervisor_id\": {{resourceId}},\n\t\"marketings\": [8,7]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/supervisor/attach-marketing",
@@ -6067,12 +6085,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -6103,12 +6121,18 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/marketing-actions",
+							"raw": "{{baseUrl}}/marketing-actions?search=bagi",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"marketing-actions"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "bagi"
+								}
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -7996,12 +8020,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -8032,7 +8056,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/contacts?marketing_target_id=3",
+							"raw": "{{baseUrl}}/contacts?",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -8042,7 +8066,8 @@
 							"query": [
 								{
 									"key": "marketing_target_id",
-									"value": "3"
+									"value": "3",
+									"disabled": true
 								}
 							]
 						},
@@ -10864,12 +10889,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -10900,7 +10925,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/schedulles?sort_by=id&sort_mode=desc&marketing_target_id=1",
+							"raw": "{{baseUrl}}/schedulles?sort_by=id&sort_mode=desc&marketing_target_id=2&marketing_id=8&marketing_action_id=2",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -10918,7 +10943,15 @@
 								},
 								{
 									"key": "marketing_target_id",
-									"value": "1"
+									"value": "2"
+								},
+								{
+									"key": "marketing_id",
+									"value": "8"
+								},
+								{
+									"key": "marketing_action_id",
+									"value": "2"
 								}
 							]
 						},
@@ -14238,10 +14271,10 @@
 			]
 		},
 		{
-			"name": "DownPaymants",
+			"name": "DownPayments",
 			"item": [
 				{
-					"name": "Get DownPaymant List",
+					"name": "Get DownPayment List",
 					"event": [
 						{
 							"listen": "test",
@@ -14295,7 +14328,7 @@
 					},
 					"response": [
 						{
-							"name": "Get DownPaymant List",
+							"name": "Get DownPayment List",
 							"originalRequest": {
 								"method": "GET",
 								"header": [
@@ -14328,11 +14361,11 @@
 							"header": [
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=7712d84d2228709f26d2e8e78d966a72GhBrWo0zhxnHLemG5kejolM55ofPlf9z0VFG8xyP6qE0LNA6R49%2Bnxbd6Atj2uEH1h02EWDifYsewboqkt5eRPCu7JUulnerLchwfZcCElS6t7nC%2BBKMYx7iW2vIR28z; Path=/; HttpOnly"
+									"value": "adonis-session=d5710a00462a33f03d3418a98b8230deIXgbbJZRGqbQz1vaTHoFPX7TpI0MzrrZHkY9icqkcDfV2UzKuc5efqZKJxeKOgRe27JvSMX62GnYvMZuG4VWfziAK83GWfVtZw3QS8cLk3Q8VxF%2FAUBU1NfQDtWtCQaa; Path=/; HttpOnly"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session-values=a3961690ce77793cca31550cc8545dad2vNdqq1YBRHhF%2FcWPY5%2BlgE%2BGHQWRPWQ47mlOa56fM26Se%2Bu%2BEv8Q%2FLSU4fUzhbPz9FKou1tBlhx7O6lbjs%2FYQ%3D%3D; Path=/; HttpOnly"
+									"value": "adonis-session-values=ee6b535e572b81b615ae8146f5787364VUTbbLINhPAP2ibA5hSDRYpz3bnD9BEef3JziA1jbDDalkDVNxoQPLoxuii9tNQCpetiGhsajN97gHGZXNx%2BTg%3D%3D; Path=/; HttpOnly"
 								},
 								{
 									"key": "Content-Type",
@@ -14340,11 +14373,11 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "456"
+									"value": "578"
 								},
 								{
 									"key": "Date",
-									"value": "Sun, 09 Dec 2018 11:53:00 GMT"
+									"value": "Thu, 10 Jan 2019 04:34:59 GMT"
 								},
 								{
 									"key": "Connection",
@@ -14352,12 +14385,12 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Data retrieval successfully\",\n        \"total\": 1,\n        \"perPage\": 10,\n        \"page\": 1,\n        \"lastPage\": 1\n    },\n    \"data\": [\n        {\n            \"id\": 1,\n            \"marketing_target_id\": 1,\n            \"name\": \"Dani\",\n            \"phone\": \"08234567890\",\n            \"dp\": 100000,\n            \"is_verified\": 0,\n            \"created_at\": \"2018-12-09 18:52:20\",\n            \"updated_at\": \"2018-12-09 18:52:20\",\n            \"target\": {\n                \"id\": 1,\n                \"code\": \"6e90cffb\",\n                \"study_program_id\": 3,\n                \"description\": \"Ibomofbe zuov deuk gokofhun.\",\n                \"created_at\": \"2018-12-09 18:50:58\",\n                \"updated_at\": \"2018-12-09 18:50:58\"\n            }\n        }\n    ]\n}"
+							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Data retrieval successfully\",\n        \"total\": 1,\n        \"perPage\": 10,\n        \"page\": 1,\n        \"lastPage\": 1\n    },\n    \"data\": [\n        {\n            \"id\": 1,\n            \"marketing_target_id\": 1,\n            \"verified_by\": 1,\n            \"transaction_no\": \"Dani-hcoxgh\",\n            \"name\": \"Dani\",\n            \"phone\": \"08234567890\",\n            \"dp\": 100000,\n            \"verified_at\": \"2019-01-10T04:34:37.000Z\",\n            \"created_at\": \"2019-01-10 11:33:08\",\n            \"updated_at\": \"2019-01-10 11:34:36\",\n            \"target\": {\n                \"id\": 1,\n                \"code\": \"42f51f00\",\n                \"study_program_id\": 2,\n                \"description\": \"Gelca laba savihev uvocojtij.\",\n                \"created_at\": \"2019-01-10 11:32:12\",\n                \"updated_at\": \"2019-01-10 11:32:12\"\n            },\n            \"verifier\": {\n                \"id\": 1,\n                \"name\": \"Super Administrator\"\n            }\n        }\n    ]\n}"
 						}
 					]
 				},
 				{
-					"name": "Store New DownPaymant",
+					"name": "Store New DownPayment",
 					"event": [
 						{
 							"listen": "test",
@@ -14403,7 +14436,7 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Dani",
+									"value": "  Dani Lesmiadi",
 									"description": "required|string",
 									"type": "text"
 								},
@@ -14440,7 +14473,7 @@
 					},
 					"response": [
 						{
-							"name": "Store New DownPaymant",
+							"name": "Store New DownPayment",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -14458,7 +14491,7 @@
 									"formdata": [
 										{
 											"key": "name",
-											"value": "Dani",
+											"value": "  Dani Lesmiadi",
 											"description": "required|string",
 											"type": "text"
 										},
@@ -14498,11 +14531,11 @@
 							"header": [
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=0094fa6922560089dc4966a2ffd4b3e4GffBxnNlL%2FkRD7tKG%2BUtea%2FGJbW8nlwgN7zkoIBDcdUXXtp5609bRlVB2Yu1YpQ2N9mYWa5TnBKz%2Ba26arUaOpiFI1WQyZacxX1nUmknruc3luuLTP0sU%2BDs9irBcRpo; Path=/; HttpOnly"
+									"value": "adonis-session=5a33034e1d3a2bf20c236ab48aa8eff86UaTXifu5GmwoUY1a2o4QVbNDsACcctxPQYJ3qx4f8REpPFWcPpKiRZu4QsmlQoMhfPJAYWLONNVlpzY1H4EVcCN2XjBR3Coa7S37Z6mknM1nNgPCNyovwxWYdHJ7bHh; Path=/; HttpOnly"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session-values=e10f0c18915a9cc3970e30afe06a63b2MAnFE1RwFNGBDAAsQMW2GFc6sU%2BpfYkdUqlyEq4VufDcSSTsCDRZbj0JNd27gSyCfP9u5k054TUkjoFSjDIoqw%3D%3D; Path=/; HttpOnly"
+									"value": "adonis-session-values=50bca5c0fdf0024321ef0edd4ea75b14%2BHaHZWPWQH2FQz8BuUUppaCdbDqvqaXKDRYbXJFoXWIIV0qBr6hxmr7z5yAswkGSE%2F4qPXHcUAmBcqzMn%2Fiy4g%3D%3D; Path=/; HttpOnly"
 								},
 								{
 									"key": "Content-Type",
@@ -14510,11 +14543,11 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "390"
+									"value": "433"
 								},
 								{
 									"key": "Date",
-									"value": "Sun, 09 Dec 2018 11:53:26 GMT"
+									"value": "Thu, 10 Jan 2019 04:33:08 GMT"
 								},
 								{
 									"key": "Connection",
@@ -14522,12 +14555,12 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"meta\": {\n        \"status\": 201,\n        \"message\": \"Created successfully\"\n    },\n    \"data\": {\n        \"marketing_target_id\": \"1\",\n        \"name\": \"Dani\",\n        \"phone\": \"08234567890\",\n        \"dp\": \"100000\",\n        \"created_at\": \"2018-12-09 18:53:26\",\n        \"updated_at\": \"2018-12-09 18:53:26\",\n        \"id\": 2,\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"6e90cffb\",\n            \"study_program_id\": 3,\n            \"description\": \"Ibomofbe zuov deuk gokofhun.\",\n            \"created_at\": \"2018-12-09 18:50:58\",\n            \"updated_at\": \"2018-12-09 18:50:58\"\n        }\n    }\n}"
+							"body": "{\n    \"meta\": {\n        \"status\": 201,\n        \"message\": \"Created successfully\"\n    },\n    \"data\": {\n        \"marketing_target_id\": \"1\",\n        \"name\": \"  Dani Lesmiadi\",\n        \"phone\": \"08234567890\",\n        \"dp\": \"100000\",\n        \"transaction_no\": \"Dani-hcoxgh\",\n        \"created_at\": \"2019-01-10 11:33:08\",\n        \"updated_at\": \"2019-01-10 11:33:08\",\n        \"id\": 1,\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"42f51f00\",\n            \"study_program_id\": 2,\n            \"description\": \"Gelca laba savihev uvocojtij.\",\n            \"created_at\": \"2019-01-10 11:32:12\",\n            \"updated_at\": \"2019-01-10 11:32:12\"\n        }\n    }\n}"
 						}
 					]
 				},
 				{
-					"name": "Show DownPaymant by Id",
+					"name": "Show DownPayment by Id",
 					"event": [
 						{
 							"listen": "test",
@@ -14582,7 +14615,7 @@
 					},
 					"response": [
 						{
-							"name": "Show DownPaymant by Id",
+							"name": "Show DownPayment by Id",
 							"originalRequest": {
 								"method": "GET",
 								"header": [
@@ -14616,11 +14649,11 @@
 							"header": [
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=ee3ee32b9ba35c1f0c923802deaeec570fMjZi84ZJuSp9uuD3faauh%2B2xMbMIRLyE%2BHEAIkDzbBKt1Iet2%2Folox9DqZJnqj7FGn7ky9UT%2FJiBlMrIVnHOrCSXrlgrK27pM%2BYGEt2JrYGnBvDW8WGM9TmLct4Yeh; Path=/; HttpOnly"
+									"value": "adonis-session=932f686872114210687517ab4551a74anJiR%2FjFIXTED%2FEULLImC8S73%2FRDnQENq0JyToMIvtjZlJlm6T8eSlTYB4gTLb68rDoU6Ii4qzlZ%2F%2BNBFX%2FMOWqJHsUKs6wMVC9XEfkANYstOzTOiqaDhPq%2BynSp%2F7UrM; Path=/; HttpOnly"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session-values=cd693e9f21304f95c149ce07a48d1ba8tZZlzJusgsh5zPEfmU3DsFI0cDjULP6OLAQ0Spt6WbST%2BjEhKZgobqoJyptDqC2SUK%2BwXbqfdKxLBW%2FVodewhQ%3D%3D; Path=/; HttpOnly"
+									"value": "adonis-session-values=71efadd0090e092f56eec5aad94722bcYNs84I8SOAsw2lMZOh%2B6yKQ3P4bhzboQlE0Od0RDjjrIqiN7evGTvuJZ0dfTk5tL0k%2BeIfiWMiIYHNqIVnqAVQ%3D%3D; Path=/; HttpOnly"
 								},
 								{
 									"key": "Content-Type",
@@ -14628,11 +14661,11 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "409"
+									"value": "474"
 								},
 								{
 									"key": "Date",
-									"value": "Sun, 09 Dec 2018 11:53:42 GMT"
+									"value": "Thu, 10 Jan 2019 04:34:15 GMT"
 								},
 								{
 									"key": "Connection",
@@ -14640,12 +14673,12 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Data retrieval successfully\"\n    },\n    \"data\": {\n        \"id\": 2,\n        \"marketing_target_id\": 1,\n        \"name\": \"Dani\",\n        \"phone\": \"08234567890\",\n        \"dp\": 100000,\n        \"is_verified\": 0,\n        \"created_at\": \"2018-12-09 18:53:26\",\n        \"updated_at\": \"2018-12-09 18:53:26\",\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"6e90cffb\",\n            \"study_program_id\": 3,\n            \"description\": \"Ibomofbe zuov deuk gokofhun.\",\n            \"created_at\": \"2018-12-09 18:50:58\",\n            \"updated_at\": \"2018-12-09 18:50:58\"\n        }\n    }\n}"
+							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Data retrieval successfully\"\n    },\n    \"data\": {\n        \"id\": 1,\n        \"marketing_target_id\": 1,\n        \"verified_by\": null,\n        \"transaction_no\": \"Dani-hcoxgh\",\n        \"name\": \"  Dani Lesmiadi\",\n        \"phone\": \"08234567890\",\n        \"dp\": 100000,\n        \"verified_at\": null,\n        \"created_at\": \"2019-01-10 11:33:08\",\n        \"updated_at\": \"2019-01-10 11:33:08\",\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"42f51f00\",\n            \"study_program_id\": 2,\n            \"description\": \"Gelca laba savihev uvocojtij.\",\n            \"created_at\": \"2019-01-10 11:32:12\",\n            \"updated_at\": \"2019-01-10 11:32:12\"\n        }\n    }\n}"
 						}
 					]
 				},
 				{
-					"name": "Update DownPaymant by Id",
+					"name": "Update DownPayment by Id",
 					"event": [
 						{
 							"listen": "test",
@@ -14712,7 +14745,7 @@
 								{
 									"key": "is_verified",
 									"value": "1",
-									"description": "string",
+									"description": "Boolean",
 									"type": "text"
 								}
 							]
@@ -14731,7 +14764,7 @@
 					},
 					"response": [
 						{
-							"name": "Update DownPaymant by Id",
+							"name": "Update DownPayment by Id",
 							"originalRequest": {
 								"method": "PUT",
 								"header": [
@@ -14796,11 +14829,11 @@
 							"header": [
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=84ef612f79d4a6ac5115bf796c1a67556cx7%2BXd%2FP3ijmsn4M9P4iedMtJi3s6FpViXrlm5Dw7PkncARzulx80AzPHtgtrvHKZIVD5zQQF88uQJDim541yW%2FS%2FQL1%2BgdTbEWEyexRlIzcTueM%2FOJYIpkaQjIgSPe; Path=/; HttpOnly"
+									"value": "adonis-session=367b06742e899e6872fbe5247c948131LeyNNWUjm6mjJMKdQnIQLXR9ffAeH61ljfmygMHyHNsGZRj0T8kJG0YTRS8EjGGyT40SRde%2Fh6EH1j1kDucWEzJ2yAPst%2BZFjLcjq05UQ8HS52lmNPR59DPQowfs7goU; Path=/; HttpOnly"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session-values=fbf61f2174e1c8e9013ab0fcdb4c325bO12KNN9oO4ntP07PHnW9tNYS4A6I0rGGvk6Or%2FG37hMF6uIVlZW02DV0r0OR0wRv0DpMbqsuyopgzLZ8lKw96Q%3D%3D; Path=/; HttpOnly"
+									"value": "adonis-session-values=a33a74eda84d10234a693d18502063a9wHaG2Hcq8wlU9QJyOUSwh2dsNbKkW%2FShg276pYcAASph76UzB%2BY3aUiWcKVuGKVxjjrQgWBO9EEaFJyB9HUF%2FA%3D%3D; Path=/; HttpOnly"
 								},
 								{
 									"key": "Content-Type",
@@ -14808,11 +14841,11 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "408"
+									"value": "479"
 								},
 								{
 									"key": "Date",
-									"value": "Sun, 09 Dec 2018 11:55:39 GMT"
+									"value": "Thu, 10 Jan 2019 04:34:36 GMT"
 								},
 								{
 									"key": "Connection",
@@ -14820,12 +14853,12 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Updated successfully\"\n    },\n    \"data\": {\n        \"id\": 2,\n        \"marketing_target_id\": \"1\",\n        \"name\": \"Dani\",\n        \"phone\": \"08234567890\",\n        \"dp\": \"100000\",\n        \"is_verified\": \"1\",\n        \"created_at\": \"2018-12-09 18:53:26\",\n        \"updated_at\": \"2018-12-09 18:55:39\",\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"6e90cffb\",\n            \"study_program_id\": 3,\n            \"description\": \"Ibomofbe zuov deuk gokofhun.\",\n            \"created_at\": \"2018-12-09 18:50:58\",\n            \"updated_at\": \"2018-12-09 18:50:58\"\n        }\n    }\n}"
+							"body": "{\n    \"meta\": {\n        \"status\": 200,\n        \"message\": \"Updated successfully\"\n    },\n    \"data\": {\n        \"id\": 1,\n        \"marketing_target_id\": \"1\",\n        \"verified_by\": 1,\n        \"transaction_no\": \"Dani-hcoxgh\",\n        \"name\": \"Dani\",\n        \"phone\": \"08234567890\",\n        \"dp\": \"100000\",\n        \"verified_at\": \"2019-01-10T04:34:36.627Z\",\n        \"created_at\": \"2019-01-10 11:33:08\",\n        \"updated_at\": \"2019-01-10 11:34:36\",\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"42f51f00\",\n            \"study_program_id\": 2,\n            \"description\": \"Gelca laba savihev uvocojtij.\",\n            \"created_at\": \"2019-01-10 11:32:12\",\n            \"updated_at\": \"2019-01-10 11:32:12\"\n        }\n    }\n}"
 						}
 					]
 				},
 				{
-					"name": "Delete DownPaymant by Id",
+					"name": "Delete DownPayment by Id",
 					"event": [
 						{
 							"listen": "test",
@@ -15842,12 +15875,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -15878,7 +15911,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/studies?university_id=4&search=komu",
+							"raw": "{{baseUrl}}/studies?",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -15888,11 +15921,13 @@
 							"query": [
 								{
 									"key": "university_id",
-									"value": "4"
+									"value": "4",
+									"disabled": true
 								},
 								{
 									"key": "search",
-									"value": "komu"
+									"value": "komu",
+									"disabled": true
 								}
 							]
 						},
@@ -16655,12 +16690,12 @@
 							"listen": "test",
 							"script": {
 								"id": "a9576535-6763-46e5-a90c-d9ecc4105819",
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -16691,7 +16726,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/study-years?study_program_id=1",
+							"raw": "{{baseUrl}}/study-years?",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -16701,7 +16736,8 @@
 							"query": [
 								{
 									"key": "study_program_id",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								}
 							]
 						},
@@ -19545,159 +19581,6 @@
 					]
 				},
 				{
-					"name": "Marketing Target  Combo Data ",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{baseUrl}}/combo-data?model=MarketingTarget&search=8a1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"combo-data"
-							],
-							"query": [
-								{
-									"key": "model",
-									"value": "MarketingTarget"
-								},
-								{
-									"key": "search",
-									"value": "8a1"
-								}
-							]
-						},
-						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
-					},
-					"response": [
-						{
-							"name": "Study Programs Combo Data",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json",
-										"type": "text",
-										"disabled": false
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text",
-										"disabled": false
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{baseUrl}}/combo-data?model=StudyProgram",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"combo-data"
-									],
-									"query": [
-										{
-											"key": "model",
-											"value": "StudyProgram"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Connection",
-									"value": "keep-alive",
-									"name": "Connection",
-									"description": "Options that are desired for the connection"
-								},
-								{
-									"key": "Content-Length",
-									"value": "142",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
-								},
-								{
-									"key": "Date",
-									"value": "Thu, 13 Sep 2018 09:59:53 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
-								},
-								{
-									"key": "Set-Cookie",
-									"value": "adonis-session=2a5684bfc74168cf6a4ab012235de909CYelJ6JMtpj%2FNsqtvzfA3M9B26eTWLgJEmO3xCb7lNUjU6%2BZsY6CNwWYpj40HEPsBlAueS%2FQEJLXuAk2jU3ZjrdGXohmrMR2TQgMAMP2a8%2BHqX8G91chembhAv0TK5EQ; Path=/; HttpOnly",
-									"name": "Set-Cookie",
-									"description": "an HTTP cookie"
-								},
-								{
-									"key": "Set-Cookie",
-									"value": "adonis-session-values=7916d95561536aa92db2883cf0bc5b2fFUTr%2B1x6z2BNApqyj%2FouZdW9EMFo4lc9p1XX7Ox2KbFwJAZMq9nWN3geURgGHwHmlH1hFlUllIlDG%2BWWFzAccQ%3D%3D; Path=/; HttpOnly",
-									"name": "Set-Cookie",
-									"description": "an HTTP cookie"
-								}
-							],
-							"cookie": [
-								{
-									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
-									"httpOnly": true,
-									"domain": "localhost",
-									"path": "/",
-									"secure": false,
-									"value": "2a5684bfc74168cf6a4ab012235de909CYelJ6JMtpj%2FNsqtvzfA3M9B26eTWLgJEmO3xCb7lNUjU6%2BZsY6CNwWYpj40HEPsBlAueS%2FQEJLXuAk2jU3ZjrdGXohmrMR2TQgMAMP2a8%2BHqX8G91chembhAv0TK5EQ",
-									"key": "adonis-session"
-								},
-								{
-									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
-									"httpOnly": true,
-									"domain": "localhost",
-									"path": "/",
-									"secure": false,
-									"value": "7916d95561536aa92db2883cf0bc5b2fFUTr%2B1x6z2BNApqyj%2FouZdW9EMFo4lc9p1XX7Ox2KbFwJAZMq9nWN3geURgGHwHmlH1hFlUllIlDG%2BWWFzAccQ%3D%3D",
-									"key": "adonis-session-values"
-								}
-							],
-							"body": "[{\"id\":1,\"name\":\"Pav hol fifet.\",\"university\":null},{\"id\":3,\"name\":\"Deljir ci ged.\",\"university\":null},{\"id\":2,\"name\":null,\"university\":null}]"
-						}
-					]
-				},
-				{
 					"name": "Schedulle  Combo",
 					"request": {
 						"auth": {
@@ -19726,7 +19609,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/combo-data?model=Schedulle&search=c74c0bd7",
+							"raw": "{{baseUrl}}/combo-data?model=Schedulle",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -19740,7 +19623,8 @@
 								},
 								{
 									"key": "search",
-									"value": "c74c0bd7"
+									"value": "c74c0bd7",
+									"disabled": true
 								}
 							]
 						},
@@ -19748,21 +19632,17 @@
 					},
 					"response": [
 						{
-							"name": "Study Programs Combo Data",
+							"name": "Schedulle  Combo",
 							"originalRequest": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Accept",
-										"value": "application/json",
-										"type": "text",
-										"disabled": false
+										"value": "application/json"
 									},
 									{
 										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text",
-										"disabled": false
+										"value": "application/json"
 									}
 								],
 								"body": {
@@ -19770,7 +19650,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{baseUrl}}/combo-data?model=StudyProgram",
+									"raw": "{{baseUrl}}/combo-data?model=Schedulle",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -19780,7 +19660,12 @@
 									"query": [
 										{
 											"key": "model",
-											"value": "StudyProgram"
+											"value": "Schedulle"
+										},
+										{
+											"key": "search",
+											"value": "c74c0bd7",
+											"disabled": true
 										}
 									]
 								}
@@ -19790,63 +19675,155 @@
 							"_postman_previewlanguage": "json",
 							"header": [
 								{
-									"key": "Connection",
-									"value": "keep-alive",
-									"name": "Connection",
-									"description": "Options that are desired for the connection"
+									"key": "Set-Cookie",
+									"value": "adonis-session=456746e9086fa38c0b779ad106bd94e8%2BDkAO%2BBZ7qXSpaU%2BK%2FXsGQlu7j30I3%2BWhYSnG7p5sVPcXMB%2BbdZGJ07bQ%2FtgJx3fn%2FxPfdP5ZwM6HOQrdgKwof%2Bdor4zGFJ70thFj8XWd7qQPyYq9GcVvBRG7846MR63; Path=/; HttpOnly"
 								},
 								{
-									"key": "Content-Length",
-									"value": "142",
-									"name": "Content-Length",
-									"description": "The length of the response body in octets (8-bit bytes)"
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=3144119714ae2f2be938fa66353be976ooh5ue23RV%2FeOvoVJ2WGofF9T%2B%2Bsxwzr6tEKT25NSKFyzvf0vSUwCLVxya7tEVxQvu24ta3ox4p%2FpyC4dyHuMA%3D%3D; Path=/; HttpOnly"
 								},
 								{
 									"key": "Content-Type",
-									"value": "application/json; charset=utf-8",
-									"name": "Content-Type",
-									"description": "The mime type of this content"
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "82"
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 13 Sep 2018 09:59:53 GMT",
-									"name": "Date",
-									"description": "The date and time that the message was sent"
+									"value": "Thu, 10 Jan 2019 02:54:50 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 3,\n        \"code\": \"35d6bf69\"\n    },\n    {\n        \"id\": 2,\n        \"code\": \"9971b51b\"\n    },\n    {\n        \"id\": 1,\n        \"code\": \"53f96288\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Marketing Target Combo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/combo-data?model=MarketingTarget&search=c6924912",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"combo-data"
+							],
+							"query": [
+								{
+									"key": "model",
+									"value": "MarketingTarget"
+								},
+								{
+									"key": "search",
+									"value": "c6924912"
+								}
+							]
+						},
+						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
+					},
+					"response": [
+						{
+							"name": "Marketing Target",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseUrl}}/combo-data?model=MarketingTarget",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"combo-data"
+									],
+									"query": [
+										{
+											"key": "model",
+											"value": "MarketingTarget"
+										},
+										{
+											"key": "search",
+											"value": "c74c0bd7",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=be6046b430c1bea667df080e41236544FWMunfivAhYFBlGTaFHi0aY58YzsvPGU0tkLzALuSCk7lxj1paJXVRXX6%2Bvvc%2Ffpc%2BSb63s4mJd42RMSAPa0gAzkAL3jhdnwlvCx%2FLq6WcR%2FdRwWbxIxFdl%2F3rlsiw4B; Path=/; HttpOnly"
 								},
 								{
 									"key": "Set-Cookie",
-									"value": "adonis-session=2a5684bfc74168cf6a4ab012235de909CYelJ6JMtpj%2FNsqtvzfA3M9B26eTWLgJEmO3xCb7lNUjU6%2BZsY6CNwWYpj40HEPsBlAueS%2FQEJLXuAk2jU3ZjrdGXohmrMR2TQgMAMP2a8%2BHqX8G91chembhAv0TK5EQ; Path=/; HttpOnly",
-									"name": "Set-Cookie",
-									"description": "an HTTP cookie"
+									"value": "adonis-session-values=d068ea7c0ad7f5f33097476c32a0f779x2iHDNE3XNjmiBNEiqROfWXzQfwFcqpsCPpqyXYZQlrXFR%2FRqbhMJAQN6e5rQPbpPifdmmod0bC94lsHBT4SXQ%3D%3D; Path=/; HttpOnly"
 								},
 								{
-									"key": "Set-Cookie",
-									"value": "adonis-session-values=7916d95561536aa92db2883cf0bc5b2fFUTr%2B1x6z2BNApqyj%2FouZdW9EMFo4lc9p1XX7Ox2KbFwJAZMq9nWN3geURgGHwHmlH1hFlUllIlDG%2BWWFzAccQ%3D%3D; Path=/; HttpOnly",
-									"name": "Set-Cookie",
-									"description": "an HTTP cookie"
-								}
-							],
-							"cookie": [
-								{
-									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
-									"httpOnly": true,
-									"domain": "localhost",
-									"path": "/",
-									"secure": false,
-									"value": "2a5684bfc74168cf6a4ab012235de909CYelJ6JMtpj%2FNsqtvzfA3M9B26eTWLgJEmO3xCb7lNUjU6%2BZsY6CNwWYpj40HEPsBlAueS%2FQEJLXuAk2jU3ZjrdGXohmrMR2TQgMAMP2a8%2BHqX8G91chembhAv0TK5EQ",
-									"key": "adonis-session"
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
 								},
 								{
-									"expires": "Tue Jan 19 2038 10:14:07 GMT+0700 (WIB)",
-									"httpOnly": true,
-									"domain": "localhost",
-									"path": "/",
-									"secure": false,
-									"value": "7916d95561536aa92db2883cf0bc5b2fFUTr%2B1x6z2BNApqyj%2FouZdW9EMFo4lc9p1XX7Ox2KbFwJAZMq9nWN3geURgGHwHmlH1hFlUllIlDG%2BWWFzAccQ%3D%3D",
-									"key": "adonis-session-values"
+									"key": "Content-Length",
+									"value": "82"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 10 Jan 2019 02:45:17 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
 								}
 							],
-							"body": "[{\"id\":1,\"name\":\"Pav hol fifet.\",\"university\":null},{\"id\":3,\"name\":\"Deljir ci ged.\",\"university\":null},{\"id\":2,\"name\":null,\"university\":null}]"
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 3,\n        \"code\": \"c6924912\"\n    },\n    {\n        \"id\": 2,\n        \"code\": \"c7787ec9\"\n    },\n    {\n        \"id\": 1,\n        \"code\": \"9a5fd4d9\"\n    }\n]"
 						}
 					]
 				}

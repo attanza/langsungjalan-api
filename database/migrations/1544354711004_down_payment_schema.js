@@ -8,10 +8,12 @@ class DownPaymentSchema extends Schema {
     this.create("down_payments", table => {
       table.increments()
       table.integer("marketing_target_id").unsigned()
+      table.integer("verified_by").unsigned()
+      table.string("transaction_no", 50)
       table.string("name", 50)
       table.string("phone", 50)
       table.integer("dp")
-      table.boolean("is_verified").default(false)
+      table.dateTime("verified_at")
       table.timestamps()
     })
   }
