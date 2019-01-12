@@ -129,8 +129,9 @@ class SchedulleController {
     const activity = `Add new Schedulle '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
-    if (parsed.data.marketing.uid) {
-      let fcmData = { to: parsed.data.marketing.uid }
+    const { uid } = parsed.data.marketing
+    if (uid) {
+      let fcmData = { to: uid }
       await PushNotifications.sendToMobile("newSchedulle", fcmData)
     }
     return response.status(201).send(parsed)
