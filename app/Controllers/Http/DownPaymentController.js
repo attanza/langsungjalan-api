@@ -1,7 +1,7 @@
 "use strict"
 
 const DownPayment = use("App/Models/DownPayment")
-const { RedisHelper, ResponseParser, InArray } = use("App/Helpers")
+const { RedisHelper, ResponseParser, TwilioApi } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const randomstring = require("randomstring")
 
@@ -87,15 +87,27 @@ class DownPaymentController {
    * Store New DownPayment
    */
   async store({ request, response, auth }) {
-    let body = request.only(fillable)
-    body.transaction_no = this.generateTransactionNo(body.name)
-    const data = await DownPayment.create(body)
-    await data.load("target")
-    await RedisHelper.delete("DownPayment_*")
-    const activity = `Add new DownPayment '${data.id}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiCreated(data.toJSON())
-    return response.status(201).send(parsed)
+    try {
+      let body = request.only(fillable)
+      body.transaction_no = this.generateTransactionNo(body.name)
+      const data = await DownPayment.create(body)
+      await data.load("target")
+      // Send SMS
+      const smsMessage = `Kami telah menerima DP sebesar Rp. ${formatNumber(
+        data.dp
+      )} dengan no transaksi "${data.transaction_no}", Selamat ${
+        data.name.split(" ")[0]
+      } telah masuk kuota subsidi. Sms ini wajib ditunjukkan saat pengambilan paket.`
+
+      TwilioApi(data.phone, smsMessage)
+      await RedisHelper.delete("DownPayment_*")
+      const activity = `Add new DownPayment '${data.id}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      console.log("e", e)
+    }
   }
 
   /**
@@ -199,6 +211,10 @@ class DownPaymentController {
       })
     )
   }
+}
+
+function formatNumber(num) {
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
 }
 
 module.exports = DownPaymentController

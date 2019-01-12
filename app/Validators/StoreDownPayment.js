@@ -19,7 +19,7 @@ class StoreDownPayment {
 
   get sanitizationRules() {
     return {
-      name: "escape",
+      name: "trim|escape",
       description: "escape",
     }
   }

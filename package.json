@@ -47,7 +47,8 @@
     "mysql": "^2.16.0",
     "randomstring": "^1.1.5",
     "redis-delete-pattern": "^0.1.0",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.2.0",
+    "twilio": "^3.27.1"
   },
   "devDependencies": {
     "eslint": "^5.12.0",

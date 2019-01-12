@@ -5,6 +5,7 @@ const MailHelper = require("./MailHelper")
 const InArray = require("./InArray")
 const PushNotifications = require("./PushNotifications")
 const AesUtil = require("./AesUtil")
+const TwilioApi = require("./TwilioApi")
 
 module.exports = {
   Slug,
@@ -14,4 +15,5 @@ module.exports = {
   InArray,
   PushNotifications,
   AesUtil,
+  TwilioApi,
 }
