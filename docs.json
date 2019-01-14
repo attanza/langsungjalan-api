@@ -7311,19 +7311,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/marketing-targets/2?report=true",
+							"raw": "{{baseUrl}}/marketing-targets/{{resourceId}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"marketing-targets",
-								"2"
-							],
-							"query": [
-								{
-									"key": "report",
-									"value": "true"
-								}
+								"{{resourceId}}"
 							]
 						},
 						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
@@ -10925,7 +10919,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/schedulles?sort_by=id&sort_mode=desc&marketing_target_id=2&marketing_id=8&marketing_action_id=2",
+							"raw": "{{baseUrl}}/schedulles?",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -10935,23 +10929,28 @@
 							"query": [
 								{
 									"key": "sort_by",
-									"value": "id"
+									"value": "id",
+									"disabled": true
 								},
 								{
 									"key": "sort_mode",
-									"value": "desc"
+									"value": "desc",
+									"disabled": true
 								},
 								{
 									"key": "marketing_target_id",
-									"value": "2"
+									"value": "2",
+									"disabled": true
 								},
 								{
 									"key": "marketing_id",
-									"value": "8"
+									"value": "8",
+									"disabled": true
 								},
 								{
 									"key": "marketing_action_id",
-									"value": "2"
+									"value": "2",
+									"disabled": true
 								}
 							]
 						},
@@ -14442,13 +14441,13 @@
 								},
 								{
 									"key": "phone",
-									"value": "08234567890",
+									"value": "+62812345678",
 									"description": "required|string",
 									"type": "text"
 								},
 								{
 									"key": "dp",
-									"value": "100000",
+									"value": "150000",
 									"description": "required|integer",
 									"type": "text"
 								},
@@ -14556,6 +14555,123 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"meta\": {\n        \"status\": 201,\n        \"message\": \"Created successfully\"\n    },\n    \"data\": {\n        \"marketing_target_id\": \"1\",\n        \"name\": \"  Dani Lesmiadi\",\n        \"phone\": \"08234567890\",\n        \"dp\": \"100000\",\n        \"transaction_no\": \"Dani-hcoxgh\",\n        \"created_at\": \"2019-01-10 11:33:08\",\n        \"updated_at\": \"2019-01-10 11:33:08\",\n        \"id\": 1,\n        \"target\": {\n            \"id\": 1,\n            \"code\": \"42f51f00\",\n            \"study_program_id\": 2,\n            \"description\": \"Gelca laba savihev uvocojtij.\",\n            \"created_at\": \"2019-01-10 11:32:12\",\n            \"updated_at\": \"2019-01-10 11:32:12\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Store New DownPayment in Bulk",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "dc3e780c-79fe-4ef9-9048-ffbd1e70362c",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"data\": [\n\t\t{\n\t\t\t\"marketing_target_id\": 1,\n\t\t\t\"name\": \"Dadan Wardana\",\n\t\t\t\"phone\": \"+62812345678\",\n\t\t\t\"dp\": 100000\n\t\t},\n\t\t{\n\t\t\t\"marketing_target_id\": 1,\n\t\t\t\"name\": \"Budi Raharjo\",\n\t\t\t\"phone\": \"+62812345676\",\n\t\t\t\"dp\": 150000\n\t\t}\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/down-payments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"down-payments"
+							]
+						},
+						"description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nesciunt aliquid excepturi quas consequuntur. Voluptas eligendi dolorum optio veniam ipsa ex, natus, sed veritatis at dolores, facere consequatur consectetur debitis explicabo!"
+					},
+					"response": [
+						{
+							"name": "Store New DownPayment in Bulk",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"data\": [\n\t\t{\n\t\t\t\"marketing_target_id\": 1,\n\t\t\t\"name\": \"Dadan Wardana\",\n\t\t\t\"phone\": \"08122443582\",\n\t\t\t\"dp\": 100000\n\t\t},\n\t\t{\n\t\t\t\"marketing_target_id\": 1,\n\t\t\t\"name\": \"Budi Raharjo\",\n\t\t\t\"phone\": \"08122443582\",\n\t\t\t\"dp\": 150000\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/down-payments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"down-payments"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session=04da1985eb24134c1a5eaa4b0b85b9b6b2B66d0MSIDPKlyPch6eFvdDFK3T7M%2B2vnQ3syxEcIJQzAcgCSb%2FHRSg6UanEYt0i6gpm2CLqe3iKsLcioWsRYWHvQR2WGnIUW8MGimkBd7jazW29pyai2AbwiN9%2Fc%2Bb; Path=/; HttpOnly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "adonis-session-values=aa416f43f01bdf6af20dfac4f85c255agjS%2FQTvsPgssoKkiMCAxibGLRJe1rsGFShRfuVKz%2FLv%2Fjlhb9xXpraD30Z9TEKuQY1kAk2fRwuj1VzxHzR2lFg%3D%3D; Path=/; HttpOnly"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "766"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 14 Jan 2019 03:42:26 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"meta\": {\n        \"status\": 201,\n        \"message\": \"Created successfully\"\n    },\n    \"data\": [\n        {\n            \"marketing_target_id\": 1,\n            \"name\": \"Dadan Wardana\",\n            \"phone\": \"08122443582\",\n            \"dp\": 100000,\n            \"transaction_no\": \"rz7azk\",\n            \"created_at\": \"2019-01-14 10:42:26\",\n            \"updated_at\": \"2019-01-14 10:42:26\",\n            \"id\": 8,\n            \"target\": {\n                \"id\": 1,\n                \"code\": \"a87255b4\",\n                \"study_program_id\": 3,\n                \"description\": \"Hokow tajozro nal la.\",\n                \"created_at\": \"2019-01-12 09:38:36\",\n                \"updated_at\": \"2019-01-12 09:38:36\"\n            }\n        },\n        {\n            \"marketing_target_id\": 1,\n            \"name\": \"Budi Raharjo\",\n            \"phone\": \"08122443582\",\n            \"dp\": 150000,\n            \"transaction_no\": \"3tpj6r\",\n            \"created_at\": \"2019-01-14 10:42:26\",\n            \"updated_at\": \"2019-01-14 10:42:26\",\n            \"id\": 9,\n            \"target\": {\n                \"id\": 1,\n                \"code\": \"a87255b4\",\n                \"study_program_id\": 3,\n                \"description\": \"Hokow tajozro nal la.\",\n                \"created_at\": \"2019-01-12 09:38:36\",\n                \"updated_at\": \"2019-01-12 09:38:36\"\n            }\n        }\n    ]\n}"
 						}
 					]
 				},
@@ -14726,7 +14842,7 @@
 								},
 								{
 									"key": "phone",
-									"value": "08234567890",
+									"value": "+628122443582",
 									"description": "required|string|max:50|unique",
 									"type": "text"
 								},
@@ -18544,6 +18660,20 @@
 			"item": [
 				{
 					"name": "University Combo Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "23175940-498b-49b9-b142-dcecc4935f82",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -18693,6 +18823,20 @@
 				},
 				{
 					"name": "Marketing Action Combo Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b597453f-733b-43d7-8484-c2ab0ef5e2f0",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -18842,6 +18986,20 @@
 				},
 				{
 					"name": "Marketing Combo Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b563733a-6d03-49ec-91b2-d5b123646284",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -18991,6 +19149,20 @@
 				},
 				{
 					"name": "Marketing All Combo Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "980843cf-58a5-4ca2-8076-7d8234a5f5d8",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -19144,6 +19316,20 @@
 				},
 				{
 					"name": "Permission Combo Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1fbc85b8-67d8-4c36-87a9-b690b301f47d",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -19280,6 +19466,20 @@
 				},
 				{
 					"name": "Role Combo Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "eb88151d-16bf-43aa-8254-5b148aa2d2b7",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -19429,6 +19629,20 @@
 				},
 				{
 					"name": "Study Programs Combo Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e0ac30c0-c1fe-47cc-acbe-171b86bc19f3",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -19582,6 +19796,20 @@
 				},
 				{
 					"name": "Schedulle  Combo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aec5940a-4f1b-4cb6-8741-e9bec619082f",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -19706,6 +19934,20 @@
 				},
 				{
 					"name": "Marketing Target Combo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f6f1d7e5-34c8-4e4b-936d-cc9aee3c8abf",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",

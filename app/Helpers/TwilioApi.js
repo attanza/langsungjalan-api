@@ -13,7 +13,15 @@ function sendSmsMessage(userPhone, body) {
       to: userPhone,
       from: tnumber,
     })
-    .then(message => console.log(message.sid))
+    .then(message => {
+      console.log("------------------------")
+      console.log("Sms Api")
+      console.log(message.accountSid)
+      console.log(message.to)
+      console.log(message.body)
+      console.log("------------------------")
+    })
+    .catch(e => console.log(e))
 }
 
 module.exports = sendSmsMessage

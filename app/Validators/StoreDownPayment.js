@@ -6,22 +6,20 @@ const messages = require("./messages")
 class StoreDownPayment {
   get rules() {
     return {
-      marketing_target_id: "required|integer",
-      name: "required|max:50",
-      phone: "required|max:50",
-      dp: "required|integer",
+      marketing_target_id: "required_if:!data|integer",
+      name: "required_if:!data|max:50",
+      phone: "required_if:!data|max:50",
+      dp: "required_if:!data|integer",
+      data: "array",
+      "data.*.marketing_target_id": "required_if:data",
+      "data.*.name": "required_if:data|max:50",
+      "data.*.phone": "required_if:data|max:50",
+      "data.*.dp": "required_if:data|integer",
     }
   }
 
   get messages() {
     return messages
-  }
-
-  get sanitizationRules() {
-    return {
-      name: "trim|escape",
-      description: "escape",
-    }
   }
 
   async fails(errorMessages) {

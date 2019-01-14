@@ -88,43 +88,50 @@ class DownPaymentController {
    */
   async store({ request, response, auth }) {
     try {
-      let body = request.only(fillable)
-      body.transaction_no = this.generateTransactionNo(body.name)
-      const data = await DownPayment.create(body)
-      await data.load("target")
-      // Send SMS
-      const smsMessage = `Kami telah menerima DP sebesar Rp. ${formatNumber(
-        data.dp
-      )} dengan no transaksi "${data.transaction_no}", Selamat ${
-        data.name.split(" ")[0]
-      } telah masuk kuota subsidi. Sms ini wajib ditunjukkan saat pengambilan paket.`
+      const { data } = request.post()
 
-      TwilioApi(data.phone, smsMessage)
-      await RedisHelper.delete("DownPayment_*")
-      const activity = `Add new DownPayment '${data.id}'`
-      await ActivityTraits.saveActivity(request, auth, activity)
-      let parsed = ResponseParser.apiCreated(data.toJSON())
-      return response.status(201).send(parsed)
+      if (data) {
+        let dataOutput = []
+        for (let i = 0; i < data.length; i++) {
+          dataOutput.push(await this.storeToDb(data[i], request, auth))
+        }
+        return response.status(201).send(ResponseParser.apiCreated(dataOutput))
+      } else {
+        let body = request.only(fillable)
+        let result = await this.storeToDb(body, request, auth)
+        return response.status(201).send(ResponseParser.apiCreated(result))
+      }
     } catch (e) {
       console.log("e", e)
     }
   }
 
   /**
-   * storeFromStudent
+   *
+   * Save it into db
    */
 
-  async storeFromStudent({ request, response }) {
+  async storeToDb(body, request, auth) {
     try {
-      let body = request.only(fillable)
-      body.transaction_no = this.generateTransactionNo(body.name)
+      body.transaction_no = await this.generateTransactionNo(body.name)
+
       const data = await DownPayment.create(body)
-      await data.loadMany(["target.study.studyName", "target.study.university"])
+      await data.load("target")
+      // Send SMS
+      const smsMessage = `Kami telah menerima DP ${formatNumber(
+        data.dp
+      )} dengan no transaksi ${data.transaction_no}, Selamat ${
+        data.name.trim().split(" ")[0]
+      } telah masuk kuota subsidi. Sms ini wajib ditunjukkan saat pengambilan paket.`
+
+      TwilioApi(data.phone, smsMessage)
       await RedisHelper.delete("DownPayment_*")
-      let parsed = ResponseParser.apiCreated(data.toJSON())
-      return response.status(201).send(parsed)
+      const activity = `Add new DownPayment '${data.transaction_no}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = data.toJSON()
+      return parsed
     } catch (e) {
-      console.log("e", e)
+      throw e
     }
   }
 
@@ -155,30 +162,39 @@ class DownPaymentController {
    * Update DownPayment by Id
    */
   async update({ request, response, auth }) {
-    let body = request.only(fillable)
-    const id = request.params.id
+    try {
+      let body = request.only(fillable)
+      const id = request.params.id
 
-    const data = await DownPayment.find(id)
-    if (!data || data.length === 0) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    const { is_verified } = request.post()
-    if (is_verified && !data.verified_at) {
-      const user = await auth.getUser()
-      body.verified_by = user.id
-      body.verified_at = new Date()
-      // TODO: Send SMS
-      console.log("todo send sms")
-    }
-    await data.merge(body)
-    await data.save()
-    const activity = `Update DownPayment '${data.id}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
+      const data = await DownPayment.find(id)
+      if (!data || data.length === 0) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      const { is_verified } = request.post()
+      if (is_verified && !data.verified_at) {
+        const user = await auth.getUser()
+        body.verified_by = user.id
+        body.verified_at = new Date()
+        // Send SMS
+        const smsMessage = `No kwitansi: ${
+          data.transaction_no
+        } pelunasan 1 paket m3 dari ${
+          data.name.trim().split(" ")[0]
+        } telah kami terima. Selamat Belajar (Admin Yapindo).`
+        TwilioApi(data.phone, smsMessage)
+      }
+      await data.merge(body)
+      await data.save()
+      const activity = `Update DownPayment '${data.transaction_no}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
 
-    await RedisHelper.delete("DownPayment_*")
-    await data.load("target")
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
+      await RedisHelper.delete("DownPayment_*")
+      await data.load("target")
+      let parsed = ResponseParser.apiUpdated(data.toJSON())
+      return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
+    }
   }
 
   /**
@@ -199,17 +215,21 @@ class DownPaymentController {
     return response.status(200).send(ResponseParser.apiDeleted())
   }
 
-  generateTransactionNo(name) {
-    name = name.trim()
-    return (
-      name.split(" ")[0] +
-      "-" +
-      randomstring.generate({
+  async generateTransactionNo() {
+    let ok = false
+    let transaction_no
+    while (!ok) {
+      transaction_no = randomstring.generate({
         length: 6,
         charset: "alphanumeric",
         capitalization: "lowercase",
       })
-    )
+      const dp = await DownPayment.findBy("transaction_no", transaction_no)
+      if (!dp) {
+        ok = true
+        return transaction_no
+      }
+    }
   }
 }
 
