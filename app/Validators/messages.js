@@ -10,6 +10,7 @@ const messages = {
   string: "{{ field }} harus berupa string",
   number: "{{ field }} harus berupa number",
   format: "{{ field }} harus berupa format yang sudah ditentukan",
+  email: "{{field}} harus berupa format email yang valid",
 }
 
 module.exports = messages
