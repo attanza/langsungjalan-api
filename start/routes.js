@@ -280,23 +280,23 @@ Route.group(() => {
    * Marketing Report Attachments
    */
 
-  Route.resource("attachments", "TargetAttachmentController")
-    .apiOnly()
-    .validator(
-      new Map([
-        [["attachments.store"], ["StoreMarketingReportAttachment"]],
-        [["attachments.update"], ["StoreMarketingReportAttachment"]],
-        [["attachments.index"], ["List"]],
-      ])
-    )
-    .middleware(
-      new Map([
-        [["attachments.index"], ["can:read-marketing-report-attachment"]],
-        [["attachments.store"], ["can:create-marketing-report-attachment"]],
-        [["attachments.update"], ["can:update-marketing-report-attachment"]],
-        [["attachments.destroy"], ["can:delete-marketing-report-attachment"]],
-      ])
-    )
+  // Route.resource("attachments", "TargetAttachmentController")
+  //   .apiOnly()
+  //   .validator(
+  //     new Map([
+  //       [["attachments.store"], ["StoreMarketingReportAttachment"]],
+  //       [["attachments.update"], ["StoreMarketingReportAttachment"]],
+  //       [["attachments.index"], ["List"]],
+  //     ])
+  //   )
+  //   .middleware(
+  //     new Map([
+  //       [["attachments.index"], ["can:read-marketing-report-attachment"]],
+  //       [["attachments.store"], ["can:create-marketing-report-attachment"]],
+  //       [["attachments.update"], ["can:update-marketing-report-attachment"]],
+  //       [["attachments.destroy"], ["can:delete-marketing-report-attachment"]],
+  //     ])
+  //   )
 
   /**
    * Universities
@@ -468,7 +468,7 @@ Route.group(() => {
     )
 
   /**
-   * Contact Reports
+   * Traget Years
    */
 
   Route.resource("target-years", "TargetYearController")
