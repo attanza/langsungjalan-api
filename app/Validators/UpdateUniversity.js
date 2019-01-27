@@ -8,8 +8,8 @@ class UpdateUniversity {
     const id = this.ctx.params.id
     return {
       name: `required|max:50|unique:universities,name,id,${id}`,
-      email: `required|email|unique:universities,email,id,${id}`,
-      phone: `required|max:30|unique:universities,phone,id,${id}`,
+      email: "mail",
+      phone: "max:30",
       contact_person: "required|max:50",
       province: "required|max:50",
       city: "required|max:50",
@@ -25,11 +25,11 @@ class UpdateUniversity {
   get sanitizationRules() {
     return {
       email: "normalize_email",
-      name: "escape",
-      phone: "escape",
-      contact_person: "escape",
-      province: "escape",
-      city: "escape",
+      name: "trim|escape",
+      phone: "trim|escape",
+      contact_person: "trim|escape",
+      province: "trim|escape",
+      city: "trim|escape",
       address: "escape",
       description: "escape",
     }

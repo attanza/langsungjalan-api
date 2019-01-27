@@ -7,8 +7,8 @@ class StoreUniversity {
   get rules() {
     return {
       name: "required|max:50|unique:universities",
-      email: "required|email|unique:universities",
-      phone: "required|max:30|unique:universities",
+      email: "email",
+      phone: "max:30",
       contact_person: "required|max:50",
       province: "required|max:50",
       city: "required|max:50",
@@ -24,11 +24,11 @@ class StoreUniversity {
   get sanitizationRules() {
     return {
       email: "normalize_email",
-      name: "escape",
-      phone: "escape",
-      contact_person: "escape",
-      province: "escape",
-      city: "escape",
+      name: "trim|escape",
+      phone: "trim|escape",
+      contact_person: "trim|escape",
+      province: "trim|escape",
+      city: "trim|escape",
       address: "escape",
       description: "escape",
     }
