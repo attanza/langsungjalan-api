@@ -170,6 +170,8 @@ class DownPaymentController {
       if (!data || data.length === 0) {
         return response.status(400).send(ResponseParser.apiNotFound())
       }
+      /*
+      As per client desicion no need to verify / send sms after verified
       const { is_verified } = request.post()
       if (is_verified && !data.verified_at) {
         const user = await auth.getUser()
@@ -183,6 +185,7 @@ class DownPaymentController {
         } telah kami terima. Selamat Belajar (Admin Yapindo).`
         TwilioApi(data.phone, smsMessage)
       }
+      */
       await data.merge(body)
       await data.save()
       const activity = `Update DownPayment '${data.transaction_no}'`
