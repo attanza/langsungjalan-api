@@ -8,7 +8,7 @@ class UpdateUniversity {
     const id = this.ctx.params.id
     return {
       name: `required|max:50|unique:universities,name,id,${id}`,
-      email: "mail",
+      email: "email",
       phone: "max:30",
       contact_person: "required|max:50",
       province: "required|max:50",
