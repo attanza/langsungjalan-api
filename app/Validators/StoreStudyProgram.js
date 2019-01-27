@@ -8,8 +8,8 @@ class StoreStudyProgram {
     return {
       university_id: "required|integer",
       study_name_id: "required|integer",
-      email: "required|email",
-      phone: "required|max:30",
+      email: "email",
+      phone: "max:30",
       description: "max:250",
       lat: "number",
       lng: "number",
@@ -23,8 +23,8 @@ class StoreStudyProgram {
   get sanitizationRules() {
     return {
       email: "normalize_email",
-      phone: "escape",
-      contact_person: "escape",
+      phone: "trim|escape",
+      contact_person: "trim|escape",
       address: "escape",
       description: "escape",
     }
