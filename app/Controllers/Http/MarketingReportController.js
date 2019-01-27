@@ -41,6 +41,7 @@ class MarketingReportController {
         sort_mode,
         schedulle_id,
         marketing_target_id,
+        university_id,
       } = request.get()
 
       if (!page) page = 1
@@ -48,7 +49,7 @@ class MarketingReportController {
       if (!sort_by) sort_by = "id"
       if (!sort_mode) sort_mode = "desc"
 
-      const redisKey = `MarketingReport_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${schedulle_id}${marketing_target_id}`
+      const redisKey = `MarketingReport_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${schedulle_id}${marketing_target_id}${university_id}`
 
       let cached = await RedisHelper.get(redisKey)
 
@@ -102,6 +103,18 @@ class MarketingReportController {
 
           if (schedulle_id && schedulle_id != "") {
             return this.where("schedulle_id", parseInt(schedulle_id))
+          }
+
+          if (university_id && university_id != "") {
+            return this.whereHas("schedulle", builder => {
+              builder.whereHas("target", builder2 => {
+                builder2.whereHas("study", builder3 => {
+                  builder3.whereHas("university", builder4 => {
+                    builder4.where("id", university_id)
+                  })
+                })
+              })
+            })
           }
         })
         .orderBy(sort_by, sort_mode)
