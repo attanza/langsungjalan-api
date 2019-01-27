@@ -4,7 +4,7 @@ const DownPayment = use("App/Models/DownPayment")
 const { RedisHelper, ResponseParser, TwilioApi } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const randomstring = require("randomstring")
-
+const Env = use("Env")
 const fillable = ["marketing_target_id", "name", "phone", "dp"]
 
 class DownPaymentController {
@@ -43,6 +43,7 @@ class DownPaymentController {
 
       const data = await DownPayment.query()
         .with("target.study.university")
+        .with("target.study.studyName")
         .with("verifier", builder => {
           builder.select("id", "name")
         })
@@ -53,6 +54,14 @@ class DownPaymentController {
             this.orWhere("phone", "like", `%${search}%`)
             this.orWhereHas("target", builder => {
               builder.where("code", "like", `%${search}%`)
+              builder.orWhereHas("study", builder2 => {
+                builder2.whereHas("university", builder3 => {
+                  builder3.where("name", "like", `%${search}%`)
+                })
+                builder2.orWhereHas("studyName", builder3 => {
+                  builder3.where("name", "like", `%${search}%`)
+                })
+              })
             })
           }
 
@@ -99,6 +108,7 @@ class DownPaymentController {
       } else {
         let body = request.only(fillable)
         let result = await this.storeToDb(body, request, auth)
+
         return response.status(201).send(ResponseParser.apiCreated(result))
       }
     } catch (e) {
@@ -114,17 +124,18 @@ class DownPaymentController {
   async storeToDb(body, request, auth) {
     try {
       body.transaction_no = await this.generateTransactionNo(body.name)
-
       const data = await DownPayment.create(body)
-      await data.load("target")
+      await data.loadMany(["target.study.university", "target.study.studyName"])
       // Send SMS
       const smsMessage = `Kami telah menerima DP ${formatNumber(
         data.dp
       )} dengan no transaksi ${data.transaction_no}, Selamat ${
         data.name.trim().split(" ")[0]
       } telah masuk kuota subsidi. Sms ini wajib ditunjukkan saat pengambilan paket.`
-
-      TwilioApi(data.phone, smsMessage)
+      const NODE_ENV = Env.get("NODE_ENV")
+      if (NODE_ENV === "production") {
+        TwilioApi(data.phone, smsMessage)
+      }
       await RedisHelper.delete("DownPayment_*")
       const activity = `Add new DownPayment '${data.transaction_no}'`
       await ActivityTraits.saveActivity(request, auth, activity)
