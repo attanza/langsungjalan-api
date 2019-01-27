@@ -42,7 +42,7 @@ class DownPaymentController {
       }
 
       const data = await DownPayment.query()
-        .with("target")
+        .with("target.study.university")
         .with("verifier", builder => {
           builder.select("id", "name")
         })
