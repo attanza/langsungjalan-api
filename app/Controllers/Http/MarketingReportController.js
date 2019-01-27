@@ -1,19 +1,19 @@
-'use strict'
+"use strict"
 
-const MarketingReport = use('App/Models/MarketingReport')
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
+const MarketingReport = use("App/Models/MarketingReport")
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits } = use("App/Traits")
 const fillable = [
-  'code',
-  'schedulle_id',
-  'method',
-  'date',
-  'terms',
-  'result',
-  'note',
-  'lat',
-  'lng',
-  'description',
+  "code",
+  "schedulle_id",
+  "method",
+  "date",
+  "terms",
+  "result",
+  "note",
+  "lat",
+  "lng",
+  "description",
 ]
 
 /**
@@ -22,86 +22,99 @@ const fillable = [
  */
 
 class MarketingReportController {
-
   /**
    * Index
    * Get List of MarketingReports
    */
   async index({ request, response }) {
+    try {
+      let {
+        page,
+        limit,
+        search,
+        search_by,
+        search_query,
+        between_date,
+        start_date,
+        end_date,
+        sort_by,
+        sort_mode,
+        schedulle_id,
+        marketing_target_id,
+      } = request.get()
 
-    let {
-      page,
-      limit,
-      search,
-      search_by,
-      search_query,
-      between_date,
-      start_date,
-      end_date,
-      sort_by,
-      sort_mode,
-      schedulle_id,
-      marketing_target_id
-    } = request.get()
+      if (!page) page = 1
+      if (!limit) limit = 10
+      if (!sort_by) sort_by = "id"
+      if (!sort_mode) sort_mode = "desc"
 
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (!sort_by) sort_by = 'id'
-    if (!sort_mode) sort_mode = 'desc'
+      const redisKey = `MarketingReport_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${schedulle_id}${marketing_target_id}`
 
-    const redisKey = `MarketingReport_${page}${limit}${sort_by}${sort_mode}${search_by}${search_query}${between_date}${start_date}${end_date}${schedulle_id}${marketing_target_id}`
+      let cached = await RedisHelper.get(redisKey)
 
-    let cached = await RedisHelper.get(redisKey)
+      if (cached && !search) {
+        return cached
+      }
 
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-
-    const data = await MarketingReport.query()
-      .with('schedulle.marketing')
-      .where(function () {
-        if (search && search != '') {
-          this.where('method', 'like', `%${search}%`)
-          this.orWhere('code', 'like', `%${search}%`)
-          this.orWhereHas('schedulle', (builder) => {
-            builder.where('code', 'like', `%${search}%`)
-          })
-          this.orWhereHas('schedulle', builder => {
-            builder.whereHas('marketing', builder2 => {
-              builder2.where('name', 'like', `%${search}%`)
+      const data = await MarketingReport.query()
+        .with("schedulle.marketing")
+        .with("schedulle.target.study.university")
+        .with("schedulle.target.study.studyName")
+        .with("schedulle.action")
+        .where(function() {
+          if (search && search != "") {
+            this.where("method", "like", `%${search}%`)
+            this.orWhere("code", "like", `%${search}%`)
+            this.orWhereHas("schedulle", builder => {
+              // builder.where("code", "like", `%${search}%`)
+              // builder.orWhereHas("marketing", builder2 => {
+              //   builder2.where("name", "like", `%${search}%`)
+              // })
+              builder.whereHas("target", builder2 => {
+                builder2.whereHas("study", builder3 => {
+                  builder3.whereHas("university", builder4 => {
+                    builder4.where("name", "like", `%${search}%`)
+                  })
+                  builder3.orWhereHas("studyName", builder4 => {
+                    builder4.where("name", "like", `%${search}%`)
+                  })
+                })
+              })
+              builder.orWhereHas("action", builder2 => {
+                builder2.where("name", "like", `%${search}%`)
+              })
             })
-          })
-        }
+          }
 
-        if (search_by && search_query) {
-          return this.where(search_by, 'like', `%${search_query}%`)
-        }
+          if (search_by && search_query) {
+            return this.where(search_by, "like", `%${search_query}%`)
+          }
 
-        if (between_date && start_date && end_date) {
-          return this.whereBetween(between_date, [start_date, end_date])
-        }
+          if (between_date && start_date && end_date) {
+            return this.whereBetween(between_date, [start_date, end_date])
+          }
 
-        if (marketing_target_id && marketing_target_id != '') {
-          return this.whereHas('schedulle', builder => {
-            builder.where('marketing_target_id', marketing_target_id)
-          })
-        }
+          if (marketing_target_id && marketing_target_id != "") {
+            return this.whereHas("schedulle", builder => {
+              builder.where("marketing_target_id", marketing_target_id)
+            })
+          }
 
-        if (schedulle_id && schedulle_id != '') {
-          return this.where(
-            'schedulle_id',
-            parseInt(schedulle_id)
-          )
-        }
-      })
-      .orderBy(sort_by, sort_mode)
-      .paginate(parseInt(page), parseInt(limit))
+          if (schedulle_id && schedulle_id != "") {
+            return this.where("schedulle_id", parseInt(schedulle_id))
+          }
+        })
+        .orderBy(sort_by, sort_mode)
+        .paginate(parseInt(page), parseInt(limit))
 
-    let parsed = ResponseParser.apiCollection(data.toJSON())
-    if (!search || search == '') {
-      await RedisHelper.set(redisKey, parsed)
+      let parsed = ResponseParser.apiCollection(data.toJSON())
+      if (!search || search == "") {
+        await RedisHelper.set(redisKey, parsed)
+      }
+      return response.status(200).send(parsed)
+    } catch (e) {
+      console.log("e", e)
     }
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -111,15 +124,22 @@ class MarketingReportController {
    */
   async store({ request, response, auth }) {
     let body = request.only(fillable)
-    if (!body.code || body.code == '') {
+    if (!body.code || body.code == "") {
       body.code = Math.floor(Date.now() / 1000).toString()
     }
-    if (!body.date || body.date == '') {
+    if (!body.date || body.date == "") {
       body.date = Date.now()
     }
     const data = await MarketingReport.create(body)
-    await data.load('schedulle.marketing')
-    await RedisHelper.delete('MarketingReport_*')
+    await data.loadMany([
+      "schedulle.marketing",
+      "schedulle.action",
+      "schedulle.target.study.studyName",
+      "schedulle.target.study.university",
+    ])
+
+    await RedisHelper.delete("MarketingReport_*")
+    await RedisHelper.delete("Schedulle_*")
     const activity = `Add new MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -141,7 +161,12 @@ class MarketingReportController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(['schedulle.marketing', 'schedulle.action', 'schedulle.target.study.studyName', 'schedulle.target.study.university'])
+    await data.loadMany([
+      "schedulle.marketing",
+      "schedulle.action",
+      "schedulle.target.study.studyName",
+      "schedulle.target.study.university",
+    ])
     let parsed = ResponseParser.apiItem(data.toJSON())
     await RedisHelper.set(redisKey, parsed)
     return response.status(200).send(parsed)
@@ -161,10 +186,16 @@ class MarketingReportController {
     }
     await data.merge(body)
     await data.save()
-    await data.load('schedulle.marketing')
+    await data.loadMany([
+      "schedulle.marketing",
+      "schedulle.action",
+      "schedulle.target.study.studyName",
+      "schedulle.target.study.university",
+    ])
     const activity = `Update MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('MarketingReport_*')
+    await RedisHelper.delete("MarketingReport_*")
+    await RedisHelper.delete("Schedulle_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -182,7 +213,8 @@ class MarketingReportController {
     }
     const activity = `Delete MarketingReport '${data.id}'`
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('MarketingReport_*')
+    await RedisHelper.delete("MarketingReport_*")
+    await RedisHelper.delete("Schedulle_*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }
