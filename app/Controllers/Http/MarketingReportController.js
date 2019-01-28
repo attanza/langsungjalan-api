@@ -152,8 +152,7 @@ class MarketingReportController {
     ])
 
     await RedisHelper.delete("MarketingReport_*")
-    await RedisHelper.delete("Schedulle_*")
-    const activity = `Add new MarketingReport '${data.id}'`
+    const activity = `Add new MarketingReport '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
@@ -205,10 +204,9 @@ class MarketingReportController {
       "schedulle.target.study.studyName",
       "schedulle.target.study.university",
     ])
-    const activity = `Update MarketingReport '${data.id}'`
+    const activity = `Update MarketingReport '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("MarketingReport_*")
-    await RedisHelper.delete("Schedulle_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -224,10 +222,9 @@ class MarketingReportController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete MarketingReport '${data.id}'`
+    const activity = `Delete MarketingReport '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("MarketingReport_*")
-    await RedisHelper.delete("Schedulle_*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

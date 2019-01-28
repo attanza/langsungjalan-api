@@ -44,7 +44,7 @@ class StudyNameController {
       }
 
       const data = await StudyName.query()
-        .where(function () {
+        .where(function() {
           if (search && search != "") {
             this.where("name", "like", `%${search}%`)
           }
@@ -80,6 +80,7 @@ class StudyNameController {
     let body = request.only(fillable)
     const data = await StudyName.create(body)
     await RedisHelper.delete("StudyName_*")
+    await RedisHelper.delete("StudyProgram_*")
     const activity = `Add new StudyName '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -123,6 +124,7 @@ class StudyNameController {
     const activity = `Update StudyName '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("StudyName_*")
+    await RedisHelper.delete("StudyProgram_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -142,12 +144,19 @@ class StudyNameController {
     await data.load("studyPrograms")
     const dataJSON = data.toJSON()
     if (dataJSON.studyPrograms && dataJSON.studyPrograms.length > 0) {
-      return response.status(400).send(ResponseParser.errorResponse("This Study Name cannot be deleted since it has Study Programs attached"))
+      return response
+        .status(400)
+        .send(
+          ResponseParser.errorResponse(
+            "This Study Name cannot be deleted since it has Study Programs attached"
+          )
+        )
     }
 
     const activity = `Delete StudyName '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("StudyName_*")
+    await RedisHelper.delete("StudyProgram_*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

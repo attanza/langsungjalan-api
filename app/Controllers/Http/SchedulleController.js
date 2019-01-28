@@ -126,7 +126,7 @@ class SchedulleController {
     const data = await Schedulle.create(body)
     await data.loadMany(["marketing", "target", "action"])
     await RedisHelper.delete("Schedulle_*")
-    const activity = `Add new Schedulle '${data.name}'`
+    const activity = `Add new Schedulle '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     if (parsed.data.marketing && parsed.data.marketing.uid) {
@@ -176,7 +176,7 @@ class SchedulleController {
     }
     await data.merge(body)
     await data.save()
-    const activity = `Update Schedulle '${data.name}'`
+    const activity = `Update Schedulle '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("Schedulle_*")
     await data.loadMany(["marketing", "target", "action"])
@@ -207,7 +207,7 @@ class SchedulleController {
           )
         )
     }
-    const activity = `Delete Schedulle '${data.name}'`
+    const activity = `Delete Schedulle '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("Schedulle*")
     await data.delete()

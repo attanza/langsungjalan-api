@@ -176,7 +176,7 @@ class TargetAttachmentController {
     await data.merge(body)
     await data.save()
     await data.load("target")
-    const activity = `Update TargetAttachment '${data.id}'`
+    const activity = `Update TargetAttachment <Target Code ${target.code}>`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("TargetAttachment_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
@@ -197,7 +197,7 @@ class TargetAttachmentController {
     if (exists) {
       await Drive.delete(Helpers.publicPath(data.url))
     }
-    const activity = `Delete TargetAttachment '${data.name}'`
+    const activity = `Delete TargetAttachment ID <${id}>`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("TargetAttachment_*")
     await data.delete()

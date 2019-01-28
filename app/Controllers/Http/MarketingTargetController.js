@@ -47,7 +47,7 @@ class MarketingTargetController {
       const data = await MarketingTarget.query()
         .with("study.studyName")
         .with("study.university")
-        .where(function () {
+        .where(function() {
           if (search && search != "") {
             this.where("code", "like", `%${search}%`)
             this.orWhereHas("study", builder => {
@@ -98,7 +98,10 @@ class MarketingTargetController {
     const data = await MarketingTarget.create(body)
     await data.loadMany(["study.studyName", "study.university"])
     await RedisHelper.delete("MarketingTarget_*")
-    const activity = `Add new MarketingTarget '${data.name}'`
+    await RedisHelper.delete("contacts*")
+    await RedisHelper.delete("schedulles*")
+    await RedisHelper.delete("downpayments*")
+    const activity = `Add new MarketingTarget '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
@@ -140,9 +143,12 @@ class MarketingTargetController {
     await data.merge(body)
     await data.save()
     await data.loadMany(["study.studyName", "study.university"])
-    const activity = `Update MarketingTarget '${data.name}'`
+    const activity = `Update MarketingTarget '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("MarketingTarget_*")
+    await RedisHelper.delete("contacts*")
+    await RedisHelper.delete("schedulles*")
+    await RedisHelper.delete("downpayments*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -161,20 +167,41 @@ class MarketingTargetController {
     await data.loadMany(["contacts", "schedulles", "downpayments"])
     const dataJSON = data.toJSON()
     if (dataJSON.contacts && dataJSON.contacts.length > 0) {
-      return response.status(400).send(ResponseParser.errorResponse("This Marketing Target cannot be deleted since it has Contacts attached"))
+      return response
+        .status(400)
+        .send(
+          ResponseParser.errorResponse(
+            "This Marketing Target cannot be deleted since it has Contacts attached"
+          )
+        )
     }
 
     if (dataJSON.schedulles && dataJSON.schedulles.length > 0) {
-      return response.status(400).send(ResponseParser.errorResponse("This Marketing Target cannot be deleted since it has Schedulles attached"))
+      return response
+        .status(400)
+        .send(
+          ResponseParser.errorResponse(
+            "This Marketing Target cannot be deleted since it has Schedulles attached"
+          )
+        )
     }
 
     if (dataJSON.downpayments && dataJSON.downpayments.length > 0) {
-      return response.status(400).send(ResponseParser.errorResponse("This Marketing Target cannot be deleted since it has Downpayments attached"))
+      return response
+        .status(400)
+        .send(
+          ResponseParser.errorResponse(
+            "This Marketing Target cannot be deleted since it has Downpayments attached"
+          )
+        )
     }
 
-    const activity = `Delete MarketingTarget '${data.name}'`
+    const activity = `Delete MarketingTarget '${data.code}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("MarketingTarget_*")
+    await RedisHelper.delete("contacts*")
+    await RedisHelper.delete("schedulles*")
+    await RedisHelper.delete("downpayments*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

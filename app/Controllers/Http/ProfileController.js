@@ -1,10 +1,10 @@
-'use strict'
+"use strict"
 
-const { RedisHelper, ResponseParser } = use('App/Helpers')
-const { ActivityTraits } = use('App/Traits')
-const Hash = use('Hash')
-const Helpers = use('Helpers')
-const User = use('App/Models/User')
+const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { ActivityTraits } = use("App/Traits")
+const Hash = use("Hash")
+const Helpers = use("Helpers")
+const User = use("App/Models/User")
 
 class ProfileController {
   async me({ response, auth }) {
@@ -12,7 +12,7 @@ class ProfileController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.load('roles')
+    await data.load("roles")
     let parsed = ResponseParser.apiItem(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -27,18 +27,21 @@ class ProfileController {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
     let body = request.only([
-      'name',
-      'email',
-      'phone',
-      'address',
-      'description'
+      "name",
+      "email",
+      "phone",
+      "address",
+      "description",
     ])
     await data.merge(body)
     await data.save()
-    await data.load('roles')
-    const activity = 'Update Profile'
+    await data.load("roles")
+    const activity = "Update Profile"
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('User_*')
+    await RedisHelper.delete("User_*")
+    await RedisHelper.delete("supervisors*")
+    await RedisHelper.delete("marketings*")
+
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
@@ -66,14 +69,14 @@ class ProfileController {
     if (!isSame) {
       return response
         .status(400)
-        .send(ResponseParser.errorResponse('Old password incorect'))
+        .send(ResponseParser.errorResponse("Old password incorect"))
     }
     const hashPassword = await Hash.make(password)
     await data.merge({ password: hashPassword })
     await data.save()
     return response
       .status(200)
-      .send(ResponseParser.successResponse(data, 'Password updated'))
+      .send(ResponseParser.successResponse(data, "Password updated"))
   }
 
   /**
@@ -86,35 +89,36 @@ class ProfileController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const photo = request.file('photo', {
-      types: ['image'],
-      size: '5mb'
+    const photo = request.file("photo", {
+      types: ["image"],
+      size: "5mb",
     })
 
     if (!photo) {
       return response
         .status(400)
-        .send(ResponseParser.errorResponse('Photo is not an image file'))
+        .send(ResponseParser.errorResponse("Photo is not an image file"))
     }
     const name = `${new Date().getTime()}.${photo.subtype}`
 
-    await photo.move(Helpers.publicPath('img/users'), { name })
+    await photo.move(Helpers.publicPath("img/users"), { name })
 
     if (!photo.moved()) {
       return response
         .status(400)
-        .send(ResponseParser.errorResponse('Photo failed to upload'))
+        .send(ResponseParser.errorResponse("Photo failed to upload"))
     }
     await data.merge({ photo: `/img/users/${name}` })
     await data.save()
-    await data.load('roles')
-    const activity = 'Update profile photo'
+    await data.load("roles")
+    const activity = "Update profile photo"
     await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete('User_*')
+    await RedisHelper.delete("User_*")
+    await RedisHelper.delete("supervisors*")
+    await RedisHelper.delete("marketings*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
   }
 }
 
 module.exports = ProfileController
-

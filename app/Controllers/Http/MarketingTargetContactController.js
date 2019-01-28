@@ -93,7 +93,7 @@ class MarketingTargetContactController {
     const data = await MarketingTargetContact.create(body)
     await data.load("target")
     await RedisHelper.delete("MarketingTargetContact_*")
-    const activity = `Add new MarketingTargetContact '${data.id}'`
+    const activity = `Add new MarketingTargetContact '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
@@ -135,7 +135,7 @@ class MarketingTargetContactController {
     await data.merge(body)
     await data.save()
     await data.load("target")
-    const activity = `Update MarketingTargetContact '${data.id}'`
+    const activity = `Update MarketingTargetContact '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("MarketingTargetContact_*")
     let parsed = ResponseParser.apiUpdated(data.toJSON())
@@ -153,7 +153,7 @@ class MarketingTargetContactController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete MarketingTargetContact '${data.id}'`
+    const activity = `Delete MarketingTargetContact '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("MarketingTargetContact_*")
     await data.delete()

@@ -112,7 +112,10 @@ class StudyProgramController {
     await RedisHelper.delete("StudyProgram_*")
     await RedisHelper.delete("StudyYear_*")
     await RedisHelper.delete("MarketingTarget_*")
-    const activity = `Add new StudyProgram ID(${data.id})`
+    const jsonData = data.toJSON()
+    const activity = `Add new StudyProgram "${jsonData.studyName.name}" in "${
+      jsonData.university.name
+    }" university`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
     return response.status(201).send(parsed)
@@ -162,7 +165,10 @@ class StudyProgramController {
     await RedisHelper.delete("StudyYear_*")
     await RedisHelper.delete("MarketingTarget_*")
     await data.loadMany(["university", "studyName", "years"])
-    const activity = `Add new StudyProgram ID(${id})`
+    const jsonData = data.toJSON()
+    const activity = `Update StudyProgram "${jsonData.studyName.name}" in "${
+      jsonData.university.name
+    }" university`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiUpdated(data.toJSON())
     return response.status(200).send(parsed)
@@ -180,7 +186,7 @@ class StudyProgramController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    await data.loadMany(["targets", "years"])
+    await data.loadMany(["targets", "years", "university", "studyName"])
     const dataJSON = data.toJSON()
     if (dataJSON.targets && dataJSON.targets.length > 0) {
       return response
@@ -200,7 +206,10 @@ class StudyProgramController {
           )
         )
     }
-    const activity = `Delete StudyProgram ID(${data.id})`
+    const jsonData = data.toJSON()
+    const activity = `Delete StudyProgram "${jsonData.studyName.name}" in "${
+      jsonData.university.name
+    }" university`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("StudyProgram_*")
     await RedisHelper.delete("StudyYear_*")
