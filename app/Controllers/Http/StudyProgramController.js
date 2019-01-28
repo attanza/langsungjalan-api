@@ -110,6 +110,8 @@ class StudyProgramController {
     const data = await StudyProgram.create(body)
     await data.loadMany(["university", "studyName"])
     await RedisHelper.delete("StudyProgram_*")
+    await RedisHelper.delete("StudyYear_*")
+    await RedisHelper.delete("MarketingTarget_*")
     const activity = `Add new StudyProgram ID(${data.id})`
     await ActivityTraits.saveActivity(request, auth, activity)
     let parsed = ResponseParser.apiCreated(data.toJSON())
@@ -157,7 +159,8 @@ class StudyProgramController {
     await data.merge(body)
     await data.save()
     await RedisHelper.delete("StudyProgram_*")
-    await RedisHelper.delete("University_*")
+    await RedisHelper.delete("StudyYear_*")
+    await RedisHelper.delete("MarketingTarget_*")
     await data.loadMany(["university", "studyName", "years"])
     const activity = `Add new StudyProgram ID(${id})`
     await ActivityTraits.saveActivity(request, auth, activity)
@@ -200,7 +203,8 @@ class StudyProgramController {
     const activity = `Delete StudyProgram ID(${data.id})`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("StudyProgram_*")
-    await RedisHelper.delete("University_*")
+    await RedisHelper.delete("StudyYear_*")
+    await RedisHelper.delete("MarketingTarget_*")
     await data.delete()
     return response.status(200).send(ResponseParser.apiDeleted())
   }

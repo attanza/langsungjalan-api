@@ -221,7 +221,7 @@ class DownPaymentController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
-    const activity = `Delete DownPayment '${data.id}'`
+    const activity = `Delete DownPayment '${data.transaction_no}'`
     await ActivityTraits.saveActivity(request, auth, activity)
 
     await RedisHelper.delete("DownPayment*")
