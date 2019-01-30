@@ -54,6 +54,8 @@ class MarketingReportController {
       let cached = await RedisHelper.get(redisKey)
 
       if (cached && !search) {
+        console.log('from cached');
+
         return cached
       }
 
@@ -62,27 +64,34 @@ class MarketingReportController {
         .with("schedulle.target.study.university")
         .with("schedulle.target.study.studyName")
         .with("schedulle.action")
-        .where(function() {
+        .where(function () {
           if (search && search != "") {
             this.where("method", "like", `%${search}%`)
             this.orWhere("code", "like", `%${search}%`)
             this.orWhereHas("schedulle", builder => {
-              // builder.where("code", "like", `%${search}%`)
-              // builder.orWhereHas("marketing", builder2 => {
-              //   builder2.where("name", "like", `%${search}%`)
-              // })
+              builder.whereHas("action", builder2 => {
+                builder2.where("name", "like", `%${search}%`)
+              })
+            })
+            this.orWhereHas("schedulle", builder => {
+              builder.orWhere("code", "like", `%${search}%`)
+            })
+            this.orWhereHas("schedulle", builder => {
               builder.whereHas("target", builder2 => {
                 builder2.whereHas("study", builder3 => {
                   builder3.whereHas("university", builder4 => {
                     builder4.where("name", "like", `%${search}%`)
                   })
-                  builder3.orWhereHas("studyName", builder4 => {
+                })
+              })
+            })
+            this.orWhereHas("schedulle", builder => {
+              builder.whereHas("target", builder2 => {
+                builder2.whereHas("study", builder3 => {
+                  builder3.whereHas("studyName", builder4 => {
                     builder4.where("name", "like", `%${search}%`)
                   })
                 })
-              })
-              builder.orWhereHas("action", builder2 => {
-                builder2.where("name", "like", `%${search}%`)
               })
             })
           }

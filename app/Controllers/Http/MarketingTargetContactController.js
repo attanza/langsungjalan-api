@@ -45,8 +45,10 @@ class MarketingTargetContactController {
       }
 
       const data = await MarketingTargetContact.query()
-        .with("target")
-        .where(function() {
+        .with("target.study.university")
+        .with("target.study.studyName")
+
+        .where(function () {
           if (search && search != "") {
             this.where("name", "like", `%${search}%`)
             this.orWhere("title", "like", `%${search}%`)
@@ -54,6 +56,20 @@ class MarketingTargetContactController {
             this.orWhere("email", "like", `%${search}%`)
             this.orWhereHas("target", builder => {
               builder.where("code", "like", `%${search}%`)
+            })
+            this.orWhereHas("target", builder => {
+              builder.whereHas("study", builder3 => {
+                builder3.whereHas("university", builder4 => {
+                  builder4.where("name", "like", `%${search}%`)
+                })
+              })
+            })
+            this.orWhereHas("target", builder => {
+              builder.whereHas("study", builder3 => {
+                builder3.whereHas("studyName", builder4 => {
+                  builder4.where("name", "like", `%${search}%`)
+                })
+              })
             })
           }
 
