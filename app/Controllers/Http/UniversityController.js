@@ -51,7 +51,7 @@ class UniversityController {
       }
 
       const data = await University.query()
-        .where(function() {
+        .where(function () {
           if (search && search != "") {
             this.where("name", "like", `%${search}%`)
             this.orWhere("address", "like", `%${search}%`)
@@ -159,6 +159,12 @@ class UniversityController {
     if (!data) {
       return response.status(400).send(ResponseParser.apiNotFound())
     }
+    await data.load("studies")
+    const jsonData = data.toJSON()
+    if (jsonData.studies.length > 0) {
+      return response.status(400).send(ResponseParser.errorResponse("Perguruan Tinggi tidak bisa dihapus, karena memiliki satu atau beberapa Studi Program"))
+    }
+
     const activity = `Delete University '${data.name}'`
     await ActivityTraits.saveActivity(request, auth, activity)
     await RedisHelper.delete("University_*")
