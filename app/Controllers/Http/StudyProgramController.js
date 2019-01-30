@@ -2,7 +2,7 @@
 
 const StudyProgram = use("App/Models/StudyProgram")
 const { RedisHelper, ResponseParser } = use("App/Helpers")
-const { ActivityTraits } = use("App/Traits")
+const { ActivityTraits, CheckExist } = use("App/Traits")
 const fillable = [
   "university_id",
   "study_name_id",
@@ -106,19 +106,43 @@ class StudyProgramController {
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
-    let body = request.only(fillable)
-    const data = await StudyProgram.create(body)
-    await data.loadMany(["university", "studyName"])
-    await RedisHelper.delete("StudyProgram_*")
-    await RedisHelper.delete("StudyYear_*")
-    await RedisHelper.delete("MarketingTarget_*")
-    const jsonData = data.toJSON()
-    const activity = `Add new StudyProgram "${jsonData.studyName.name}" in "${
-      jsonData.university.name
-    }" university`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiCreated(data.toJSON())
-    return response.status(201).send(parsed)
+    try {
+      let body = request.only(fillable)
+      const isUniversityExists = await CheckExist(
+        body.university_id,
+        "University"
+      )
+      if (!isUniversityExists) {
+        return response
+          .status(422)
+          .send(ResponseParser.apiValidationFailed("University not fund"))
+      }
+
+      const isStudyNameExists = await CheckExist(
+        body.study_name_id,
+        "StudyName"
+      )
+      if (!isStudyNameExists) {
+        return response
+          .status(422)
+          .send(ResponseParser.apiValidationFailed("StudyName not fund"))
+      }
+
+      const data = await StudyProgram.create(body)
+      await data.loadMany(["university", "studyName"])
+      await RedisHelper.delete("StudyProgram_*")
+      await RedisHelper.delete("StudyYear_*")
+      await RedisHelper.delete("MarketingTarget_*")
+      const jsonData = data.toJSON()
+      const activity = `Add new StudyProgram "${jsonData.studyName.name}" in "${
+        jsonData.university.name
+      }" university`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      console.log("e", e)
+    }
   }
 
   /**
@@ -158,6 +182,22 @@ class StudyProgramController {
     const data = await StudyProgram.find(id)
     if (!data || data.length === 0) {
       return response.status(400).send(ResponseParser.apiNotFound())
+    }
+    const isUniversityExists = await CheckExist(
+      body.university_id,
+      "University"
+    )
+    if (!isUniversityExists) {
+      return response
+        .status(422)
+        .send(ResponseParser.apiValidationFailed("University not fund"))
+    }
+
+    const isStudyNameExists = await CheckExist(body.study_name_id, "StudyName")
+    if (!isStudyNameExists) {
+      return response
+        .status(422)
+        .send(ResponseParser.apiValidationFailed("StudyName not fund"))
     }
     await data.merge(body)
     await data.save()
