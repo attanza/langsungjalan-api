@@ -116,7 +116,7 @@ class StudyProgramController {
       if (!isUniversityExists) {
         return response
           .status(422)
-          .send(ResponseParser.apiValidationFailed("University not fund"))
+          .send(ResponseParser.apiValidationFailed("University not found"))
       }
 
       const isStudyNameExists = await CheckExist(
@@ -126,7 +126,7 @@ class StudyProgramController {
       if (!isStudyNameExists) {
         return response
           .status(422)
-          .send(ResponseParser.apiValidationFailed("StudyName not fund"))
+          .send(ResponseParser.apiValidationFailed("StudyName not found"))
       }
 
       const data = await StudyProgram.create(body)
@@ -233,7 +233,6 @@ class StudyProgramController {
    * Delete
    * Delete StudyProgram by Id
    * Can only be done by Super Administrator
-   * Default StudyProgram ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student'] cannot be deleted
    */
   async destroy({ request, response, auth }) {
     try {

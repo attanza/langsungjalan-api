@@ -1,7 +1,9 @@
 "use strict"
 
 const Schedulle = use("App/Models/Schedulle")
-const { RedisHelper, ResponseParser, PushNotifications } = use("App/Helpers")
+const { RedisHelper, ResponseParser, PushNotifications, ErrorLog } = use(
+  "App/Helpers"
+)
 const { ActivityTraits } = use("App/Traits")
 
 const fillable = [

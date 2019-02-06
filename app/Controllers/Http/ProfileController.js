@@ -1,6 +1,6 @@
 "use strict"
 
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const Hash = use("Hash")
 const Helpers = use("Helpers")
