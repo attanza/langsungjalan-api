@@ -4,6 +4,7 @@ const University = use("App/Models/University")
 const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const fillable = [
+  "name",
   "address",
   "email",
   "phone",
