@@ -6,6 +6,7 @@ const InArray = require("./InArray")
 const PushNotifications = require("./PushNotifications")
 const AesUtil = require("./AesUtil")
 const TwilioApi = require("./TwilioApi")
+const ErrorLog = require("./ErrorLog")
 
 module.exports = {
   Slug,
@@ -16,4 +17,5 @@ module.exports = {
   PushNotifications,
   AesUtil,
   TwilioApi,
+  ErrorLog,
 }

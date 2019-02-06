@@ -1,6 +1,6 @@
-'use strict'
+"use strict"
 
-const BaseExceptionHandler = use('BaseExceptionHandler')
+const BaseExceptionHandler = use("BaseExceptionHandler")
 
 /**
  * This class handles all exceptions thrown during
@@ -20,42 +20,42 @@ class ExceptionHandler extends BaseExceptionHandler {
    *
    * @return {void}
    */
-  async handle (error, { response }) {
-    if (error.name === 'InvalidJwtToken') {
-      console.log('InvalidJwtToken') //eslint-disable-line
+  async handle(error, { response }) {
+    if (error.name === "InvalidJwtToken") {
+      console.log("InvalidJwtToken") //eslint-disable-line
       return response.status(401).send({
         meta: {
           status: 401,
-          message: 'Unathorized'
-        }
+          message: "Unathorized",
+        },
       })
     }
 
-    if (error.name === 'ExpiredJwtToken') {
-      console.log('ExpiredJwtToken') //eslint-disable-line
+    if (error.name === "ExpiredJwtToken") {
+      console.log("ExpiredJwtToken") //eslint-disable-line
       return response.status(401).send({
         meta: {
           status: 401,
-          message: 'Expired token'
-        }
+          message: "Expired token",
+        },
       })
     }
 
-    if (error.name === 'HttpException') {
+    if (error.name === "HttpException") {
       return response.status(404).send({
         meta: {
           status: 404,
-          message: 'Route not found'
-        }
+          message: "Route not found",
+        },
       })
     }
 
-    if (error.name === 'ForbiddenException') {
+    if (error.name === "ForbiddenException") {
       return response.status(403).send({
         meta: {
           status: 403,
-          message: 'Forbidden'
-        }
+          message: "Forbidden",
+        },
       })
     }
 

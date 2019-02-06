@@ -39,6 +39,16 @@ class MailHelper {
         .subject("Pembayaran DP Baru")
     })
   }
+
+  async sendError(action, e) {
+    const data = { e }
+    Mail.send("emails.errors_mail", data, message => {
+      message
+        .to("dani.lesmiadi@gmail.com")
+        .from(from)
+        .subject("langsungjalan ~ error in " + action)
+    })
+  }
 }
 
 module.exports = new MailHelper()
