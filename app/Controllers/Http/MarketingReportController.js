@@ -1,7 +1,7 @@
 "use strict"
 
 const MarketingReport = use("App/Models/MarketingReport")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const fillable = [
   "code",
@@ -54,8 +54,6 @@ class MarketingReportController {
       let cached = await RedisHelper.get(redisKey)
 
       if (cached && !search) {
-        console.log('from cached');
-
         return cached
       }
 
@@ -64,7 +62,7 @@ class MarketingReportController {
         .with("schedulle.target.study.university")
         .with("schedulle.target.study.studyName")
         .with("schedulle.action")
-        .where(function () {
+        .where(function() {
           if (search && search != "") {
             this.where("method", "like", `%${search}%`)
             this.orWhere("code", "like", `%${search}%`)
@@ -135,7 +133,8 @@ class MarketingReportController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -145,26 +144,31 @@ class MarketingReportController {
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
-    let body = request.only(fillable)
-    if (!body.code || body.code == "") {
-      body.code = Math.floor(Date.now() / 1000).toString()
-    }
-    if (!body.date || body.date == "") {
-      body.date = Date.now()
-    }
-    const data = await MarketingReport.create(body)
-    await data.loadMany([
-      "schedulle.marketing",
-      "schedulle.action",
-      "schedulle.target.study.studyName",
-      "schedulle.target.study.university",
-    ])
+    try {
+      let body = request.only(fillable)
+      if (!body.code || body.code == "") {
+        body.code = Math.floor(Date.now() / 1000).toString()
+      }
+      if (!body.date || body.date == "") {
+        body.date = Date.now()
+      }
+      const data = await MarketingReport.create(body)
+      await data.loadMany([
+        "schedulle.marketing",
+        "schedulle.action",
+        "schedulle.target.study.studyName",
+        "schedulle.target.study.university",
+      ])
 
-    await RedisHelper.delete("MarketingReport_*")
-    const activity = `Add new MarketingReport '${data.code}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiCreated(data.toJSON())
-    return response.status(201).send(parsed)
+      await RedisHelper.delete("MarketingReport_*")
+      const activity = `Add new MarketingReport '${data.code}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -172,25 +176,30 @@ class MarketingReportController {
    * MarketingReport by id
    */
   async show({ request, response }) {
-    const id = request.params.id
-    let redisKey = `MarketingReport_${id}`
-    let cached = await RedisHelper.get(redisKey)
-    if (cached) {
-      return response.status(200).send(cached)
+    try {
+      const id = request.params.id
+      let redisKey = `MarketingReport_${id}`
+      let cached = await RedisHelper.get(redisKey)
+      if (cached) {
+        return response.status(200).send(cached)
+      }
+      const data = await MarketingReport.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.loadMany([
+        "schedulle.marketing",
+        "schedulle.action",
+        "schedulle.target.study.studyName",
+        "schedulle.target.study.university",
+      ])
+      let parsed = ResponseParser.apiItem(data.toJSON())
+      await RedisHelper.set(redisKey, parsed)
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const data = await MarketingReport.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    await data.loadMany([
-      "schedulle.marketing",
-      "schedulle.action",
-      "schedulle.target.study.studyName",
-      "schedulle.target.study.university",
-    ])
-    let parsed = ResponseParser.apiItem(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -199,25 +208,30 @@ class MarketingReportController {
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
-    let body = request.only(fillable)
-    const id = request.params.id
-    const data = await MarketingReport.find(id)
-    if (!data || data.length === 0) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      let body = request.only(fillable)
+      const id = request.params.id
+      const data = await MarketingReport.find(id)
+      if (!data || data.length === 0) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.merge(body)
+      await data.save()
+      await data.loadMany([
+        "schedulle.marketing",
+        "schedulle.action",
+        "schedulle.target.study.studyName",
+        "schedulle.target.study.university",
+      ])
+      const activity = `Update MarketingReport '${data.code}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("MarketingReport_*")
+      let parsed = ResponseParser.apiUpdated(data.toJSON())
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    await data.merge(body)
-    await data.save()
-    await data.loadMany([
-      "schedulle.marketing",
-      "schedulle.action",
-      "schedulle.target.study.studyName",
-      "schedulle.target.study.university",
-    ])
-    const activity = `Update MarketingReport '${data.code}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("MarketingReport_*")
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -226,16 +240,21 @@ class MarketingReportController {
    * Can only be done by Super Administrator
    */
   async destroy({ request, response, auth }) {
-    const id = request.params.id
-    const data = await MarketingReport.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      const id = request.params.id
+      const data = await MarketingReport.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      const activity = `Delete MarketingReport '${data.code}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("MarketingReport_*")
+      await data.delete()
+      return response.status(200).send(ResponseParser.apiDeleted())
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const activity = `Delete MarketingReport '${data.code}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("MarketingReport_*")
-    await data.delete()
-    return response.status(200).send(ResponseParser.apiDeleted())
   }
 }
 

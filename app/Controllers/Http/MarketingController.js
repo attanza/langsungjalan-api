@@ -2,7 +2,7 @@
 
 const User = use("App/Models/User")
 const Role = use("App/Models/Role")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits, ActivationTraits } = use("App/Traits")
 
 const fillable = [
@@ -88,7 +88,8 @@ class UserController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -98,21 +99,26 @@ class UserController {
    */
 
   async store({ request, response, auth }) {
-    let body = request.only(fillable)
-    let { password } = request.post()
-    body.password = password
-    const data = await User.create(body)
-    await data.roles().attach(await getMarketingRoleId())
-    await ActivationTraits.createAndActivate(data)
-    await RedisHelper.delete("Marketing_*")
-    await RedisHelper.delete("User_*")
-    await RedisHelper.delete("Dashboard_Data")
-    await RedisHelper.delete("activities")
-    const activity = `Add new Marketing '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await data.load("supervisors")
-    let parsed = ResponseParser.apiCreated(data.toJSON())
-    return response.status(201).send(parsed)
+    try {
+      let body = request.only(fillable)
+      let { password } = request.post()
+      body.password = password
+      const data = await User.create(body)
+      await data.roles().attach(await getMarketingRoleId())
+      await ActivationTraits.createAndActivate(data)
+      await RedisHelper.delete("Marketing_*")
+      await RedisHelper.delete("User_*")
+      await RedisHelper.delete("Dashboard_Data")
+      await RedisHelper.delete("activities")
+      const activity = `Add new Marketing '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await data.load("supervisors")
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -121,22 +127,27 @@ class UserController {
    */
 
   async show({ request, response }) {
-    const id = request.params.id
-    let redisKey = `Marketing_${id}`
-    let cached = await RedisHelper.get(redisKey)
-    if (cached) {
-      return response.status(200).send(cached)
+    try {
+      const id = request.params.id
+      let redisKey = `Marketing_${id}`
+      let cached = await RedisHelper.get(redisKey)
+      if (cached) {
+        return response.status(200).send(cached)
+      }
+      const data = await User.query()
+        .where("id", id)
+        .first()
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.load("supervisors")
+      let parsed = ResponseParser.apiItem(data.toJSON())
+      await RedisHelper.set(redisKey, parsed)
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const data = await User.query()
-      .where("id", id)
-      .first()
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    await data.load("supervisors")
-    let parsed = ResponseParser.apiItem(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -145,25 +156,30 @@ class UserController {
    */
 
   async update({ request, response, auth }) {
-    const id = request.params.id
-    const data = await User.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      const id = request.params.id
+      const data = await User.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+
+      let body = request.only(fillable)
+
+      await data.merge(body)
+      await data.save()
+      await data.load("supervisors")
+      const activity = `Update Marketing '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("Marketing_*")
+      await RedisHelper.delete("User_*")
+      await RedisHelper.delete("Dashboard_Data")
+      await RedisHelper.delete("activities")
+      let parsed = ResponseParser.apiUpdated(data.toJSON())
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-
-    let body = request.only(fillable)
-
-    await data.merge(body)
-    await data.save()
-    await data.load("supervisors")
-    const activity = `Update Marketing '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("Marketing_*")
-    await RedisHelper.delete("User_*")
-    await RedisHelper.delete("Dashboard_Data")
-    await RedisHelper.delete("activities")
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -172,24 +188,29 @@ class UserController {
    */
 
   async destroy({ request, response, auth }) {
-    const id = request.params.id
-    const data = await User.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      const id = request.params.id
+      const data = await User.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      const activity = `Delete Marketing '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("Marketing_*")
+      await RedisHelper.delete("User_*")
+      await RedisHelper.delete("Dashboard_Data")
+      await RedisHelper.delete("activities")
+      // Delete Relationship
+      await data.tokens().delete()
+      await data.roles().detach()
+      await data.supervisors().detach()
+      // Delete Data
+      await data.delete()
+      return response.status(200).send(ResponseParser.apiDeleted())
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const activity = `Delete Marketing '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("Marketing_*")
-    await RedisHelper.delete("User_*")
-    await RedisHelper.delete("Dashboard_Data")
-    await RedisHelper.delete("activities")
-    // Delete Relationship
-    await data.tokens().delete()
-    await data.roles().detach()
-    await data.supervisors().detach()
-    // Delete Data
-    await data.delete()
-    return response.status(200).send(ResponseParser.apiDeleted())
   }
 }
 

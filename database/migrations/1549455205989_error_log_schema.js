@@ -7,9 +7,8 @@ class ErrorLogSchema extends Schema {
   up() {
     this.create("error_logs", table => {
       table.increments()
-      table.string("from")
-      table.string("resource")
-      table.string("action")
+      table.string("url")
+      table.string("method")
       table.text("error")
       table.string("solve_by")
       table.dateTime("solved_at")

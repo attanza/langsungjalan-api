@@ -1,7 +1,7 @@
 "use strict"
 
 const MarketingTarget = use("App/Models/MarketingTarget")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const fillable = ["code", "study_program_id", "description"]
 
@@ -84,7 +84,8 @@ class MarketingTargetController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -94,17 +95,22 @@ class MarketingTargetController {
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
-    let body = request.only(fillable)
-    const data = await MarketingTarget.create(body)
-    await data.loadMany(["study.studyName", "study.university"])
-    await RedisHelper.delete("MarketingTarget_*")
-    await RedisHelper.delete("contacts*")
-    await RedisHelper.delete("schedulles*")
-    await RedisHelper.delete("downpayments*")
-    const activity = `Add new MarketingTarget '${data.code}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiCreated(data.toJSON())
-    return response.status(201).send(parsed)
+    try {
+      let body = request.only(fillable)
+      const data = await MarketingTarget.create(body)
+      await data.loadMany(["study.studyName", "study.university"])
+      await RedisHelper.delete("MarketingTarget_*")
+      await RedisHelper.delete("contacts*")
+      await RedisHelper.delete("schedulles*")
+      await RedisHelper.delete("downpayments*")
+      const activity = `Add new MarketingTarget '${data.code}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -112,20 +118,25 @@ class MarketingTargetController {
    * MarketingTarget by id
    */
   async show({ request, response }) {
-    const id = request.params.id
-    let redisKey = `MarketingTarget_${id}`
-    let cached = await RedisHelper.get(redisKey)
-    if (cached) {
-      return response.status(200).send(cached)
+    try {
+      const id = request.params.id
+      let redisKey = `MarketingTarget_${id}`
+      let cached = await RedisHelper.get(redisKey)
+      if (cached) {
+        return response.status(200).send(cached)
+      }
+      const data = await MarketingTarget.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.loadMany(["study.studyName", "study.university"])
+      let parsed = ResponseParser.apiItem(data.toJSON())
+      await RedisHelper.set(redisKey, parsed)
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const data = await MarketingTarget.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    await data.loadMany(["study.studyName", "study.university"])
-    let parsed = ResponseParser.apiItem(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -134,23 +145,28 @@ class MarketingTargetController {
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
-    let body = request.only(fillable)
-    const id = request.params.id
-    const data = await MarketingTarget.find(id)
-    if (!data || data.length === 0) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      let body = request.only(fillable)
+      const id = request.params.id
+      const data = await MarketingTarget.find(id)
+      if (!data || data.length === 0) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.merge(body)
+      await data.save()
+      await data.loadMany(["study.studyName", "study.university"])
+      const activity = `Update MarketingTarget '${data.code}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("MarketingTarget_*")
+      await RedisHelper.delete("contacts*")
+      await RedisHelper.delete("schedulles*")
+      await RedisHelper.delete("downpayments*")
+      let parsed = ResponseParser.apiUpdated(data.toJSON())
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    await data.merge(body)
-    await data.save()
-    await data.loadMany(["study.studyName", "study.university"])
-    const activity = `Update MarketingTarget '${data.code}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("MarketingTarget_*")
-    await RedisHelper.delete("contacts*")
-    await RedisHelper.delete("schedulles*")
-    await RedisHelper.delete("downpayments*")
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -159,51 +175,56 @@ class MarketingTargetController {
    * Can only be done by Super Administrator
    */
   async destroy({ request, response, auth }) {
-    const id = request.params.id
-    const data = await MarketingTarget.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    await data.loadMany(["contacts", "schedulles", "downpayments"])
-    const dataJSON = data.toJSON()
-    if (dataJSON.contacts && dataJSON.contacts.length > 0) {
-      return response
-        .status(400)
-        .send(
-          ResponseParser.errorResponse(
-            "This Marketing Target cannot be deleted since it has Contacts attached"
+    try {
+      const id = request.params.id
+      const data = await MarketingTarget.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.loadMany(["contacts", "schedulles", "downpayments"])
+      const dataJSON = data.toJSON()
+      if (dataJSON.contacts && dataJSON.contacts.length > 0) {
+        return response
+          .status(400)
+          .send(
+            ResponseParser.errorResponse(
+              "This Marketing Target cannot be deleted since it has Contacts attached"
+            )
           )
-        )
-    }
+      }
 
-    if (dataJSON.schedulles && dataJSON.schedulles.length > 0) {
-      return response
-        .status(400)
-        .send(
-          ResponseParser.errorResponse(
-            "This Marketing Target cannot be deleted since it has Schedulles attached"
+      if (dataJSON.schedulles && dataJSON.schedulles.length > 0) {
+        return response
+          .status(400)
+          .send(
+            ResponseParser.errorResponse(
+              "This Marketing Target cannot be deleted since it has Schedulles attached"
+            )
           )
-        )
-    }
+      }
 
-    if (dataJSON.downpayments && dataJSON.downpayments.length > 0) {
-      return response
-        .status(400)
-        .send(
-          ResponseParser.errorResponse(
-            "This Marketing Target cannot be deleted since it has Downpayments attached"
+      if (dataJSON.downpayments && dataJSON.downpayments.length > 0) {
+        return response
+          .status(400)
+          .send(
+            ResponseParser.errorResponse(
+              "This Marketing Target cannot be deleted since it has Downpayments attached"
+            )
           )
-        )
-    }
+      }
 
-    const activity = `Delete MarketingTarget '${data.code}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("MarketingTarget_*")
-    await RedisHelper.delete("contacts*")
-    await RedisHelper.delete("schedulles*")
-    await RedisHelper.delete("downpayments*")
-    await data.delete()
-    return response.status(200).send(ResponseParser.apiDeleted())
+      const activity = `Delete MarketingTarget '${data.code}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("MarketingTarget_*")
+      await RedisHelper.delete("contacts*")
+      await RedisHelper.delete("schedulles*")
+      await RedisHelper.delete("downpayments*")
+      await data.delete()
+      return response.status(200).send(ResponseParser.apiDeleted())
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**

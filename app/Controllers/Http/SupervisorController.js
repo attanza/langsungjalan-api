@@ -2,7 +2,7 @@
 
 const User = use("App/Models/User")
 const Role = use("App/Models/Role")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits, ActivationTraits } = use("App/Traits")
 const fillable = [
   "name",
@@ -77,7 +77,8 @@ class SupervisorController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -87,16 +88,21 @@ class SupervisorController {
    */
 
   async store({ request, response, auth }) {
-    let body = request.only(fillable)
-    const data = await User.create(body)
-    await data.roles().attach(await getSupervisorRoleId())
-    await ActivationTraits.createAndActivate(data)
-    await RedisHelper.delete("Supervisor_*")
-    await RedisHelper.delete("User_*")
-    const activity = `Add new Supervisor '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiCreated(data.toJSON())
-    return response.status(201).send(parsed)
+    try {
+      let body = request.only(fillable)
+      const data = await User.create(body)
+      await data.roles().attach(await getSupervisorRoleId())
+      await ActivationTraits.createAndActivate(data)
+      await RedisHelper.delete("Supervisor_*")
+      await RedisHelper.delete("User_*")
+      const activity = `Add new Supervisor '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -105,21 +111,26 @@ class SupervisorController {
    */
 
   async show({ request, response }) {
-    const id = request.params.id
-    let redisKey = `Supervisor_${id}`
-    let cached = await RedisHelper.get(redisKey)
-    if (cached) {
-      return response.status(200).send(cached)
+    try {
+      const id = request.params.id
+      let redisKey = `Supervisor_${id}`
+      let cached = await RedisHelper.get(redisKey)
+      if (cached) {
+        return response.status(200).send(cached)
+      }
+      const data = await User.query()
+        .where("id", id)
+        .first()
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      let parsed = ResponseParser.apiItem(data.toJSON())
+      await RedisHelper.set(redisKey, parsed)
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const data = await User.query()
-      .where("id", id)
-      .first()
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    let parsed = ResponseParser.apiItem(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -128,22 +139,27 @@ class SupervisorController {
    */
 
   async update({ request, response, auth }) {
-    const id = request.params.id
-    const data = await User.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      const id = request.params.id
+      const data = await User.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+
+      let body = request.only(fillable)
+
+      await data.merge(body)
+      await data.save()
+      const activity = `Update Supervisor '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("Supervisor_*")
+      await RedisHelper.delete("User_*")
+      let parsed = ResponseParser.apiUpdated(data.toJSON())
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-
-    let body = request.only(fillable)
-
-    await data.merge(body)
-    await data.save()
-    const activity = `Update Supervisor '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("Supervisor_*")
-    await RedisHelper.delete("User_*")
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -152,24 +168,29 @@ class SupervisorController {
    */
 
   async destroy({ request, response, auth }) {
-    const id = request.params.id
-    const data = await User.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
+    try {
+      const id = request.params.id
+      const data = await User.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
 
-    const activity = `Delete Supervisor '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("Supervisor_*")
-    await RedisHelper.delete("Marketing_*")
-    await RedisHelper.delete("User_*")
-    // Delete Relationship
-    await data.tokens().delete()
-    await data.marketings().detach()
-    await data.roles().detach()
-    // Delete Data
-    await data.delete()
-    return response.status(200).send(ResponseParser.apiDeleted())
+      const activity = `Delete Supervisor '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("Supervisor_*")
+      await RedisHelper.delete("Marketing_*")
+      await RedisHelper.delete("User_*")
+      // Delete Relationship
+      await data.tokens().delete()
+      await data.marketings().detach()
+      await data.roles().detach()
+      // Delete Data
+      await data.delete()
+      return response.status(200).send(ResponseParser.apiDeleted())
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -208,7 +229,8 @@ class SupervisorController {
         .status(200)
         .send(ResponseParser.successResponse(null, "Marketing attached"))
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -233,27 +255,8 @@ class SupervisorController {
         .status(200)
         .send(ResponseParser.successResponse(supervisor, "Marketing detached"))
     } catch (e) {
-      console.log("e", e)
-    }
-  }
-
-  async searchMarketing({ request, response }) {
-    let { page, limit, search } = request.get()
-
-    if (!page) page = 1
-    if (!limit) limit = 10
-    if (search && search != "") {
-      const data = await User.query()
-        .whereHas("roles", builder => {
-          builder.where("role_id", 3)
-        })
-        .where("name", "like", `%${search}%`)
-        .orWhere("email", "like", `%${search}%`)
-        .orWhere("phone", "like", `%${search}%`)
-        .orWhere("address", "like", `%${search}%`)
-        .paginate(parseInt(page), parseInt(limit))
-      let parsed = ResponseParser.apiCollection(data.toJSON())
-      return response.status(200).send(parsed)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 }

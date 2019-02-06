@@ -1,7 +1,7 @@
 "use strict"
 
 const Activity = use("App/Models/Activity")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 
 class ActivityController {
   /**
@@ -73,7 +73,8 @@ class ActivityController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 }

@@ -4,9 +4,8 @@ const ErrorLog = use("App/Models/ErrorLog")
 const { RedisHelper, ResponseParser, MailHelper } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const fillable = [
-  "from",
-  "resource",
-  "action",
+  "url",
+  "method",
   "error",
   "solve_by",
   "soleved_at",

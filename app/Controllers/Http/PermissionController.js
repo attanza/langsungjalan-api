@@ -1,7 +1,7 @@
 "use strict"
 
 const Permission = use("App/Models/Permission")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const fillable = ["name", "description"]
 
@@ -44,7 +44,7 @@ class PermissionController {
       }
 
       const data = await Permission.query()
-        .where(function () {
+        .where(function() {
           if (search && search != "") {
             this.where("name", "like", `%${search}%`)
           }
@@ -67,7 +67,8 @@ class PermissionController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
   /**
@@ -76,13 +77,18 @@ class PermissionController {
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
-    let body = request.only(fillable)
-    const data = await Permission.create(body)
-    await RedisHelper.delete("Permission_*")
-    const activity = `Add new Permission '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiCreated(data.toJSON())
-    return response.status(201).send(parsed)
+    try {
+      let body = request.only(fillable)
+      const data = await Permission.create(body)
+      await RedisHelper.delete("Permission_*")
+      const activity = `Add new Permission '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -90,19 +96,24 @@ class PermissionController {
    * Permission by id
    */
   async show({ request, response }) {
-    const id = request.params.id
-    let redisKey = `Permission_${id}`
-    let cached = await RedisHelper.get(redisKey)
-    if (cached) {
-      return response.status(200).send(cached)
+    try {
+      const id = request.params.id
+      let redisKey = `Permission_${id}`
+      let cached = await RedisHelper.get(redisKey)
+      if (cached) {
+        return response.status(200).send(cached)
+      }
+      const data = await Permission.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      let parsed = ResponseParser.apiItem(data.toJSON())
+      await RedisHelper.set(redisKey, parsed)
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const data = await Permission.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    let parsed = ResponseParser.apiItem(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -111,19 +122,24 @@ class PermissionController {
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
-    let body = request.only(fillable)
-    const id = request.params.id
-    const data = await Permission.find(id)
-    if (!data || data.length === 0) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      let body = request.only(fillable)
+      const id = request.params.id
+      const data = await Permission.find(id)
+      if (!data || data.length === 0) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.merge(body)
+      await data.save()
+      const activity = `Update Permission '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("Permission_*")
+      let parsed = ResponseParser.apiUpdated(data.toJSON())
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    await data.merge(body)
-    await data.save()
-    const activity = `Update Permission '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("Permission_*")
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -132,19 +148,24 @@ class PermissionController {
    * Can only be done by Super Administrator
    */
   async destroy({ request, response, auth }) {
-    const id = request.params.id
-    const data = await Permission.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      const id = request.params.id
+      const data = await Permission.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+
+      await data.roles().detach()
+
+      const activity = `Delete Permission '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("Permission_*")
+      await data.delete()
+      return response.status(200).send(ResponseParser.apiDeleted())
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-
-    await data.roles().detach()
-
-    const activity = `Delete Permission '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("Permission_*")
-    await data.delete()
-    return response.status(200).send(ResponseParser.apiDeleted())
   }
 }
 

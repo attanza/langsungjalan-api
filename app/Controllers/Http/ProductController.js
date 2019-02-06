@@ -1,7 +1,7 @@
 "use strict"
 
 const Product = use("App/Models/Product")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 
 /**
@@ -70,7 +70,8 @@ class ProductController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -80,20 +81,25 @@ class ProductController {
    * Can only be done by Super Administrator
    */
   async store({ request, response, auth }) {
-    let body = request.only([
-      "code",
-      "name",
-      "measurement",
-      "price",
-      "description",
-    ])
-    const data = await Product.create(body)
-    await RedisHelper.delete("Product_*")
-    await RedisHelper.delete("Dashboard_Data")
-    const activity = `Add new Product '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiCreated(data.toJSON())
-    return response.status(201).send(parsed)
+    try {
+      let body = request.only([
+        "code",
+        "name",
+        "measurement",
+        "price",
+        "description",
+      ])
+      const data = await Product.create(body)
+      await RedisHelper.delete("Product_*")
+      await RedisHelper.delete("Dashboard_Data")
+      const activity = `Add new Product '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = ResponseParser.apiCreated(data.toJSON())
+      return response.status(201).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -101,19 +107,24 @@ class ProductController {
    * Product by id
    */
   async show({ request, response }) {
-    const id = request.params.id
-    let redisKey = `Product_${id}`
-    let cached = await RedisHelper.get(redisKey)
-    if (cached) {
-      return response.status(200).send(cached)
+    try {
+      const id = request.params.id
+      let redisKey = `Product_${id}`
+      let cached = await RedisHelper.get(redisKey)
+      if (cached) {
+        return response.status(200).send(cached)
+      }
+      const data = await Product.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      let parsed = ResponseParser.apiItem(data.toJSON())
+      await RedisHelper.set(redisKey, parsed)
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const data = await Product.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    let parsed = ResponseParser.apiItem(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -122,26 +133,31 @@ class ProductController {
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
-    let body = request.only([
-      "code",
-      "name",
-      "measurement",
-      "price",
-      "description",
-    ])
-    const id = request.params.id
-    const data = await Product.find(id)
-    if (!data || data.length === 0) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      let body = request.only([
+        "code",
+        "name",
+        "measurement",
+        "price",
+        "description",
+      ])
+      const id = request.params.id
+      const data = await Product.find(id)
+      if (!data || data.length === 0) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.merge(body)
+      await data.save()
+      const activity = `Update Product '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("Product_*")
+      await RedisHelper.delete("Dashboard_Data")
+      let parsed = ResponseParser.apiUpdated(data.toJSON())
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    await data.merge(body)
-    await data.save()
-    const activity = `Update Product '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("Product_*")
-    await RedisHelper.delete("Dashboard_Data")
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -149,17 +165,22 @@ class ProductController {
    * Delete Product by Id
    */
   async destroy({ request, response, auth }) {
-    const id = request.params.id
-    const data = await Product.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
+    try {
+      const id = request.params.id
+      const data = await Product.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      const activity = `Delete Product '${data.name}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("Product_*")
+      await RedisHelper.delete("Dashboard_Data")
+      await data.delete()
+      return response.status(200).send(ResponseParser.apiDeleted())
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const activity = `Delete Product '${data.name}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("Product_*")
-    await RedisHelper.delete("Dashboard_Data")
-    await data.delete()
-    return response.status(200).send(ResponseParser.apiDeleted())
   }
 }
 

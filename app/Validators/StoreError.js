@@ -6,9 +6,8 @@ const { ResponseParser } = use("App/Helpers")
 class StoreError {
   get rules() {
     return {
-      from: "required|string|max:50",
-      resource: "required|string|max:50",
-      action: "required|string|max:50",
+      from: "url|string",
+      method: "required|string|max:10",
       error: "required|string",
       solve_by: "string|max:50",
       action_to_solve: "string",

@@ -4,7 +4,6 @@ const University = use("App/Models/University")
 const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const fillable = [
-  "name",
   "address",
   "email",
   "phone",
@@ -80,10 +79,8 @@ class UniversityController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      ErrorLog("backend.university.index", e)
-      return response
-        .status(400)
-        .send(ResponseParser.errorResponse("Somehing went wrong!"))
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -105,10 +102,8 @@ class UniversityController {
       let parsed = ResponseParser.apiCreated(data.toJSON())
       return response.status(201).send(parsed)
     } catch (e) {
-      ErrorLog("backend.university.store", e)
-      return response
-        .status(400)
-        .send(ResponseParser.errorResponse("Somehing went wrong!"))
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -132,10 +127,8 @@ class UniversityController {
       await RedisHelper.set(redisKey, parsed)
       return response.status(200).send(parsed)
     } catch (e) {
-      ErrorLog("backend.university.show", e)
-      return response
-        .status(400)
-        .send(ResponseParser.errorResponse("Somehing went wrong!"))
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -163,10 +156,8 @@ class UniversityController {
       let parsed = ResponseParser.apiUpdated(data.toJSON())
       return response.status(200).send(parsed)
     } catch (e) {
-      ErrorLog("backend.university.show", e)
-      return response
-        .status(400)
-        .send(ResponseParser.errorResponse("Somehing went wrong!"))
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -204,10 +195,8 @@ class UniversityController {
       await data.delete()
       return response.status(200).send(ResponseParser.apiDeleted())
     } catch (e) {
-      ErrorLog("backend.university.show", e)
-      return response
-        .status(400)
-        .send(ResponseParser.errorResponse("Somehing went wrong!"))
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 }

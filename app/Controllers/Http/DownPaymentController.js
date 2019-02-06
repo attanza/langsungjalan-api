@@ -1,7 +1,7 @@
 "use strict"
 
 const DownPayment = use("App/Models/DownPayment")
-const { RedisHelper, ResponseParser, TwilioApi } = use("App/Helpers")
+const { RedisHelper, ResponseParser, TwilioApi, ErrorLog } = use("App/Helpers")
 const { ActivityTraits } = use("App/Traits")
 const randomstring = require("randomstring")
 const Env = use("Env")
@@ -87,7 +87,8 @@ class DownPaymentController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -112,7 +113,8 @@ class DownPaymentController {
         return response.status(201).send(ResponseParser.apiCreated(result))
       }
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -151,21 +153,26 @@ class DownPaymentController {
    * DownPayment by id
    */
   async show({ request, response }) {
-    const id = request.params.id
-    let redisKey = `DownPayment_${id}`
-    let cached = await RedisHelper.get(redisKey)
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-    const data = await DownPayment.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    await data.load("target")
+    try {
+      const id = request.params.id
+      let redisKey = `DownPayment_${id}`
+      let cached = await RedisHelper.get(redisKey)
+      if (cached) {
+        return response.status(200).send(cached)
+      }
+      const data = await DownPayment.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.load("target")
 
-    let parsed = ResponseParser.apiItem(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
+      let parsed = ResponseParser.apiItem(data.toJSON())
+      await RedisHelper.set(redisKey, parsed)
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -207,7 +214,8 @@ class DownPaymentController {
       let parsed = ResponseParser.apiUpdated(data.toJSON())
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -216,17 +224,22 @@ class DownPaymentController {
    * Delete DownPayment by Id
    */
   async destroy({ request, response, auth }) {
-    const id = request.params.id
-    const data = await DownPayment.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    const activity = `Delete DownPayment '${data.transaction_no}'`
-    await ActivityTraits.saveActivity(request, auth, activity)
+    try {
+      const id = request.params.id
+      const data = await DownPayment.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      const activity = `Delete DownPayment '${data.transaction_no}'`
+      await ActivityTraits.saveActivity(request, auth, activity)
 
-    await RedisHelper.delete("DownPayment*")
-    await data.delete()
-    return response.status(200).send(ResponseParser.apiDeleted())
+      await RedisHelper.delete("DownPayment*")
+      await data.delete()
+      return response.status(200).send(ResponseParser.apiDeleted())
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   async generateTransactionNo() {

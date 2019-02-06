@@ -1,18 +1,17 @@
-'use strict'
+"use strict"
 
 class ResponseParser {
-
   apiCollection(items) {
     const output = {
       meta: {
         status: 200,
-        message: 'Data retrieval successfully',
+        message: "Data retrieval successfully",
         total: items.total,
         perPage: items.perPage,
         page: items.page,
         lastPage: items.lastPage,
       },
-      data: items.data
+      data: items.data,
     }
     return output
   }
@@ -21,9 +20,9 @@ class ResponseParser {
     const output = {
       meta: {
         status: 201,
-        message: 'Created successfully',
+        message: "Created successfully",
       },
-      data
+      data,
     }
     return output
   }
@@ -32,9 +31,9 @@ class ResponseParser {
     const output = {
       meta: {
         status: 200,
-        message: 'Updated successfully',
+        message: "Updated successfully",
       },
-      data
+      data,
     }
     return output
   }
@@ -43,7 +42,7 @@ class ResponseParser {
     const output = {
       meta: {
         status: 200,
-        message: 'Deleted successfully'
+        message: "Deleted successfully",
       },
     }
     return output
@@ -53,9 +52,9 @@ class ResponseParser {
     const output = {
       meta: {
         status: 200,
-        message: 'Data retrieval successfully',
+        message: "Data retrieval successfully",
       },
-      data
+      data,
     }
     return output
   }
@@ -63,7 +62,7 @@ class ResponseParser {
   apiNotFound() {
     const meta = {
       status: 400,
-      message: 'Data not found',
+      message: "Data not found",
     }
     return { meta }
   }
@@ -72,9 +71,9 @@ class ResponseParser {
     const output = {
       meta: {
         status: 422,
-        message: 'Validation failed',
+        message: "Validation failed",
       },
-      details: data
+      details: data,
     }
     return output
   }
@@ -87,8 +86,8 @@ class ResponseParser {
     return {
       meta: {
         status: 400,
-        message: msg
-      }
+        message: msg,
+      },
     }
   }
 
@@ -100,8 +99,8 @@ class ResponseParser {
     return {
       meta: {
         status: 401,
-        message: 'Unathorized'
-      }
+        message: "Unathorized",
+      },
     }
   }
 
@@ -113,9 +112,9 @@ class ResponseParser {
     return {
       meta: {
         status: 200,
-        message: msg
+        message: msg,
       },
-      data
+      data,
     }
   }
 
@@ -127,8 +126,21 @@ class ResponseParser {
     return {
       meta: {
         status: 403,
-        message: 'Forbidden'
-      }
+        message: "Forbidden",
+      },
+    }
+  }
+
+  /**
+   * Unknown Error Response
+   */
+
+  unknownError() {
+    return {
+      meta: {
+        status: 500,
+        message: "unknownError",
+      },
     }
   }
 }

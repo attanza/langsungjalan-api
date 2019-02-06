@@ -1,7 +1,7 @@
 "use strict"
 
 const StudyProgram = use("App/Models/StudyProgram")
-const { RedisHelper, ResponseParser } = use("App/Helpers")
+const { RedisHelper, ResponseParser, ErrorLog } = use("App/Helpers")
 const { ActivityTraits, CheckExist } = use("App/Traits")
 const fillable = [
   "university_id",
@@ -96,7 +96,8 @@ class StudyProgramController {
       }
       return response.status(200).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -141,7 +142,8 @@ class StudyProgramController {
       let parsed = ResponseParser.apiCreated(data.toJSON())
       return response.status(201).send(parsed)
     } catch (e) {
-      console.log("e", e)
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
   }
 
@@ -150,25 +152,30 @@ class StudyProgramController {
    * StudyProgram by id
    */
   async show({ request, response }) {
-    const id = request.params.id
-    let redisKey = `StudyProgram_${id}`
-    let cached = await RedisHelper.get(redisKey)
-    if (cached) {
-      return response.status(200).send(cached)
-    }
-    const data = await StudyProgram.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    await data.loadMany({
-      university: null,
-      studyName: null,
-      // years: builder => builder.orderBy('year')
-    })
+    try {
+      const id = request.params.id
+      let redisKey = `StudyProgram_${id}`
+      let cached = await RedisHelper.get(redisKey)
+      if (cached) {
+        return response.status(200).send(cached)
+      }
+      const data = await StudyProgram.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.loadMany({
+        university: null,
+        studyName: null,
+        // years: builder => builder.orderBy('year')
+      })
 
-    let parsed = ResponseParser.apiItem(data.toJSON())
-    await RedisHelper.set(redisKey, parsed)
-    return response.status(200).send(parsed)
+      let parsed = ResponseParser.apiItem(data.toJSON())
+      await RedisHelper.set(redisKey, parsed)
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
+    }
   }
 
   /**
@@ -177,41 +184,49 @@ class StudyProgramController {
    * Can only be done by Super Administrator
    */
   async update({ request, response, auth }) {
-    let body = request.only(fillable)
-    const id = request.params.id
-    const data = await StudyProgram.find(id)
-    if (!data || data.length === 0) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    const isUniversityExists = await CheckExist(
-      body.university_id,
-      "University"
-    )
-    if (!isUniversityExists) {
-      return response
-        .status(422)
-        .send(ResponseParser.apiValidationFailed("University not fund"))
-    }
+    try {
+      let body = request.only(fillable)
+      const id = request.params.id
+      const data = await StudyProgram.find(id)
+      if (!data || data.length === 0) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      const isUniversityExists = await CheckExist(
+        body.university_id,
+        "University"
+      )
+      if (!isUniversityExists) {
+        return response
+          .status(422)
+          .send(ResponseParser.apiValidationFailed("University not fund"))
+      }
 
-    const isStudyNameExists = await CheckExist(body.study_name_id, "StudyName")
-    if (!isStudyNameExists) {
-      return response
-        .status(422)
-        .send(ResponseParser.apiValidationFailed("StudyName not fund"))
+      const isStudyNameExists = await CheckExist(
+        body.study_name_id,
+        "StudyName"
+      )
+      if (!isStudyNameExists) {
+        return response
+          .status(422)
+          .send(ResponseParser.apiValidationFailed("StudyName not fund"))
+      }
+      await data.merge(body)
+      await data.save()
+      await RedisHelper.delete("StudyProgram_*")
+      await RedisHelper.delete("StudyYear_*")
+      await RedisHelper.delete("MarketingTarget_*")
+      await data.loadMany(["university", "studyName", "years"])
+      const jsonData = data.toJSON()
+      const activity = `Update StudyProgram "${jsonData.studyName.name}" in "${
+        jsonData.university.name
+      }" university`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      let parsed = ResponseParser.apiUpdated(data.toJSON())
+      return response.status(200).send(parsed)
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    await data.merge(body)
-    await data.save()
-    await RedisHelper.delete("StudyProgram_*")
-    await RedisHelper.delete("StudyYear_*")
-    await RedisHelper.delete("MarketingTarget_*")
-    await data.loadMany(["university", "studyName", "years"])
-    const jsonData = data.toJSON()
-    const activity = `Update StudyProgram "${jsonData.studyName.name}" in "${
-      jsonData.university.name
-    }" university`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    let parsed = ResponseParser.apiUpdated(data.toJSON())
-    return response.status(200).send(parsed)
   }
 
   /**
@@ -221,41 +236,46 @@ class StudyProgramController {
    * Default StudyProgram ['Super Administrator', 'Administrator', 'Supervisor', 'Marketing', 'Student'] cannot be deleted
    */
   async destroy({ request, response, auth }) {
-    const id = request.params.id
-    const data = await StudyProgram.find(id)
-    if (!data) {
-      return response.status(400).send(ResponseParser.apiNotFound())
-    }
-    await data.loadMany(["targets", "years", "university", "studyName"])
-    const dataJSON = data.toJSON()
-    if (dataJSON.targets && dataJSON.targets.length > 0) {
-      return response
-        .status(400)
-        .send(
-          ResponseParser.errorResponse(
-            "Target cannot be deleted since it has Marketing Targets attached"
+    try {
+      const id = request.params.id
+      const data = await StudyProgram.find(id)
+      if (!data) {
+        return response.status(400).send(ResponseParser.apiNotFound())
+      }
+      await data.loadMany(["targets", "years", "university", "studyName"])
+      const dataJSON = data.toJSON()
+      if (dataJSON.targets && dataJSON.targets.length > 0) {
+        return response
+          .status(400)
+          .send(
+            ResponseParser.errorResponse(
+              "Target cannot be deleted since it has Marketing Targets attached"
+            )
           )
-        )
-    }
-    if (dataJSON.years && dataJSON.years.length > 0) {
-      return response
-        .status(400)
-        .send(
-          ResponseParser.errorResponse(
-            "Target cannot be deleted since it has Years attached"
+      }
+      if (dataJSON.years && dataJSON.years.length > 0) {
+        return response
+          .status(400)
+          .send(
+            ResponseParser.errorResponse(
+              "Target cannot be deleted since it has Years attached"
+            )
           )
-        )
+      }
+      const jsonData = data.toJSON()
+      const activity = `Delete StudyProgram "${jsonData.studyName.name}" in "${
+        jsonData.university.name
+      }" university`
+      await ActivityTraits.saveActivity(request, auth, activity)
+      await RedisHelper.delete("StudyProgram_*")
+      await RedisHelper.delete("StudyYear_*")
+      await RedisHelper.delete("MarketingTarget_*")
+      await data.delete()
+      return response.status(200).send(ResponseParser.apiDeleted())
+    } catch (e) {
+      ErrorLog(request, e)
+      return response.status(500).send(ResponseParser.unknownError())
     }
-    const jsonData = data.toJSON()
-    const activity = `Delete StudyProgram "${jsonData.studyName.name}" in "${
-      jsonData.university.name
-    }" university`
-    await ActivityTraits.saveActivity(request, auth, activity)
-    await RedisHelper.delete("StudyProgram_*")
-    await RedisHelper.delete("StudyYear_*")
-    await RedisHelper.delete("MarketingTarget_*")
-    await data.delete()
-    return response.status(200).send(ResponseParser.apiDeleted())
   }
 }
 

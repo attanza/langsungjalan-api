@@ -40,13 +40,13 @@ class MailHelper {
     })
   }
 
-  async sendError(action, e) {
+  async sendError(subject, e) {
     const data = { e }
     Mail.send("emails.errors_mail", data, message => {
       message
         .to("dani.lesmiadi@gmail.com")
         .from(from)
-        .subject("langsungjalan ~ error in " + action)
+        .subject(subject)
     })
   }
 }
