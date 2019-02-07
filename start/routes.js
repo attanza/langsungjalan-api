@@ -431,14 +431,6 @@ Route.group(() => {
     .validator(
       new Map([[["error-logs.store", "error-logs.update"], ["StoreError"]]])
     )
-    .middleware(
-      new Map([
-        [["products.index"], ["can:read-product"]],
-        [["products.store"], ["can:create-product"]],
-        [["products.update"], ["can:update-product"]],
-        [["products.destroy"], ["can:delete-product"]],
-      ])
-    )
 
   /**
    * For Combo Box / Select Box
