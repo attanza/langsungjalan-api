@@ -71,6 +71,7 @@ class PermissionController {
       return response.status(500).send(ResponseParser.unknownError())
     }
   }
+
   /**
    * Store
    * Store New Permissions
